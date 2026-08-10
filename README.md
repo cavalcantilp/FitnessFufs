@@ -44,10 +44,13 @@ node scripts/generate-icons.mjs
 ## Déploiement
 
 Le workflow `.github/workflows/deploy.yml` build et publie `dist/` sur GitHub
-Pages à chaque push sur `main`. Il active Pages lui-même au premier run
-(`configure-pages` avec `enablement: true`) ; si cette étape échoue faute de
-droits, activer manuellement **Settings → Pages → Source : GitHub Actions** puis
-relancer le workflow.
+Pages à chaque push sur `main`.
+
+**Étape manuelle, une seule fois :** aller dans **Settings → Pages → Build and
+deployment → Source : GitHub Actions**, puis relancer le workflow. Le
+`GITHUB_TOKEN` du workflow n'a pas le droit de créer le site Pages lui-même
+(`Create Pages site failed: Resource not accessible by integration`), donc tant
+que ce réglage n'est pas fait l'étape `configure-pages` échoue.
 
 Le site est alors servi depuis `https://cavalcantilp.github.io/myFitnessFufs/`.
 Le workflow passe le nom du dépôt au build via `BASE_PATH`, donc le chemin suit

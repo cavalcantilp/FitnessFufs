@@ -52,10 +52,23 @@ deployment → Source : GitHub Actions**, puis relancer le workflow. Le
 (`Create Pages site failed: Resource not accessible by integration`), donc tant
 que ce réglage n'est pas fait l'étape `configure-pages` échoue.
 
-Le site est alors servi depuis `https://cavalcantilp.github.io/myFitnessFufs/`.
-Le workflow passe le nom du dépôt au build via `BASE_PATH`, donc le chemin suit
-automatiquement un éventuel renommage. Pour un déploiement à la racine d'un
-domaine, builder avec `BASE_PATH=/ npm run build`.
+### Domaine personnalisé
+
+Le site est servi depuis **https://myfitnessfufs.cavalcantilp.com**, déclaré
+dans `public/CNAME` (le fichier est copié tel quel dans `dist/`). Deux réglages
+à faire une fois :
+
+1. **DNS** — chez le registrar de `cavalcantilp.com`, ajouter un enregistrement
+   `CNAME` : `myfitnessfufs` → `cavalcantilp.github.io`.
+2. **GitHub** — Settings → Pages → Custom domain : `myfitnessfufs.cavalcantilp.com`,
+   puis cocher *Enforce HTTPS* une fois le certificat émis.
+
+Le domaine apex `cavalcantilp.com` reste au dépôt `cavalcantilp-web-apps` : un
+domaine ne peut pointer que vers un seul site Pages, d'où le sous-domaine.
+
+Le build utilise donc `base: '/'`. Sans domaine personnalisé, GitHub Pages sert
+depuis `https://cavalcantilp.github.io/myFitnessFufs/` : builder alors avec
+`BASE_PATH=/myFitnessFufs/ npm run build`.
 
 ## Structure
 

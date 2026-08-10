@@ -2,10 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// Sur GitHub Pages le site est servi depuis /<nom-du-dépôt>/ ; le workflow
-// injecte BASE_PATH pour que le chemin suive tout renommage du dépôt.
-// Pour un déploiement à la racine d'un domaine, builder avec BASE_PATH=/
-const base = process.env.BASE_PATH ?? '/myFitnessFufs/'
+// Le site est servi à la racine du domaine personnalisé déclaré dans
+// public/CNAME. Sans domaine personnalisé, GitHub Pages sert depuis
+// /<nom-du-dépôt>/ : builder alors avec BASE_PATH=/myFitnessFufs/
+const base = process.env.BASE_PATH ?? '/'
 
 export default defineConfig({
   base,

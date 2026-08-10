@@ -28,10 +28,8 @@ jobs:
 
       - run: npm ci
 
-      # Le chemin de base suit le nom réel du dépôt, sans le coder en dur.
+      # base = / : le site est servi à la racine du domaine de public/CNAME.
       - run: npm run build
-        env:
-          BASE_PATH: /${{ github.event.repository.name }}/
 
       # enablement active Pages sur le dépôt au premier run, sans passage
       # manuel par Settings → Pages.

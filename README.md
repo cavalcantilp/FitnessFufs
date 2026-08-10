@@ -44,8 +44,10 @@ node scripts/generate-icons.mjs
 ## Déploiement
 
 Le workflow `.github/workflows/deploy.yml` build et publie `dist/` sur GitHub
-Pages à chaque push sur `main`. Il faut activer **Settings → Pages → Source :
-GitHub Actions** une fois pour toutes.
+Pages à chaque push sur `main`. Il active Pages lui-même au premier run
+(`configure-pages` avec `enablement: true`) ; si cette étape échoue faute de
+droits, activer manuellement **Settings → Pages → Source : GitHub Actions** puis
+relancer le workflow.
 
 Le site est alors servi depuis `https://cavalcantilp.github.io/myFitnessFufs/`.
 Le workflow passe le nom du dépôt au build via `BASE_PATH`, donc le chemin suit

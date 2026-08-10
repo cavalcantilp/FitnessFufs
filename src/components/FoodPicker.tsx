@@ -84,6 +84,10 @@ export function FoodPicker({ onSelect, onCreate }: FoodPickerProps) {
                       {t('macro.protein.short')} {food.per100.protein} · {t('macro.carbs.short')}{' '}
                       {food.per100.carbs} · {t('macro.fat.short')} {food.per100.fat} —{' '}
                       {t('add.per100')}
+                      {/* Les chiffres affichés sont ceux de l'état par défaut : on le nomme. */}
+                      {food.state
+                        ? ` ${t(food.state === 'raw' ? 'state.raw' : 'state.cooked').toLowerCase()}`
+                        : ''}
                     </div>
                   </button>
                   <span className="kcal">{food.per100.kcal}</span>

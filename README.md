@@ -11,8 +11,14 @@ aucun serveur, aucun envoi de données.
 
 - **Journal quotidien** — quatre repas, navigation jour par jour, recopie du jour
   précédent, anneau de progression calorique et barres de macros.
-- **Base d'aliments** — près de 90 aliments courants avec valeurs pour 100 g,
-  recherche insensible aux accents et sur les libellés des cinq langues.
+- **Base d'aliments** — près de 200 aliments avec valeurs pour 100 g, recherche
+  insensible aux accents et portant sur les libellés des cinq langues. Fromages
+  français, italiens et européens, spécialités brésiliennes et portugaises,
+  viandes et poissons, boulangerie, compléments sportifs.
+- **Cru ou cuit** — 35 aliments (féculents, légumineuses, viandes, poissons)
+  proposent les deux états : 100 g de riz cru valent 365 kcal, 100 g de riz cuit
+  130 kcal. Une bascule dans la fiche recalcule les macros et la portion usuelle,
+  et l'état pesé est mémorisé dans le journal.
 - **Aliments personnalisés** — création à la volée, calories déduites des macros
   si elles ne sont pas saisies, mise en favori.
 - **Objectifs** — métabolisme de base (Mifflin-St Jeor), dépense estimée selon le
@@ -69,6 +75,19 @@ domaine ne peut pointer que vers un seul site Pages, d'où le sous-domaine.
 Le build utilise donc `base: '/'`. Sans domaine personnalisé, GitHub Pages sert
 depuis `https://cavalcantilp.github.io/myFitnessFufs/` : builder alors avec
 `BASE_PATH=/myFitnessFufs/ npm run build`.
+
+## Ajouter un aliment
+
+Éditer `src/lib/foods.ts` :
+
+```ts
+// État unique : id, libellés fr/pt/es/en/it, kcal, P, G, L, portion, catégorie
+food('feta', ['Feta', 'Queijo feta', 'Queso feta', 'Feta', 'Feta'], 264, 14, 4, 21, 40, 'dairy'),
+
+// Deux états : catégorie, état par défaut, puis [kcal, P, G, L, portion] cru puis cuit
+food2('pasta', ['Pâtes', 'Massa', 'Pasta', 'Pasta', 'Pasta'], 'carbs', 'cooked',
+      [371, 13, 75, 1.5, 80], [158, 5.8, 31, 0.9, 180]),
+```
 
 ## Structure
 

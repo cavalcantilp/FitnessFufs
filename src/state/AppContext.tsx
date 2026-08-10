@@ -11,7 +11,15 @@ import { BUILTIN_FOODS } from '../lib/foods'
 import { computeTargets, nutrientsFor, type Targets } from '../lib/nutrition'
 import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
-import type { DiaryEntry, Food, Lang, MealId, Profile, WeightEntry } from '../lib/types'
+import type {
+  DiaryEntry,
+  Food,
+  FoodState,
+  Lang,
+  MealId,
+  Profile,
+  WeightEntry,
+} from '../lib/types'
 
 export const DEFAULT_PROFILE: Profile = {
   height: 175,
@@ -48,7 +56,7 @@ interface AppState {
 
   entries: DiaryEntry[]
   entriesFor: (date: string) => DiaryEntry[]
-  addEntry: (date: string, meal: MealId, food: Food, grams: number) => void
+  addEntry: (date: string, meal: MealId, food: Food, grams: number, state?: FoodState) => void
   removeEntry: (id: string) => void
   copyDay: (from: string, to: string) => number
 
@@ -123,20 +131,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [entries],
   )
 
-  const addEntry = useCallback((date: string, meal: MealId, food: Food, grams: number) => {
-    setEntries((current) => [
-      ...current,
-      {
-        id: newId(),
-        date,
-        meal,
-        foodId: food.id,
-        label: food.name,
-        grams,
-        nutrients: nutrientsFor(food, grams),
-      },
-    ])
-  }, [])
+  const addEntry = useCallback(
+    (date: string, meal: MealId, food: Food, grams: number, state?: FoodState) => {
+      setEntries((current) => [
+        ...current,
+        {
+          id: newId(),
+          date,
+          meal,
+          foodId: food.id,
+          label: food.name,
+          grams,
+          state,
+          nutrients: nutrientsFor(food, grams, state),
+        },
+      ])
+    },
+    [],
+  )
 
   const removeEntry = useCallback((id: string) => {
     setEntries((current) => current.filter((entry) => entry.id !== id))

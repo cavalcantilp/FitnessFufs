@@ -119,7 +119,9 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
                   <div className="info">
                     <div className="name">{labelOf(entry.foodId, entry.label)}</div>
                     <div className="detail">
-                      {entry.grams} g · {t('macro.protein.short')} {entry.nutrients.protein} ·{' '}
+                      {entry.grams} g
+                      {entry.state ? ` ${t(entry.state === 'raw' ? 'state.raw' : 'state.cooked')}` : ''}{' '}
+                      · {t('macro.protein.short')} {entry.nutrients.protein} ·{' '}
                       {t('macro.carbs.short')} {entry.nutrients.carbs} · {t('macro.fat.short')}{' '}
                       {entry.nutrients.fat}
                     </div>

@@ -30,8 +30,8 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
           food={selected}
           meal={meal}
           onClose={() => setSelected(null)}
-          onConfirm={(grams, chosenMeal) => {
-            addEntry(date, chosenMeal, selected, grams)
+          onConfirm={(grams, chosenMeal, state) => {
+            addEntry(date, chosenMeal, selected, grams, state)
             setSelected(null)
             onAdded(t('add.added'))
           }}

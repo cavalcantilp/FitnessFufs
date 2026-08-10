@@ -35,6 +35,19 @@ export interface Nutrients {
 
 export type MealId = 'breakfast' | 'lunch' | 'dinner' | 'snack'
 
+/**
+ * État de préparation. Décisif sur le poids : 100 g de riz cru donnent environ
+ * 280 g de riz cuit, donc les valeurs pour 100 g n'ont rien à voir.
+ */
+export type FoodState = 'raw' | 'cooked'
+
+export interface FoodPortion {
+  /** Valeurs pour 100 g / 100 ml dans cet état. */
+  per100: Nutrients
+  /** Portion usuelle en grammes dans cet état. */
+  serving: number
+}
+
 export interface Food {
   id: string
   /** Libellé par défaut (français), utilisé tel quel pour les aliments personnalisés. */
@@ -47,6 +60,10 @@ export interface Food {
   serving: number
   category: FoodCategory
   custom?: boolean
+  /** État décrit par per100. Renseigné uniquement si l'aliment a deux états. */
+  state?: FoodState
+  /** L'autre état de préparation : cru si per100 décrit le cuit, et inversement. */
+  alt?: FoodPortion
 }
 
 export type FoodCategory =
@@ -59,6 +76,7 @@ export type FoodCategory =
   | 'drink'
   | 'snack'
   | 'dish'
+  | 'supplement'
 
 export interface DiaryEntry {
   id: string
@@ -69,6 +87,8 @@ export interface DiaryEntry {
   /** Libellé figé au moment de l'ajout : l'entrée survit à la suppression de l'aliment. */
   label: string
   grams: number
+  /** État pesé, quand l'aliment en propose deux. */
+  state?: FoodState
   nutrients: Nutrients
 }
 

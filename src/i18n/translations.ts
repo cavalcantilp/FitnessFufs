@@ -51,6 +51,10 @@ const fr = {
   'add.kcalMismatch': 'Calories recalculées depuis les macros : {n} kcal',
   'add.deleteFood': 'Supprimer cet aliment',
 
+  'state.title': 'Préparation',
+  'state.raw': 'Cru',
+  'state.cooked': 'Cuit',
+
   'cat.all': 'Tous',
   'cat.favorites': 'Favoris',
   'cat.mine': 'Mes aliments',
@@ -63,6 +67,7 @@ const fr = {
   'cat.drink': 'Boissons',
   'cat.snack': 'En-cas',
   'cat.dish': 'Plats',
+  'cat.supplement': 'Compléments',
 
   'weight.title': 'Suivi du poids',
   'weight.current': 'Poids actuel',
@@ -200,6 +205,10 @@ const pt: Dict = {
   'add.kcalMismatch': 'Calorias recalculadas a partir dos macros: {n} kcal',
   'add.deleteFood': 'Eliminar este alimento',
 
+  'state.title': 'Preparação',
+  'state.raw': 'Cru',
+  'state.cooked': 'Cozido',
+
   'cat.all': 'Todos',
   'cat.favorites': 'Favoritos',
   'cat.mine': 'Os meus alimentos',
@@ -212,6 +221,7 @@ const pt: Dict = {
   'cat.drink': 'Bebidas',
   'cat.snack': 'Snacks',
   'cat.dish': 'Pratos',
+  'cat.supplement': 'Suplementos',
 
   'weight.title': 'Registo de peso',
   'weight.current': 'Peso atual',
@@ -345,6 +355,10 @@ const es: Dict = {
   'add.kcalMismatch': 'Calorías recalculadas desde los macros: {n} kcal',
   'add.deleteFood': 'Eliminar este alimento',
 
+  'state.title': 'Preparación',
+  'state.raw': 'Crudo',
+  'state.cooked': 'Cocido',
+
   'cat.all': 'Todos',
   'cat.favorites': 'Favoritos',
   'cat.mine': 'Mis alimentos',
@@ -357,6 +371,7 @@ const es: Dict = {
   'cat.drink': 'Bebidas',
   'cat.snack': 'Snacks',
   'cat.dish': 'Platos',
+  'cat.supplement': 'Suplementos',
 
   'weight.title': 'Seguimiento del peso',
   'weight.current': 'Peso actual',
@@ -490,6 +505,10 @@ const en: Dict = {
   'add.kcalMismatch': 'Calories recomputed from macros: {n} kcal',
   'add.deleteFood': 'Delete this food',
 
+  'state.title': 'Preparation',
+  'state.raw': 'Raw',
+  'state.cooked': 'Cooked',
+
   'cat.all': 'All',
   'cat.favorites': 'Favourites',
   'cat.mine': 'My foods',
@@ -502,6 +521,7 @@ const en: Dict = {
   'cat.drink': 'Drinks',
   'cat.snack': 'Snacks',
   'cat.dish': 'Dishes',
+  'cat.supplement': 'Supplements',
 
   'weight.title': 'Weight tracking',
   'weight.current': 'Current weight',
@@ -635,6 +655,10 @@ const it: Dict = {
   'add.kcalMismatch': 'Calorie ricalcolate dai macro: {n} kcal',
   'add.deleteFood': 'Elimina questo alimento',
 
+  'state.title': 'Preparazione',
+  'state.raw': 'Crudo',
+  'state.cooked': 'Cotto',
+
   'cat.all': 'Tutti',
   'cat.favorites': 'Preferiti',
   'cat.mine': 'I miei alimenti',
@@ -647,6 +671,7 @@ const it: Dict = {
   'cat.drink': 'Bevande',
   'cat.snack': 'Snack',
   'cat.dish': 'Piatti',
+  'cat.supplement': 'Integratori',
 
   'weight.title': 'Monitoraggio del peso',
   'weight.current': 'Peso attuale',

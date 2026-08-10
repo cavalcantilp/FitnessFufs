@@ -1,6 +1,8 @@
 import type {
   ActivityLevel,
   Food,
+  FoodPortion,
+  FoodState,
   MacroSplit,
   MacroSplitId,
   Nutrients,
@@ -77,14 +79,24 @@ export function computeTargets(profile: Profile): Targets {
   }
 }
 
-/** Valeurs nutritionnelles d'une quantité donnée d'un aliment. */
-export function nutrientsFor(food: Food, grams: number): Nutrients {
+/**
+ * Valeurs et portion usuelle correspondant à un état de préparation. Un aliment
+ * sans variante ignore l'état demandé et renvoie toujours ses propres valeurs.
+ */
+export function portionOf(food: Food, state?: FoodState): FoodPortion {
+  if (food.alt && state && food.state && state !== food.state) return food.alt
+  return { per100: food.per100, serving: food.serving }
+}
+
+/** Valeurs nutritionnelles d'une quantité donnée d'un aliment, dans l'état pesé. */
+export function nutrientsFor(food: Food, grams: number, state?: FoodState): Nutrients {
+  const { per100 } = portionOf(food, state)
   const ratio = grams / 100
   return {
-    kcal: Math.round(food.per100.kcal * ratio),
-    protein: round1(food.per100.protein * ratio),
-    carbs: round1(food.per100.carbs * ratio),
-    fat: round1(food.per100.fat * ratio),
+    kcal: Math.round(per100.kcal * ratio),
+    protein: round1(per100.protein * ratio),
+    carbs: round1(per100.carbs * ratio),
+    fat: round1(per100.fat * ratio),
   }
 }
 

@@ -28,7 +28,10 @@ jobs:
 
       - run: npm ci
 
+      # Le chemin de base suit le nom réel du dépôt, sans le coder en dur.
       - run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
 
       - uses: actions/configure-pages@v5
 

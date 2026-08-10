@@ -47,13 +47,10 @@ Le workflow `.github/workflows/deploy.yml` build et publie `dist/` sur GitHub
 Pages à chaque push sur `main`. Il faut activer **Settings → Pages → Source :
 GitHub Actions** une fois pour toutes.
 
-Le site est alors servi depuis `https://cavalcantilp.github.io/myfitnessfufs/`,
-ce qui correspond au `base` configuré dans `vite.config.ts`. Pour un déploiement
-à la racine d'un domaine, builder avec `BASE_PATH=/ npm run build`.
-
-> GitHub Pages n'est disponible sur un dépôt privé qu'avec une offre payante
-> (Pro, Team ou Enterprise). Sur un compte gratuit, rendre le dépôt public pour
-> que le déploiement aboutisse.
+Le site est alors servi depuis `https://cavalcantilp.github.io/myFitnessFufs/`.
+Le workflow passe le nom du dépôt au build via `BASE_PATH`, donc le chemin suit
+automatiquement un éventuel renommage. Pour un déploiement à la racine d'un
+domaine, builder avec `BASE_PATH=/ npm run build`.
 
 ## Structure
 

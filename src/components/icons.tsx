@@ -63,6 +63,18 @@ export function IconChevronRight({ size = 20 }: IconProps) {
   )
 }
 
+export function IconChevronDown({ size = 18, open = false }: IconProps & { open?: boolean }) {
+  return (
+    <svg
+      {...base(size)}
+      aria-hidden="true"
+      style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  )
+}
+
 export function IconTrash({ size = 18 }: IconProps) {
   return (
     <svg {...base(size)} aria-hidden="true">

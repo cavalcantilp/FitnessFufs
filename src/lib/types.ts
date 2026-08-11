@@ -27,7 +27,28 @@ export interface Nutrients {
   protein: number
   carbs: number
   fat: number
+  /** Fibres alimentaires, comprises dans les glucides déclarés. */
+  fiber: number
 }
+
+/**
+ * Micronutriments suivis, pour 100 g. Sodium, potassium, calcium, fer,
+ * magnésium et zinc en milligrammes ; vitamine C en milligrammes ; vitamines D
+ * et B12 en microgrammes.
+ */
+export interface Micros {
+  sodium: number
+  potassium: number
+  calcium: number
+  iron: number
+  magnesium: number
+  zinc: number
+  vitaminC: number
+  vitaminD: number
+  vitaminB12: number
+}
+
+export type MicroKey = keyof Micros
 
 export type MealId = 'breakfast' | 'lunch' | 'dinner' | 'snack'
 
@@ -60,6 +81,12 @@ export interface Food {
   state?: FoodState
   /** L'autre état de préparation : cru si per100 décrit le cuit, et inversement. */
   alt?: FoodPortion
+  /**
+   * Micronutriments pour 100 g dans l'état par défaut. Absent quand la
+   * composition n'est pas établie de façon fiable — plats composés, produits
+   * industriels, compléments : mieux vaut ne rien afficher qu'un chiffre inventé.
+   */
+  micros?: Micros
 }
 
 export type FoodCategory =

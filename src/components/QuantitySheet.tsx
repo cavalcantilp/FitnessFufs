@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Sheet } from './Sheet'
+import { MicroPanel } from './MicroPanel'
 import { useApp } from '../state/AppContext'
 import { foodName, statesOf } from '../lib/foods'
-import { nutrientsFor, portionOf } from '../lib/nutrition'
+import { microsFor, nutrientsFor, portionOf } from '../lib/nutrition'
 import { MEALS } from '../lib/meals'
 import type { Food, FoodState, MealId } from '../lib/types'
 
@@ -88,7 +89,7 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: Quan
         </select>
       </div>
 
-      <div className="stat-row">
+      <div className="stat-row four">
         <div className="stat">
           <div className="label">{t('macro.protein')}</div>
           <div className="value">{preview.protein} g</div>
@@ -101,7 +102,13 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: Quan
           <div className="label">{t('macro.fat')}</div>
           <div className="value">{preview.fat} g</div>
         </div>
+        <div className="stat">
+          <div className="label">{t('macro.fiber')}</div>
+          <div className="value">{preview.fiber} g</div>
+        </div>
       </div>
+
+      <MicroPanel micros={microsFor(food, valid ? amount : 0)} />
 
       <button
         type="button"

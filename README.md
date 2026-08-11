@@ -15,6 +15,15 @@ aucun serveur, aucun envoi de données.
   insensible aux accents et portant sur les libellés des cinq langues. Fromages
   français, italiens et européens, spécialités brésiliennes et portugaises,
   viandes et poissons, boulangerie, compléments sportifs.
+- **Fibres** — renseignées sur les 197 aliments, suivies comme une quatrième
+  barre avec un objectif de 14 g pour 1000 kcal (plancher à 25 g).
+- **Micronutriments** — sodium, potassium, calcium, fer, magnésium, zinc et
+  vitamines C, D et B12, repliés derrière une flèche dans la fiche d'aliment et
+  dans le résumé du jour, avec le pourcentage des apports de référence. Le
+  sodium se lit comme un plafond et passe en rouge au-delà de 100 %.
+  Renseignés sur 145 aliments bruts ; les plats composés, viennoiseries et
+  compléments sont laissés vides plutôt que remplis au jugé, et le total du
+  jour indique la part des calories réellement couvertes.
 - **Cru ou cuit** — 35 aliments (féculents, légumineuses, viandes, poissons)
   proposent les deux états : 100 g de riz cru valent 365 kcal, 100 g de riz cuit
   130 kcal. Une bascule dans la fiche recalcule les macros et la portion usuelle,
@@ -86,13 +95,21 @@ depuis `https://cavalcantilp.github.io/myFitnessFufs/` : builder alors avec
 Éditer `src/lib/foods.ts` :
 
 ```ts
-// État unique : id, libellés fr/pt/es/en/it, kcal, P, G, L, portion, catégorie
-food('feta', ['Feta', 'Queijo feta', 'Queso feta', 'Feta', 'Feta'], 264, 14, 4, 21, 40, 'dairy'),
+// État unique : id, libellés fr/pt/es/en/it, kcal, P, G, L, fibres, portion,
+// catégorie, puis les micronutriments — facultatifs, à omettre si incertains.
+food('feta', ['Feta', 'Queijo feta', 'Queso feta', 'Feta', 'Feta'], 264, 14, 4, 21, 0, 40, 'dairy',
+     [1100, 60, 490, 0.7, 19, 2.9, 0, 0.4, 1.7]),
 
-// Deux états : catégorie, état par défaut, puis [kcal, P, G, L, portion] cru puis cuit
+// Deux états : catégorie, état par défaut, puis [kcal, P, G, L, fibres, portion]
+// cru puis cuit, et enfin les micronutriments de l'état par défaut.
 food2('pasta', ['Pâtes', 'Massa', 'Pasta', 'Pasta', 'Pasta'], 'carbs', 'cooked',
-      [371, 13, 75, 1.5, 80], [158, 5.8, 31, 0.9, 180]),
+      [371, 13, 75, 1.5, 3.2, 80], [158, 5.8, 31, 0.9, 1.8, 180],
+      [5, 44, 7, 0.5, 18, 0.5, 0, 0, 0]),
 ```
+
+Les micronutriments vont dans l'ordre sodium, potassium, calcium, fer,
+magnésium, zinc, vitamine C, vitamine D, vitamine B12 — les six premiers en
+milligrammes, les vitamines D et B12 en microgrammes.
 
 ## Structure
 

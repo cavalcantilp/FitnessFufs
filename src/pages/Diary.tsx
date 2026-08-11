@@ -2,9 +2,10 @@ import { useMemo } from 'react'
 import { useApp } from '../state/AppContext'
 import { Ring } from '../components/Ring'
 import { MacroBars } from '../components/MacroBars'
+import { MicroPanel } from '../components/MicroPanel'
 import { IconChevronLeft, IconChevronRight, IconCopy, IconPlus, IconTrash } from '../components/icons'
 import { formatDay, shiftDay, todayKey } from '../lib/date'
-import { sumNutrients } from '../lib/nutrition'
+import { microsFor, sumMicros, sumNutrients } from '../lib/nutrition'
 import { MEALS } from '../lib/meals'
 import { foodName } from '../lib/foods'
 import type { MealId } from '../lib/types'
@@ -40,6 +41,25 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
   }
 
   const remaining = targets.kcal - eaten.kcal
+
+  /**
+   * Totaux de micronutriments du jour, et part des calories provenant
+   * d'aliments renseignés : sans ce repère, un total partiel se lirait comme
+   * un total complet.
+   */
+  const { dayMicros, microCoverage } = useMemo(() => {
+    let covered = 0
+    const perEntry = dayEntries.map((entry) => {
+      const item = foods.find((candidate) => candidate.id === entry.foodId)
+      const scaled = item ? microsFor(item, entry.grams) : null
+      if (scaled) covered += entry.nutrients.kcal
+      return scaled
+    })
+    return {
+      dayMicros: perEntry.some(Boolean) ? sumMicros(perEntry) : null,
+      microCoverage: eaten.kcal > 0 ? Math.round((covered / eaten.kcal) * 100) : 100,
+    }
+  }, [dayEntries, foods, eaten.kcal])
 
   const handleCopy = () => {
     const copied = copyDay(shiftDay(date, -1), date)
@@ -99,6 +119,7 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
           </div>
         </div>
         <MacroBars eaten={eaten} targets={targets} />
+        <MicroPanel micros={dayMicros} coverage={microCoverage} />
       </div>
 
       {MEALS.map((meal) => {

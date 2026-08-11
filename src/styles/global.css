@@ -17,6 +17,7 @@
   --protein: #38bdf8;
   --fat: #f59e0b;
   --carbs: #34d399;
+  --fiber: #a78bfa;
 
   --radius: 16px;
   --radius-lg: 24px;
@@ -531,9 +532,17 @@ input[type='range']::-moz-range-thumb {
 
 .macro-bars {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
   margin-top: 16px;
+}
+
+.macro-bar .head {
+  font-size: 0.68rem;
+}
+
+.macro-bar .amount {
+  font-size: 0.72rem;
 }
 
 .macro-bar .head {
@@ -814,6 +823,15 @@ input[type='range']::-moz-range-thumb {
   gap: 12px;
 }
 
+.stat-row.four {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.stat-row.four .value {
+  font-size: 1rem;
+}
+
 .stat {
   text-align: center;
 }
@@ -953,4 +971,74 @@ input[type='range']::-moz-range-thumb {
   height: 84px;
   margin: 0 auto;
   display: block;
+}
+
+/* ---------- Panneau dépliable ---------- */
+
+.disclosure {
+  margin-top: 16px;
+  border-top: 1px solid rgba(71, 85, 105, 0.4);
+}
+
+.disclosure-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 0 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.disclosure-head:active {
+  color: var(--text-main);
+}
+
+.disclosure-body {
+  padding-bottom: 4px;
+  animation: fade 0.15s ease;
+}
+
+.micro-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 0.82rem;
+}
+
+.micro-row + .micro-row {
+  border-top: 1px solid rgba(71, 85, 105, 0.2);
+}
+
+.micro-row .name {
+  flex: 1;
+  color: var(--text-sub);
+  font-weight: 600;
+}
+
+.micro-row .value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.micro-row .share {
+  width: 52px;
+  text-align: right;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.micro-row .share.over {
+  color: var(--negative);
+}
+
+.disclosure-body .hint,
+.disclosure-body .notice {
+  margin-top: 10px;
 }

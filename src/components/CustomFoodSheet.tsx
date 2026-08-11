@@ -20,6 +20,7 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
   const [protein, setProtein] = useState('')
   const [carbs, setCarbs] = useState('')
   const [fat, setFat] = useState('')
+  const [fiber, setFiber] = useState('')
   const [serving, setServing] = useState('100')
   const [category, setCategory] = useState<FoodCategory>('dish')
 
@@ -42,6 +43,7 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
         protein: num(protein),
         carbs: num(carbs),
         fat: num(fat),
+        fiber: num(fiber),
       },
       serving: Math.max(1, Math.round(num(serving)) || 100),
       category,
@@ -85,6 +87,33 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
         </div>
       </div>
 
+      <div className="grid-2">
+        <div className="field">
+          <label htmlFor="cf-fiber">{t('macro.fiber')}</label>
+          <input
+            id="cf-fiber"
+            type="text"
+            inputMode="decimal"
+            value={fiber}
+            onChange={(event) => setFiber(event.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor="cf-cat">{t('add.category')}</label>
+          <select
+            id="cf-cat"
+            value={category}
+            onChange={(event) => setCategory(event.target.value as FoodCategory)}
+          >
+            {FOOD_CATEGORIES.map((entry) => (
+              <option key={entry} value={entry}>
+                {t(`cat.${entry}` as TranslationKey)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className="grid-3">
         <div className="field">
           <label htmlFor="cf-p">{t('macro.protein')}</label>
@@ -116,21 +145,6 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
             onChange={(event) => setFat(event.target.value)}
           />
         </div>
-      </div>
-
-      <div className="field">
-        <label htmlFor="cf-cat">{t('cat.all')}</label>
-        <select
-          id="cf-cat"
-          value={category}
-          onChange={(event) => setCategory(event.target.value as FoodCategory)}
-        >
-          {FOOD_CATEGORIES.map((entry) => (
-            <option key={entry} value={entry}>
-              {t(`cat.${entry}` as TranslationKey)}
-            </option>
-          ))}
-        </select>
       </div>
 
       {!kcal.trim() && derivedKcal > 0 ? (

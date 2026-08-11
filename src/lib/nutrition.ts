@@ -3,6 +3,8 @@ import type {
   Food,
   FoodPortion,
   FoodState,
+  MicroKey,
+  Micros,
   Nutrients,
   Profile,
   Sex,
@@ -131,6 +133,7 @@ export function computeTargets(profile: Profile): Targets {
     protein: Math.round(protein),
     fat: Math.round(fat),
     carbs: Math.round(carbsKcal / KCAL_PER_GRAM.carbs),
+    fiber: fiberTarget(kcal),
     proteinKcal: Math.round(proteinKcal),
     fatKcal: Math.round(fatKcal),
     carbsKcal: Math.round(carbsKcal),
@@ -156,10 +159,11 @@ export function nutrientsFor(food: Food, grams: number, state?: FoodState): Nutr
     protein: round1(per100.protein * ratio),
     carbs: round1(per100.carbs * ratio),
     fat: round1(per100.fat * ratio),
+    fiber: round1(per100.fiber * ratio),
   }
 }
 
-export const EMPTY_NUTRIENTS: Nutrients = { kcal: 0, protein: 0, carbs: 0, fat: 0 }
+export const EMPTY_NUTRIENTS: Nutrients = { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 }
 
 export function sumNutrients(items: Nutrients[]): Nutrients {
   const total = items.reduce(
@@ -168,6 +172,8 @@ export function sumNutrients(items: Nutrients[]): Nutrients {
       protein: acc.protein + n.protein,
       carbs: acc.carbs + n.carbs,
       fat: acc.fat + n.fat,
+      // Les entrées d'avant l'ajout des fibres n'ont pas le champ.
+      fiber: acc.fiber + (n.fiber ?? 0),
     }),
     EMPTY_NUTRIENTS,
   )
@@ -176,7 +182,86 @@ export function sumNutrients(items: Nutrients[]): Nutrients {
     protein: round1(total.protein),
     carbs: round1(total.carbs),
     fat: round1(total.fat),
+    fiber: round1(total.fiber),
   }
+}
+
+/** Micronutriments d'une quantité donnée. Absents si l'aliment n'est pas renseigné. */
+export function microsFor(food: Food, grams: number): Micros | null {
+  if (!food.micros) return null
+  const ratio = grams / 100
+  const scaled = {} as Micros
+  for (const key of MICRO_KEYS) {
+    scaled[key] = food.micros[key] * ratio
+  }
+  return scaled
+}
+
+export const MICRO_KEYS: MicroKey[] = [
+  'sodium',
+  'potassium',
+  'calcium',
+  'iron',
+  'magnesium',
+  'zinc',
+  'vitaminC',
+  'vitaminD',
+  'vitaminB12',
+]
+
+/** Unité d'affichage de chaque micronutriment. */
+export const MICRO_UNITS: Record<MicroKey, 'mg' | 'µg'> = {
+  sodium: 'mg',
+  potassium: 'mg',
+  calcium: 'mg',
+  iron: 'mg',
+  magnesium: 'mg',
+  zinc: 'mg',
+  vitaminC: 'mg',
+  vitaminD: 'µg',
+  vitaminB12: 'µg',
+}
+
+/**
+ * Apports quotidiens de référence adulte (règlement UE 1169/2011, valeurs
+ * nutritionnelles de référence). Le sodium n'a pas d'ANC mais une limite haute :
+ * 2000 mg, au-delà desquels l'apport est excessif.
+ */
+export const MICRO_REFERENCE: Record<MicroKey, number> = {
+  sodium: 2000,
+  potassium: 3500,
+  calcium: 800,
+  iron: 14,
+  magnesium: 375,
+  zinc: 10,
+  vitaminC: 80,
+  vitaminD: 5,
+  vitaminB12: 2.5,
+}
+
+/** Le sodium se lit comme un plafond, pas comme un objectif à atteindre. */
+export const MICRO_IS_LIMIT: Partial<Record<MicroKey, boolean>> = { sodium: true }
+
+export function sumMicros(items: (Micros | null)[]): Micros {
+  const total = {} as Micros
+  for (const key of MICRO_KEYS) {
+    total[key] = 0
+  }
+  for (const item of items) {
+    if (!item) continue
+    for (const key of MICRO_KEYS) {
+      total[key] += item[key]
+    }
+  }
+  return total
+}
+
+/**
+ * Objectif de fibres : 14 g pour 1000 kcal, la recommandation la plus répandue,
+ * plancher à 25 g pour ne pas descendre sous le repère usuel adulte.
+ */
+export function fiberTarget(kcal: number): number {
+  return Math.max(25, Math.round((kcal / 1000) * 14))
 }
 
 /** Calories reconstituées à partir des macros — sert à valider une saisie manuelle. */

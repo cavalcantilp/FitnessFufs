@@ -322,6 +322,133 @@ export const BUILTIN_FOODS: Food[] = [
   food('maltodextrin', ['Maltodextrine', 'Maltodextrina', 'Maltodextrina', 'Maltodextrin', 'Maltodestrine'], 380, 0, 95, 0, 0, 30, 'supplement'),
   food('bcaa', ['BCAA (poudre)', 'BCAA (pó)', 'BCAA (polvo)', 'BCAA powder', 'BCAA (polvere)'], 400, 98, 0, 0, 0, 10, 'supplement'),
   food('creatine', ['Créatine', 'Creatina', 'Creatina', 'Creatine monohydrate', 'Creatina'], 0, 0, 0, 0, 0, 5, 'supplement'),
+
+  // ---------- Base élargie : ingrédients du quotidien ----------
+  // Un premier retour d'usage a montré que les manques ne portaient pas sur des
+  // produits de marque mais sur des ingrédients ordinaires — un jaune d'œuf, du
+  // sucre, un citron. C'est la table intégrée qu'il fallait compléter.
+
+  food('egg_yolk', ["Jaune d'œuf", 'Gema de ovo', 'Yema de huevo', 'Egg yolk', "Tuorlo d'uovo"], 322, 16, 3.6, 27, 0, 18, 'protein', [48, 109, 129, 2.7, 5, 2.3, 0, 5.4, 1.9]),
+  food('milk_whole', ['Lait entier', 'Leite gordo', 'Leche entera', 'Whole milk', 'Latte intero'], 64, 3.2, 4.8, 3.6, 0, 200, 'dairy', [44, 150, 120, 0.05, 11, 0.4, 1, 0.1, 0.4]),
+  food('milk_skim', ['Lait écrémé', 'Leite magro', 'Leche desnatada', 'Skimmed milk', 'Latte scremato'], 34, 3.4, 5, 0.1, 0, 200, 'dairy', [44, 156, 122, 0.03, 11, 0.4, 1, 0, 0.4]),
+  food('yogurt_fruit', ['Yaourt aux fruits', 'Iogurte de frutas', 'Yogur de frutas', 'Fruit yogurt', 'Yogurt alla frutta'], 95, 3.5, 15, 2.5, 0.3, 125, 'dairy'),
+  food('petit_suisse', ['Petit-suisse', 'Queijo fresco batido', 'Petit-suisse', 'Petit-suisse', 'Petit-suisse'], 145, 9, 3, 10, 0, 60, 'dairy'),
+  food('soy_milk', ['Lait de soja', 'Bebida de soja', 'Bebida de soja', 'Soy milk', 'Latte di soia'], 45, 3.3, 2.5, 1.8, 0.5, 200, 'drink'),
+  food('oat_milk', ["Lait d'avoine", 'Bebida de aveia', 'Bebida de avena', 'Oat milk', "Latte d'avena"], 46, 0.8, 7, 1.5, 0.8, 200, 'drink'),
+  food('coconut_milk', ['Lait de coco', 'Leite de coco', 'Leche de coco', 'Coconut milk', 'Latte di cocco'], 197, 2, 3, 20, 0, 100, 'fat'),
+
+  food('tempeh', ['Tempeh', 'Tempeh', 'Tempeh', 'Tempeh', 'Tempeh'], 192, 19, 8, 11, 5, 100, 'protein'),
+  food('seitan', ['Seitan', 'Seitan', 'Seitán', 'Seitan', 'Seitan'], 141, 25, 14, 2, 1, 100, 'protein'),
+  food('silken_tofu', ['Tofu soyeux', 'Tofu sedoso', 'Tofu sedoso', 'Silken tofu', 'Tofu vellutato'], 55, 5, 2, 3, 0.2, 100, 'protein'),
+  food('edamame', ['Édamame', 'Edamame', 'Edamame', 'Edamame', 'Edamame'], 121, 12, 9, 5, 5, 100, 'protein'),
+  food('red_lentils', ['Lentilles corail cuites', 'Lentilhas vermelhas cozidas', 'Lentejas rojas cocidas', 'Cooked red lentils', 'Lenticchie rosse cotte'], 116, 9, 20, 0.4, 5, 150, 'protein'),
+  food('split_peas', ['Pois cassés cuits', 'Ervilhas partidas cozidas', 'Guisantes secos cocidos', 'Cooked split peas', 'Piselli spezzati cotti'], 118, 8, 21, 0.4, 8, 150, 'protein'),
+  food('anchovy', ['Anchois', 'Anchovas', 'Anchoas', 'Anchovies', 'Acciughe'], 131, 20, 0, 5, 0, 30, 'protein'),
+  food('scallop', ['Saint-Jacques', 'Vieiras', 'Vieiras', 'Scallops', 'Capesante'], 88, 17, 2.4, 0.8, 0, 100, 'protein'),
+  food('octopus', ['Poulpe', 'Polvo', 'Pulpo', 'Octopus', 'Polpo'], 82, 15, 2.2, 1, 0, 120, 'protein'),
+  food('surimi', ['Surimi', 'Delícias do mar', 'Surimi', 'Surimi', 'Surimi'], 95, 8, 15, 0.9, 0.5, 60, 'protein'),
+
+  food('pasta_whole', ['Pâtes complètes cuites', 'Massa integral cozida', 'Pasta integral cocida', 'Cooked wholewheat pasta', 'Pasta integrale cotta'], 124, 5, 24, 1.1, 4, 180, 'carbs'),
+  food('bulgur', ['Boulgour cuit', 'Bulgur cozido', 'Bulgur cocido', 'Cooked bulgur', 'Bulgur cotto'], 83, 3, 19, 0.2, 4.5, 150, 'carbs'),
+  food('buckwheat', ['Sarrasin cuit', 'Trigo-sarraceno cozido', 'Trigo sarraceno cocido', 'Cooked buckwheat', 'Grano saraceno cotto'], 92, 3.4, 20, 0.6, 2.7, 150, 'carbs'),
+  food('polenta', ['Polenta', 'Polenta', 'Polenta', 'Polenta', 'Polenta'], 85, 2, 18, 0.4, 1, 200, 'carbs'),
+  food('gnocchi', ['Gnocchi', 'Nhoque', 'Ñoquis', 'Gnocchi', 'Gnocchi'], 150, 4, 30, 1.5, 2, 200, 'carbs'),
+  food('noodles', ['Nouilles asiatiques cuites', 'Noodles cozidos', 'Fideos asiáticos cocidos', 'Cooked asian noodles', 'Noodles cotti'], 138, 4.5, 25, 2, 1.2, 180, 'carbs'),
+  food('pita', ['Pain pita', 'Pão pita', 'Pan de pita', 'Pita bread', 'Pane pita'], 275, 9, 55, 1.2, 2.2, 60, 'carbs'),
+  food('naan', ['Naan', 'Naan', 'Naan', 'Naan', 'Naan'], 310, 9, 50, 8, 2, 80, 'carbs'),
+  food('bagel', ['Bagel', 'Bagel', 'Bagel', 'Bagel', 'Bagel'], 250, 10, 48, 1.5, 2, 90, 'carbs'),
+  food('flour', ['Farine de blé', 'Farinha de trigo', 'Harina de trigo', 'Wheat flour', 'Farina di grano'], 364, 10, 76, 1, 2.7, 30, 'carbs'),
+
+  food('sugar', ['Sucre', 'Açúcar', 'Azúcar', 'Sugar', 'Zucchero'], 400, 0, 100, 0, 0, 10, 'snack'),
+  food('maple_syrup', ["Sirop d'érable", 'Xarope de ácer', 'Sirope de arce', 'Maple syrup', "Sciroppo d'acero"], 260, 0, 67, 0, 0, 20, 'snack'),
+  food('mayonnaise', ['Mayonnaise', 'Maionese', 'Mayonesa', 'Mayonnaise', 'Maionese'], 680, 1, 2, 75, 0, 15, 'fat'),
+  food('ketchup', ['Ketchup', 'Ketchup', 'Kétchup', 'Ketchup', 'Ketchup'], 102, 1.2, 24, 0.2, 0.3, 15, 'snack'),
+  food('mustard', ['Moutarde', 'Mostarda', 'Mostaza', 'Mustard', 'Senape'], 66, 4, 5, 3.5, 2, 10, 'snack'),
+  food('tomato_sauce', ['Sauce tomate', 'Molho de tomate', 'Salsa de tomate', 'Tomato sauce', 'Salsa di pomodoro'], 55, 1.6, 8, 1.8, 1.5, 100, 'veg'),
+  food('soy_sauce', ['Sauce soja', 'Molho de soja', 'Salsa de soja', 'Soy sauce', 'Salsa di soia'], 53, 8, 5, 0.1, 0.8, 10, 'snack'),
+  food('olives', ['Olives', 'Azeitonas', 'Aceitunas', 'Olives', 'Olive'], 145, 1, 4, 15, 3.2, 30, 'fat'),
+  food('pickles', ['Cornichons', 'Pepinos de conserva', 'Pepinillos', 'Pickles', 'Cetriolini'], 12, 0.7, 2, 0.2, 1.2, 30, 'veg'),
+  food('tahini', ['Tahini', 'Tahini', 'Tahini', 'Tahini', 'Tahini'], 595, 17, 21, 54, 9, 15, 'fat'),
+  food('hummus', ['Houmous', 'Húmus', 'Hummus', 'Hummus', 'Hummus'], 166, 8, 14, 10, 6, 60, 'dish'),
+
+  food('hazelnuts', ['Noisettes', 'Avelãs', 'Avellanas', 'Hazelnuts', 'Nocciole'], 628, 15, 17, 61, 10, 30, 'fat'),
+  food('pistachios', ['Pistaches', 'Pistácios', 'Pistachos', 'Pistachios', 'Pistacchi'], 562, 20, 28, 45, 10, 30, 'fat'),
+  food('pecans', ['Noix de pécan', 'Nozes-pecã', 'Nueces pecanas', 'Pecans', 'Noci pecan'], 691, 9, 14, 72, 10, 30, 'fat'),
+  food('sunflower_seeds', ['Graines de tournesol', 'Sementes de girassol', 'Pipas de girasol', 'Sunflower seeds', 'Semi di girasole'], 584, 21, 20, 51, 9, 20, 'fat'),
+  food('pumpkin_seeds', ['Graines de courge', 'Sementes de abóbora', 'Pipas de calabaza', 'Pumpkin seeds', 'Semi di zucca'], 559, 30, 11, 49, 6, 20, 'fat'),
+  food('flax_seeds', ['Graines de lin', 'Sementes de linhaça', 'Semillas de lino', 'Flax seeds', 'Semi di lino'], 534, 18, 29, 42, 27, 15, 'fat'),
+  food('sesame', ['Graines de sésame', 'Sementes de sésamo', 'Semillas de sésamo', 'Sesame seeds', 'Semi di sesamo'], 573, 18, 23, 50, 12, 15, 'fat'),
+  food('coconut_flesh', ['Noix de coco', 'Coco', 'Coco', 'Coconut', 'Cocco'], 354, 3.3, 15, 33, 9, 40, 'fat'),
+
+  food('raisins', ['Raisins secs', 'Passas', 'Pasas', 'Raisins', 'Uvetta'], 299, 3, 79, 0.5, 3.7, 30, 'fruit'),
+  food('dates', ['Dattes', 'Tâmaras', 'Dátiles', 'Dates', 'Datteri'], 282, 2.5, 75, 0.4, 8, 30, 'fruit'),
+  food('dried_apricots', ['Abricots secs', 'Alperces secos', 'Orejones', 'Dried apricots', 'Albicocche secche'], 241, 3.4, 63, 0.5, 7.3, 30, 'fruit'),
+  food('prunes', ['Pruneaux', 'Ameixas secas', 'Ciruelas pasas', 'Prunes', 'Prugne secche'], 240, 2.2, 64, 0.4, 7.1, 30, 'fruit'),
+  food('dried_figs', ['Figues sèches', 'Figos secos', 'Higos secos', 'Dried figs', 'Fichi secchi'], 249, 3.3, 64, 0.9, 9.8, 30, 'fruit'),
+  food('compote', ['Compote de pommes', 'Puré de maçã', 'Compota de manzana', 'Apple sauce', 'Composta di mele'], 80, 0.3, 19, 0.1, 1.5, 100, 'fruit'),
+
+  food('lemon', ['Citron', 'Limão', 'Limón', 'Lemon', 'Limone'], 29, 1.1, 9, 0.3, 2.8, 60, 'fruit', [2, 138, 26, 0.6, 8, 0.06, 53, 0, 0]),
+  food('lime', ['Citron vert', 'Lima', 'Lima', 'Lime', 'Lime'], 30, 0.7, 11, 0.2, 2.8, 40, 'fruit'),
+  food('pear', ['Poire', 'Pera', 'Pera', 'Pear', 'Pera'], 57, 0.4, 15, 0.1, 3.1, 150, 'fruit'),
+  food('peach', ['Pêche', 'Pêssego', 'Melocotón', 'Peach', 'Pesca'], 39, 0.9, 10, 0.3, 1.5, 150, 'fruit'),
+  food('apricot', ['Abricot', 'Alperce', 'Albaricoque', 'Apricot', 'Albicocca'], 48, 1.4, 11, 0.4, 2, 40, 'fruit'),
+  food('plum', ['Prune', 'Ameixa', 'Ciruela', 'Plum', 'Prugna'], 46, 0.7, 11, 0.3, 1.4, 60, 'fruit'),
+  food('cherry', ['Cerises', 'Cerejas', 'Cerezas', 'Cherries', 'Ciliegie'], 63, 1.1, 16, 0.2, 2.1, 100, 'fruit'),
+  food('fig', ['Figue', 'Figo', 'Higo', 'Fig', 'Fico'], 74, 0.8, 19, 0.3, 2.9, 50, 'fruit'),
+  food('melon', ['Melon', 'Melão', 'Melón', 'Melon', 'Melone'], 34, 0.8, 8, 0.2, 0.9, 200, 'fruit'),
+  food('grapefruit', ['Pamplemousse', 'Toranja', 'Pomelo', 'Grapefruit', 'Pompelmo'], 42, 0.8, 11, 0.1, 1.6, 200, 'fruit'),
+  food('raspberry', ['Framboises', 'Framboesas', 'Frambuesas', 'Raspberries', 'Lamponi'], 52, 1.2, 12, 0.7, 6.5, 100, 'fruit'),
+  food('blackberry', ['Mûres', 'Amoras', 'Moras', 'Blackberries', 'More'], 43, 1.4, 10, 0.5, 5.3, 100, 'fruit'),
+
+  food('peas', ['Petits pois', 'Ervilhas', 'Guisantes', 'Green peas', 'Piselli'], 81, 5.4, 14, 0.4, 5, 150, 'veg', [5, 244, 25, 1.5, 33, 1.2, 40, 0, 0]),
+  food('beetroot', ['Betterave', 'Beterraba', 'Remolacha', 'Beetroot', 'Barbabietola'], 43, 1.6, 10, 0.2, 2.8, 100, 'veg'),
+  food('squash', ['Courge / butternut', 'Abóbora', 'Calabaza', 'Squash', 'Zucca'], 45, 1, 12, 0.1, 2, 200, 'veg'),
+  food('leek', ['Poireau', 'Alho-francês', 'Puerro', 'Leek', 'Porro'], 61, 1.5, 14, 0.3, 1.8, 150, 'veg'),
+  food('celery', ['Céleri', 'Aipo', 'Apio', 'Celery', 'Sedano'], 16, 0.7, 3, 0.2, 1.6, 100, 'veg'),
+  food('asparagus', ['Asperges', 'Espargos', 'Espárragos', 'Asparagus', 'Asparagi'], 20, 2.2, 3.9, 0.1, 2.1, 150, 'veg'),
+  food('endive', ['Endive', 'Endívia', 'Endivia', 'Endive', 'Indivia'], 17, 1, 3.4, 0.1, 3, 100, 'veg'),
+  food('radish', ['Radis', 'Rabanetes', 'Rábanos', 'Radish', 'Ravanelli'], 16, 0.7, 3.4, 0.1, 1.6, 60, 'veg'),
+  food('artichoke', ['Artichaut', 'Alcachofra', 'Alcachofa', 'Artichoke', 'Carciofo'], 47, 3.3, 11, 0.2, 5.4, 120, 'veg'),
+  food('garlic', ['Ail', 'Alho', 'Ajo', 'Garlic', 'Aglio'], 149, 6.4, 33, 0.5, 2.1, 5, 'veg'),
+
+  food('omelette', ['Omelette', 'Omelete', 'Tortilla francesa', 'Omelette', 'Frittata'], 154, 11, 1, 12, 0, 150, 'dish'),
+  food('quiche', ['Quiche lorraine', 'Quiche', 'Quiche', 'Quiche lorraine', 'Quiche'], 280, 10, 20, 18, 1, 150, 'dish'),
+  food('lasagna', ['Lasagnes', 'Lasanha', 'Lasaña', 'Lasagna', 'Lasagne'], 165, 9, 15, 8, 1.2, 300, 'dish'),
+  food('gratin', ['Gratin dauphinois', 'Batata gratinada', 'Patatas gratinadas', 'Potato gratin', 'Patate gratinate'], 160, 4, 14, 10, 1.3, 250, 'dish'),
+  food('shepherds_pie', ['Hachis parmentier', 'Empadão de carne', 'Pastel de carne', "Shepherd's pie", 'Pasticcio di carne'], 130, 7, 13, 5.5, 1.5, 300, 'dish'),
+  food('paella', ['Paella', 'Paelha', 'Paella', 'Paella', 'Paella'], 150, 9, 18, 4.5, 1, 300, 'dish'),
+  food('risotto', ['Risotto', 'Risoto', 'Risotto', 'Risotto', 'Risotto'], 145, 4, 22, 4.5, 0.8, 300, 'dish'),
+  food('ratatouille', ['Ratatouille', 'Ratatouille', 'Pisto', 'Ratatouille', 'Ratatouille'], 60, 1.3, 6, 3.5, 2.2, 200, 'dish'),
+  food('veg_soup', ['Soupe de légumes', 'Sopa de legumes', 'Sopa de verduras', 'Vegetable soup', 'Zuppa di verdure'], 40, 1.2, 6, 1.2, 1.5, 250, 'dish'),
+  food('croque_monsieur', ['Croque-monsieur', 'Tosta mista', 'Sándwich mixto', 'Croque-monsieur', 'Toast prosciutto e formaggio'], 280, 15, 22, 14, 1.3, 150, 'dish'),
+  food('kebab', ['Kebab', 'Kebab', 'Kebab', 'Kebab', 'Kebab'], 215, 15, 18, 9, 1.5, 300, 'dish'),
+  food('chicken_curry', ['Curry de poulet', 'Caril de frango', 'Pollo al curry', 'Chicken curry', 'Pollo al curry'], 130, 11, 7, 6.5, 1, 300, 'dish'),
+  food('nuggets', ['Nuggets de poulet', 'Nuggets de frango', 'Nuggets de pollo', 'Chicken nuggets', 'Nuggets di pollo'], 296, 15, 16, 19, 1, 100, 'dish'),
+
+  food('tiramisu', ['Tiramisu', 'Tiramisu', 'Tiramisú', 'Tiramisu', 'Tiramisù'], 260, 5, 25, 15, 0.5, 100, 'snack'),
+  food('choc_mousse', ['Mousse au chocolat', 'Mousse de chocolate', 'Mousse de chocolate', 'Chocolate mousse', 'Mousse al cioccolato'], 230, 5, 25, 12, 1.5, 80, 'snack'),
+  food('creme_brulee', ['Crème brûlée', 'Leite-creme', 'Crema catalana', 'Crème brûlée', 'Crema catalana'], 290, 4.5, 22, 20, 0, 100, 'snack'),
+  food('rice_pudding', ['Riz au lait', 'Arroz doce', 'Arroz con leche', 'Rice pudding', 'Riso al latte'], 130, 3.5, 20, 3.5, 0.3, 120, 'snack'),
+  food('flan', ['Flan', 'Pudim', 'Flan', 'Flan', 'Budino'], 120, 4, 18, 3.5, 0, 100, 'snack'),
+  food('brownie', ['Brownie', 'Brownie', 'Brownie', 'Brownie', 'Brownie'], 420, 5, 50, 22, 2.5, 50, 'snack'),
+  food('madeleine', ['Madeleine', 'Madalena', 'Magdalena', 'Madeleine', 'Madeleine'], 440, 6, 50, 24, 1.2, 25, 'snack'),
+  food('candy_bar', ['Barre chocolatée', 'Barra de chocolate', 'Barrita de chocolate', 'Chocolate bar', 'Barretta di cioccolato'], 480, 6, 60, 24, 1.5, 50, 'snack'),
+  food('popcorn', ['Popcorn', 'Pipocas', 'Palomitas', 'Popcorn', 'Popcorn'], 480, 8, 60, 22, 10, 30, 'snack'),
+  food('peanuts_salted', ['Cacahuètes salées', 'Amendoins salgados', 'Cacahuetes salados', 'Salted peanuts', 'Arachidi salate'], 590, 25, 16, 49, 8, 30, 'snack'),
+
+  food('white_wine', ['Vin blanc', 'Vinho branco', 'Vino blanco', 'White wine', 'Vino bianco'], 82, 0.1, 2.6, 0, 0, 125, 'drink'),
+  food('rose_wine', ['Vin rosé', 'Vinho rosé', 'Vino rosado', 'Rosé wine', 'Vino rosato'], 83, 0.1, 2.8, 0, 0, 125, 'drink'),
+  food('champagne', ['Champagne', 'Champanhe', 'Champán', 'Champagne', 'Champagne'], 76, 0.3, 1.4, 0, 0, 100, 'drink'),
+  food('cider', ['Cidre', 'Sidra', 'Sidra', 'Cider', 'Sidro'], 42, 0, 4, 0, 0, 250, 'drink'),
+  food('whisky', ['Whisky', 'Whisky', 'Whisky', 'Whisky', 'Whisky'], 250, 0, 0, 0, 0, 40, 'drink'),
+  food('vodka', ['Vodka', 'Vodka', 'Vodka', 'Vodka', 'Vodka'], 231, 0, 0, 0, 0, 40, 'drink'),
+  food('rum', ['Rhum', 'Rum', 'Ron', 'Rum', 'Rum'], 231, 0, 0, 0, 0, 40, 'drink'),
+  food('caipirinha', ['Caipirinha', 'Caipirinha', 'Caipiriña', 'Caipirinha', 'Caipirinha'], 180, 0, 15, 0, 0, 200, 'drink'),
+  food('iced_tea', ['Thé glacé', 'Chá gelado', 'Té helado', 'Iced tea', 'Tè freddo'], 30, 0, 7.5, 0, 0, 330, 'drink'),
+  food('lemonade', ['Limonade', 'Limonada', 'Limonada', 'Lemonade', 'Limonata'], 40, 0, 10, 0, 0, 330, 'drink'),
+  food('espresso', ['Expresso', 'Café expresso', 'Café expreso', 'Espresso', 'Espresso'], 2, 0.1, 0, 0, 0, 30, 'drink'),
+  food('latte', ['Café latte', 'Galão', 'Café con leche', 'Latte', 'Caffellatte'], 55, 3, 5, 2.2, 0, 250, 'drink'),
+  food('sparkling_water', ['Eau gazeuse', 'Água com gás', 'Agua con gas', 'Sparkling water', 'Acqua frizzante'], 0, 0, 0, 0, 0, 500, 'drink'),
 ]
 
 /**
@@ -437,6 +564,55 @@ const PORTIONS: Record<string, PortionUnit[]> = {
   energy_bar: [{ key: 'unit', grams: 50 }],
   energy_gel: [{ key: 'unit', grams: 40 }],
 
+  egg_yolk: [{ key: 'unit', grams: 18 }],
+  sugar: [{ key: 'teaspoon', grams: 5 }, { key: 'spoon', grams: 12 }],
+  flour: [{ key: 'spoon', grams: 10 }],
+  mayonnaise: [{ key: 'spoon', grams: 15 }],
+  ketchup: [{ key: 'spoon', grams: 15 }],
+  mustard: [{ key: 'teaspoon', grams: 5 }],
+  soy_sauce: [{ key: 'spoon', grams: 15 }],
+  tahini: [{ key: 'spoon', grams: 15 }],
+  maple_syrup: [{ key: 'spoon', grams: 20 }],
+  olives: [{ key: 'unit', grams: 4 }],
+  dates: [{ key: 'unit', grams: 8 }],
+  prunes: [{ key: 'unit', grams: 9 }],
+  dried_apricots: [{ key: 'unit', grams: 8 }],
+  raisins: [{ key: 'spoon', grams: 15 }],
+  lemon: [{ key: 'unit', grams: 60 }],
+  lime: [{ key: 'unit', grams: 40 }],
+  pear: [{ key: 'unit', grams: 150 }],
+  peach: [{ key: 'unit', grams: 150 }],
+  apricot: [{ key: 'unit', grams: 40 }],
+  plum: [{ key: 'unit', grams: 60 }],
+  fig: [{ key: 'unit', grams: 50 }],
+  compote: [{ key: 'pot', grams: 100 }],
+  milk_whole: [{ key: 'glass', grams: 200 }],
+  milk_skim: [{ key: 'glass', grams: 200 }],
+  soy_milk: [{ key: 'glass', grams: 200 }],
+  oat_milk: [{ key: 'glass', grams: 200 }],
+  yogurt_fruit: [{ key: 'pot', grams: 125 }],
+  petit_suisse: [{ key: 'pot', grams: 60 }],
+  pita: [{ key: 'unit', grams: 60 }],
+  naan: [{ key: 'unit', grams: 80 }],
+  bagel: [{ key: 'unit', grams: 90 }],
+  nuggets: [{ key: 'unit', grams: 20 }],
+  madeleine: [{ key: 'unit', grams: 25 }],
+  candy_bar: [{ key: 'unit', grams: 50 }],
+  white_wine: [{ key: 'glass', grams: 125 }],
+  rose_wine: [{ key: 'glass', grams: 125 }],
+  champagne: [{ key: 'glass', grams: 100 }],
+  cider: [{ key: 'glass', grams: 250 }],
+  whisky: [{ key: 'glass', grams: 40 }],
+  vodka: [{ key: 'glass', grams: 40 }],
+  rum: [{ key: 'glass', grams: 40 }],
+  espresso: [{ key: 'glass', grams: 30 }],
+  latte: [{ key: 'glass', grams: 250 }],
+  iced_tea: [{ key: 'glass', grams: 250 }],
+  lemonade: [{ key: 'glass', grams: 250 }],
+  sparkling_water: [{ key: 'glass', grams: 250 }],
+  hummus: [{ key: 'spoon', grams: 25 }],
+  coconut_milk: [{ key: 'spoon', grams: 15 }],
+
   // Légumes comptés à l'unité
   tomato: [{ key: 'unit', grams: 120 }],
   carrot: [{ key: 'unit', grams: 100 }],
@@ -492,6 +668,24 @@ const ALIASES: Record<string, string[]> = {
   beef_mince: ['carne moida', 'viande hachee'],
   yogurt_plain: ['iogurte', 'yaourt'],
   strawberry: ['morango'],
+  egg_yolk: ['gema', 'gema de ovo', 'jaune'],
+  sugar: ['acucar', 'sucre en poudre'],
+  peas: ['ervilha', 'petit pois'],
+  squash: ['abobora', 'potiron', 'butternut'],
+  beetroot: ['beterraba'],
+  leek: ['alho frances'],
+  lemon: ['limao', 'citron jaune'],
+  coconut_flesh: ['coco'],
+  coconut_milk: ['leite de coco'],
+  peanuts_salted: ['amendoim'],
+  popcorn: ['pipoca'],
+  flan: ['pudim', 'pudding'],
+  rice_pudding: ['arroz doce'],
+  latte: ['galao', 'cafe com leite'],
+  omelette: ['omelete', 'oeufs brouilles'],
+  soy_milk: ['leite de soja'],
+  olives: ['azeitona'],
+  mayonnaise: ['maionese'],
   grapes: ['uva'],
 }
 
@@ -523,9 +717,18 @@ export function statesOf(food: Food): FoodState[] {
   return food.alt && food.state ? ['raw', 'cooked'] : []
 }
 
-/** Retire accents et casse pour que « pates » retrouve « Pâtes ». */
+/**
+ * Retire accents, ligatures et casse pour que « pates » retrouve « Pâtes ».
+ *
+ * Les ligatures méritent un traitement à part : la décomposition Unicode ne
+ * défait pas « œ », si bien qu'un utilisateur tapant « jaune d'oeuf » ne
+ * trouvait pas « Jaune d'œuf » — ni l'œuf entier, ni le blanc d'œuf, ni le
+ * bœuf haché.
+ */
 export function normalize(value: string): string {
   return value
+    .replace(/œ/gi, 'oe')
+    .replace(/æ/gi, 'ae')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()

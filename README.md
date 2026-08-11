@@ -11,11 +11,11 @@ aucun serveur, aucun envoi de données.
 
 - **Journal quotidien** — quatre repas, navigation jour par jour, recopie du jour
   précédent, anneau de progression calorique et barres de macros.
-- **Base d'aliments** — près de 200 aliments avec valeurs pour 100 g, recherche
+- **Base d'aliments** — plus de 300 aliments avec valeurs pour 100 g, recherche
   insensible aux accents et portant sur les libellés des cinq langues. Fromages
   français, italiens et européens, spécialités brésiliennes et portugaises,
   viandes et poissons, boulangerie, compléments sportifs.
-- **Fibres** — renseignées sur les 197 aliments, suivies comme une quatrième
+- **Fibres** — renseignées sur tous les aliments, suivies comme une quatrième
   barre avec un objectif de 14 g pour 1000 kcal (plancher à 25 g).
 - **Micronutriments** — sodium, potassium, calcium, fer, magnésium, zinc et
   vitamines C, D et B12, repliés derrière une flèche dans la fiche d'aliment et

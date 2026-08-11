@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { FOOD_CATEGORIES, foodName, searchFoods } from '../lib/foods'
-import { searchOpenFoodFacts } from '../lib/openfoodfacts'
+import { OpenFoodFactsError, searchOpenFoodFacts } from '../lib/openfoodfacts'
 import { canScanBarcodes } from '../lib/device'
 import { IconBarcode, IconStar } from './icons'
 import type { Food, FoodCategory } from '../lib/types'
@@ -22,7 +22,7 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
   const [filter, setFilter] = useState<Filter>('all')
   const [remote, setRemote] = useState<Food[] | null>(null)
   const [loading, setLoading] = useState(false)
-  const [remoteError, setRemoteError] = useState(false)
+  const [remoteError, setRemoteError] = useState<string[] | null>(null)
   // Évalué une fois : la nature de l'appareil ne change pas en cours de session.
   const [scannable] = useState(canScanBarcodes)
 
@@ -49,17 +49,17 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
   // Les résultats distants ne valent que pour la recherche qui les a produits.
   useEffect(() => {
     setRemote(null)
-    setRemoteError(false)
+    setRemoteError(null)
   }, [query])
 
   const searchRemote = async () => {
     setLoading(true)
-    setRemoteError(false)
+    setRemoteError(null)
     try {
       setRemote(await searchOpenFoodFacts(query, lang))
-    } catch {
+    } catch (error) {
       // Une panne de service ne doit pas se lire comme « ce produit n'existe pas ».
-      setRemoteError(true)
+      setRemoteError(error instanceof OpenFoodFactsError ? error.details : ['?'])
       setRemote([])
     } finally {
       setLoading(false)
@@ -175,9 +175,17 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
               <span>{t('off.results', { n: newRemote.length })}</span>
             </div>
             {newRemote.length === 0 ? (
-              <p className={remoteError ? 'notice' : 'hint'}>
-                {remoteError ? t('off.error') : t('off.none')}
-              </p>
+              <>
+                <p className={remoteError ? 'notice' : 'hint'}>
+                  {remoteError ? t('off.error') : t('off.none')}
+                </p>
+                {/* Détail technique : permet de rapporter la cause exacte. */}
+                {remoteError ? (
+                  <p className="hint" style={{ fontFamily: 'ui-monospace, monospace', fontSize: '0.68rem' }}>
+                    {remoteError.join(' · ')}
+                  </p>
+                ) : null}
+              </>
             ) : (
               <div className="food-list">{newRemote.map(row)}</div>
             )}

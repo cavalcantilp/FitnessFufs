@@ -156,7 +156,12 @@ function productsOf(payload: unknown): OffProduct[] {
 }
 
 /** Signale que tous les services ont échoué, ce qui n'est pas « zéro résultat ». */
-export class OpenFoodFactsError extends Error {}
+export class OpenFoodFactsError extends Error {
+  /** Cause renvoyée par chaque tentative, pour pouvoir diagnostiquer. */
+  constructor(public readonly details: string[]) {
+    super(`Open Food Facts unreachable: ${details.join(' / ')}`)
+  }
+}
 
 /**
  * Deux services de recherche coexistent chez Open Food Facts et l'ancien est
@@ -184,6 +189,7 @@ export async function searchOpenFoodFacts(
   if (term.length < 3) return []
 
   let reached = false
+  const failures: string[] = []
   for (const url of searchUrls(term, lang)) {
     try {
       const products = productsOf(await getJson(url, signal))
@@ -195,11 +201,16 @@ export async function searchOpenFoodFacts(
     } catch (error) {
       // Service indisponible ou format inattendu : on tente le suivant.
       if (signal?.aborted) throw error
+      const host = new URL(url).host
+      const cause = error instanceof Error ? error.message : String(error)
+      // Un « Failed to fetch » sans code HTTP signe presque toujours un refus
+      // CORS : le navigateur bloque la réponse avant qu'on puisse la lire.
+      failures.push(`${host}: ${cause}`)
     }
   }
 
   // Aucun service n'a répondu : le dire, plutôt que d'annoncer « zéro produit ».
-  if (!reached) throw new OpenFoodFactsError('Open Food Facts unreachable')
+  if (!reached) throw new OpenFoodFactsError(failures)
   return []
 }
 

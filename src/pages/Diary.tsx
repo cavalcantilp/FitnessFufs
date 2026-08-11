@@ -84,7 +84,15 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
         </button>
         <div style={{ textAlign: 'center' }}>
           <div className="label">{formatDay(date, lang)}</div>
-          {date === today ? <span className="today-hint">{t('diary.today')}</span> : null}
+          {date === today ? (
+            <span className="today-hint">{t('diary.today')}</span>
+          ) : (
+            // Un jour éloigné se feuillette mal une flèche à la fois : ce
+            // bouton revient directement à aujourd'hui.
+            <button type="button" className="today-jump" onClick={() => onDateChange(today)}>
+              {t('diary.backToToday')}
+            </button>
+          )}
         </div>
         <button
           type="button"

@@ -481,6 +481,20 @@ input[type='range']::-moz-range-thumb {
   letter-spacing: 0.06em;
 }
 
+/* Même rôle que .today-hint sur un autre jour, mais cliquable : la flèche
+   droite se désactive en approchant d'aujourd'hui, ce bouton y ramène d'un coup. */
+.day-nav .today-jump {
+  display: block;
+  margin: 0 auto;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .day-nav .arrow {
   display: grid;
   place-items: center;

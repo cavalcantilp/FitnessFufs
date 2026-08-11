@@ -152,6 +152,13 @@ const fr = {
   'preset.endurance': 'Endurance',
   'preset.custom': 'Personnalisé',
   'profile.carbsAuto': "Les glucides complètent automatiquement l'objectif calorique.",
+  'day.macros': 'Macros du jour',
+  'day.custom': 'personnalisées',
+  'day.reset': 'Revenir aux macros du profil',
+  'day.followsProfile': 'Cette journée suit le profil. Bouger un curseur ne change que ce jour-là.',
+  'profile.dayMacrosOpen': 'Ouvrir les macros du jour dans le journal',
+  'profile.dayMacrosOpenHint':
+    "Le panneau reste déplié sur chaque journée au lieu d'être replié derrière sa flèche.",
   'profile.warnMacros':
     "Protéines et lipides pèsent {n} kcal de plus que l'objectif : les glucides restent à zéro. Baissez un curseur ou relevez l'objectif pour les voir remonter.",
   'profile.bmr': 'Métabolisme de base',
@@ -358,6 +365,13 @@ const pt: Dict = {
   'preset.endurance': 'Resistência',
   'preset.custom': 'Personalizado',
   'profile.carbsAuto': 'Os hidratos completam automaticamente a meta calórica.',
+  'day.macros': 'Macros do dia',
+  'day.custom': 'personalizadas',
+  'day.reset': 'Voltar às macros do perfil',
+  'day.followsProfile': 'Este dia segue o perfil. Mexer num cursor altera apenas este dia.',
+  'profile.dayMacrosOpen': 'Abrir as macros do dia no diário',
+  'profile.dayMacrosOpenHint':
+    'O painel fica aberto em todos os dias em vez de ficar recolhido atrás da seta.',
   'profile.warnMacros':
     'As proteínas e as gorduras pesam mais {n} kcal do que a meta: os hidratos ficam a zero. Baixe um cursor ou aumente a meta para os ver subir.',
   'profile.bmr': 'Metabolismo basal',
@@ -561,6 +575,13 @@ const es: Dict = {
   'preset.endurance': 'Resistencia',
   'preset.custom': 'Personalizado',
   'profile.carbsAuto': 'Los carbohidratos completan automáticamente el objetivo calórico.',
+  'day.macros': 'Macros del día',
+  'day.custom': 'personalizadas',
+  'day.reset': 'Volver a las macros del perfil',
+  'day.followsProfile': 'Este día sigue el perfil. Mover un control solo cambia este día.',
+  'profile.dayMacrosOpen': 'Abrir las macros del día en el diario',
+  'profile.dayMacrosOpenHint':
+    'El panel queda desplegado en todos los días en vez de estar plegado tras la flecha.',
   'profile.warnMacros':
     'Las proteínas y las grasas suman {n} kcal más que el objetivo: los carbohidratos se quedan a cero. Baja un control o sube el objetivo para que vuelvan a subir.',
   'profile.bmr': 'Metabolismo basal',
@@ -764,6 +785,13 @@ const en: Dict = {
   'preset.endurance': 'Endurance',
   'preset.custom': 'Custom',
   'profile.carbsAuto': 'Carbs automatically fill the rest of the calorie target.',
+  'day.macros': 'Macros for the day',
+  'day.custom': 'custom',
+  'day.reset': 'Back to profile macros',
+  'day.followsProfile': 'This day follows the profile. Moving a slider changes this day only.',
+  'profile.dayMacrosOpen': 'Open the day macros in the diary',
+  'profile.dayMacrosOpenHint':
+    'The panel stays open on every day instead of folded behind its arrow.',
   'profile.warnMacros':
     'Protein and fat come to {n} kcal more than the target: carbs stay at zero. Lower a slider or raise the target to bring them back.',
   'profile.bmr': 'Basal metabolic rate',
@@ -967,6 +995,13 @@ const it: Dict = {
   'preset.endurance': 'Resistenza',
   'preset.custom': 'Personalizzato',
   'profile.carbsAuto': "I carboidrati completano automaticamente l'obiettivo calorico.",
+  'day.macros': 'Macro del giorno',
+  'day.custom': 'personalizzate',
+  'day.reset': 'Tornare alle macro del profilo',
+  'day.followsProfile': 'Questa giornata segue il profilo. Spostare un cursore cambia solo questo giorno.',
+  'profile.dayMacrosOpen': 'Aprire le macro del giorno nel diario',
+  'profile.dayMacrosOpenHint':
+    "Il pannello resta aperto ogni giorno invece di restare piegato dietro la freccia.",
   'profile.warnMacros':
     "Proteine e grassi superano di {n} kcal l'obiettivo: i carboidrati restano a zero. Abbassa un cursore o alza l'obiettivo per farli risalire.",
   'profile.bmr': 'Metabolismo basale',

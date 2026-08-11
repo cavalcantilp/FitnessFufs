@@ -129,7 +129,15 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
         </select>
       </div>
 
-      <div className="stat-row four">
+      {/*
+        Les calories en tête : c'est le chiffre qu'on surveille en dosant, et
+        il ne figurait que sur le bouton de validation, en bas de la feuille.
+      */}
+      <div className="stat-row five">
+        <div className="stat">
+          <div className="label">{t('macro.kcal')}</div>
+          <div className="value accent">{preview.kcal}</div>
+        </div>
         <div className="stat">
           <div className="label">{t('macro.protein')}</div>
           <div className="value">{preview.protein} g</div>

@@ -828,8 +828,22 @@ input[type='range']::-moz-range-thumb {
   gap: 8px;
 }
 
-.stat-row.four .value {
+.stat-row.five {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.stat-row.four .value,
+.stat-row.five .value {
   font-size: 1rem;
+}
+
+.stat-row.five .label {
+  font-size: 0.6rem;
+}
+
+.stat .value.accent {
+  color: var(--accent);
 }
 
 .stat {
@@ -1345,4 +1359,54 @@ input[type='range']::-moz-range-thumb {
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--accent);
+}
+
+/* ---------- Macros du jour ---------- */
+
+/* Case à cocher : la cible tactile doit couvrir tout le libellé, pas la case. */
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.check-row input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  accent-color: var(--accent);
+}
+
+.check-row .hint {
+  display: block;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+/* Marque une journée qui s'écarte du profil, à même l'en-tête replié. */
+.disclosure-head .tag {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.16);
+  color: var(--accent);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.disclosure-body .macro-grid {
+  gap: 8px;
+}
+
+.disclosure-body .macro-value {
+  font-size: 1.05rem;
 }

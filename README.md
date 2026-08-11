@@ -10,7 +10,8 @@ aucun serveur, aucun envoi de données.
 ## Fonctionnalités
 
 - **Journal quotidien** — quatre repas, navigation jour par jour, recopie du jour
-  précédent, anneau de progression calorique et barres de macros.
+  précédent, anneau de progression calorique et barres de macros. La fiche de
+  quantité affiche les calories en tête des macros, recalculées à la frappe.
 - **Base d'aliments** — plus de 300 aliments avec valeurs pour 100 g, recherche
   insensible aux accents et portant sur les libellés des cinq langues. Fromages
   français, italiens et européens, spécialités brésiliennes et portugaises,
@@ -61,6 +62,12 @@ aucun serveur, aucun envoi de données.
   Trois cartes et un anneau donnent le résultat en direct. Si protéines et
   lipides saturent l'objectif, les glucides tombent à zéro et l'alerte chiffre
   le dépassement plutôt que de laisser croire l'affichage figé.
+- **Macros du jour** — une journée peut s'écarter du profil : mêmes programme et
+  curseurs, repliés derrière une flèche dans le journal, avec une étiquette
+  « personnalisées » sur l'en-tête et un retour en un geste. Rien n'est recopié
+  à l'avance : les journées non personnalisées suivent le profil, donc un
+  réglage modifié après coup s'y propage. Une case du profil garde le panneau
+  déplié sur toutes les journées.
 - **Calendrier** — vue mensuelle plein écran avec une barre par repas renseigné ;
   un jour cliqué ouvre le journal correspondant. On change de mois par les
   flèches ou, au doigt, par un balayage horizontal — retenu seulement s'il est

@@ -3,6 +3,7 @@ import { useApp } from '../state/AppContext'
 import { Ring } from '../components/Ring'
 import { MacroBars } from '../components/MacroBars'
 import { MicroPanel } from '../components/MicroPanel'
+import { DayMacroPanel } from '../components/DayMacroPanel'
 import { IconChevronLeft, IconChevronRight, IconCopy, IconPlus, IconTrash } from '../components/icons'
 import { formatDay, shiftDay, todayKey } from '../lib/date'
 import { microsFor, sumMicros, sumNutrients } from '../lib/nutrition'
@@ -18,7 +19,11 @@ interface DiaryProps {
 }
 
 export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
-  const { t, lang, entriesFor, removeEntry, targets, copyDay, foods } = useApp()
+  const { t, lang, entriesFor, removeEntry, targetsFor, copyDay, foods } = useApp()
+
+  // Les objectifs du jour consulté, pas ceux du profil : la journée peut avoir
+  // sa propre répartition.
+  const targets = targetsFor(date)
 
   const today = todayKey()
   const dayEntries = entriesFor(date)
@@ -119,6 +124,8 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
           </div>
         </div>
         <MacroBars eaten={eaten} targets={targets} />
+        {/* Remonté à chaque jour : l'ouverture dépend de la journée affichée. */}
+        <DayMacroPanel key={date} date={date} targets={targets} />
         <MicroPanel micros={dayMicros} coverage={microCoverage} />
       </div>
 

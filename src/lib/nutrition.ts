@@ -61,12 +61,12 @@ export const MACRO_PRESET_ORDER: MacroPresetId[] = [
  * bouger une glissière bascule donc sur « personnalisé », et revenir pile sur
  * les valeurs d'un programme le re-sélectionne.
  */
-export function presetOf(profile: Profile): MacroPresetId | 'custom' {
+export function presetOf(macros: MacroPreset): MacroPresetId | 'custom' {
   const near = (a: number, b: number) => Math.abs(a - b) < 0.001
   const match = MACRO_PRESET_ORDER.find(
     (id) =>
-      near(MACRO_PRESETS[id].proteinPerKg, profile.proteinPerKg) &&
-      near(MACRO_PRESETS[id].fatPerKg, profile.fatPerKg),
+      near(MACRO_PRESETS[id].proteinPerKg, macros.proteinPerKg) &&
+      near(MACRO_PRESETS[id].fatPerKg, macros.fatPerKg),
   )
   return match ?? 'custom'
 }

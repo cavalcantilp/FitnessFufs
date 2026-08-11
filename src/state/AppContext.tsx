@@ -12,6 +12,7 @@ import { computeTargets, nutrientsFor, type Targets } from '../lib/nutrition'
 import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
 import type {
+  DayMacros,
   DiaryEntry,
   Food,
   FoodState,
@@ -30,6 +31,7 @@ export const DEFAULT_PROFILE: Profile = {
   goalRate: 0.5,
   proteinPerKg: 2,
   fatPerKg: 0.9,
+  dayMacrosOpen: false,
 }
 
 export interface ExportPayload {
@@ -40,6 +42,7 @@ export interface ExportPayload {
   weights: WeightEntry[]
   customFoods: Food[]
   favorites: string[]
+  dayMacros?: Record<string, DayMacros>
 }
 
 interface AppState {
@@ -50,6 +53,13 @@ interface AppState {
   profile: Profile
   updateProfile: (patch: Partial<Profile>) => void
   targets: Targets
+
+  /** Journées dont la répartition s'écarte du profil, indexées par date. */
+  dayMacros: Record<string, DayMacros>
+  /** Objectifs d'une journée donnée, personnalisation comprise. */
+  targetsFor: (date: string) => Targets
+  setDayMacrosFor: (date: string, macros: DayMacros) => void
+  clearDayMacros: (date: string) => void
 
   onboarded: boolean
   completeOnboarding: () => void
@@ -98,6 +108,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [weights, setWeights] = useState<WeightEntry[]>(() => load(STORAGE_KEYS.weights, []))
   const [customFoods, setCustomFoods] = useState<Food[]>(() => load(STORAGE_KEYS.customFoods, []))
   const [favorites, setFavorites] = useState<string[]>(() => load(STORAGE_KEYS.favorites, []))
+  const [dayMacros, setDayMacros] = useState<Record<string, DayMacros>>(() =>
+    load(STORAGE_KEYS.dayMacros, {}),
+  )
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
@@ -106,6 +119,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.weights, weights), [weights])
   useEffect(() => save(STORAGE_KEYS.customFoods, customFoods), [customFoods])
   useEffect(() => save(STORAGE_KEYS.favorites, favorites), [favorites])
+  useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -125,6 +139,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const foods = useMemo(() => [...customFoods, ...BUILTIN_FOODS], [customFoods])
   const targets = useMemo(() => computeTargets(profile), [profile])
+
+  /**
+   * Objectifs d'une journée : ceux du profil, sauf si la journée a sa propre
+   * répartition. Le calcul est une poignée d'opérations, inutile de le mémoïser.
+   */
+  const targetsFor = useCallback(
+    (date: string) => computeTargets({ ...profile, ...dayMacros[date] }),
+    [profile, dayMacros],
+  )
+
+  const setDayMacrosFor = useCallback((date: string, macros: DayMacros) => {
+    setDayMacros((current) => ({ ...current, [date]: macros }))
+  }, [])
+
+  /** Retire la personnalisation : la journée repasse sous le profil. */
+  const clearDayMacros = useCallback((date: string) => {
+    setDayMacros((current) => {
+      if (!(date in current)) return current
+      const next = { ...current }
+      delete next[date]
+      return next
+    })
+  }, [])
 
   const updateProfile = useCallback((patch: Partial<Profile>) => {
     setProfile((current) => ({ ...current, ...patch }))
@@ -224,8 +261,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       weights,
       customFoods,
       favorites,
+      dayMacros,
     }),
-    [profile, entries, weights, customFoods, favorites],
+    [profile, entries, weights, customFoods, favorites, dayMacros],
   )
 
   const importData = useCallback((payload: unknown) => {
@@ -238,6 +276,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setWeights(Array.isArray(data.weights) ? data.weights : [])
     setCustomFoods(Array.isArray(data.customFoods) ? data.customFoods : [])
     setFavorites(Array.isArray(data.favorites) ? data.favorites : [])
+    // Sauvegardes d'avant la fonctionnalité : aucune journée personnalisée.
+    setDayMacros(data.dayMacros ?? {})
     setOnboarded(true)
     return true
   }, [])
@@ -249,6 +289,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setWeights([])
     setCustomFoods([])
     setFavorites([])
+    setDayMacros({})
     setOnboarded(false)
   }, [])
 
@@ -260,6 +301,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       profile,
       updateProfile,
       targets,
+      dayMacros,
+      targetsFor,
+      setDayMacrosFor,
+      clearDayMacros,
       onboarded,
       completeOnboarding: () => setOnboarded(true),
       entries,
@@ -288,6 +333,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       profile,
       updateProfile,
       targets,
+      dayMacros,
+      targetsFor,
+      setDayMacrosFor,
+      clearDayMacros,
       onboarded,
       entries,
       entriesFor,

@@ -20,6 +20,21 @@ export interface Profile {
    */
   proteinPerKg: number
   fatPerKg: number
+  /**
+   * Déplie d'office le panneau des macros du jour dans le journal, pour qui
+   * ajuste sa répartition au quotidien plutôt qu'une fois pour toutes.
+   */
+  dayMacrosOpen: boolean
+}
+
+/**
+ * Répartition propre à une journée : jour d'entraînement, jour de repos, écart
+ * assumé. Absente, la journée suit le profil — rien n'est recopié à l'avance,
+ * pour qu'une modification du profil se propage aux jours non personnalisés.
+ */
+export interface DayMacros {
+  proteinPerKg: number
+  fatPerKg: number
 }
 
 export interface Nutrients {

@@ -13,10 +13,11 @@ interface FoodPickerProps {
   onSelect: (food: Food) => void
   onCreate: (query: string) => void
   onScan: () => void
+  onToast: (message: string) => void
 }
 
 /** Recherche, filtres et liste d'aliments — partagés par l'onglet « Ajouter » et le journal. */
-export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
+export function FoodPicker({ onSelect, onCreate, onScan, onToast }: FoodPickerProps) {
   const { t, lang, foods, favorites, toggleFavorite } = useApp()
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
@@ -43,8 +44,21 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
     else if (filter !== 'all') pool = pool.filter((food) => food.category === filter)
     // Pas de troncature : une liste coupée à 60 rendait la moitié de la base
     // introuvable pour qui parcourt au lieu de chercher.
-    return searchFoods(pool, query, lang)
+    const found = searchFoods(pool, query, lang)
+    // Les favoris remontent en tête. Sans cela l'étoile ne produisait aucun
+    // effet visible — une première utilisatrice en a conclu qu'elle servait à
+    // remplir le journal, et s'est étonnée de n'y rien voir arriver.
+    const starred = found.filter((food) => favorites.includes(food.id))
+    if (starred.length === 0 || starred.length === found.length) return found
+    return [...starred, ...found.filter((food) => !favorites.includes(food.id))]
   }, [foods, filter, favorites, query, lang])
+
+  /** L'étoile épingle, elle n'enregistre pas : le message le dit à chaque bascule. */
+  const star = (food: Food) => {
+    const wasFavorite = favorites.includes(food.id)
+    toggleFavorite(food.id)
+    onToast(t(wasFavorite ? 'fav.removed' : 'fav.added', { name: foodName(food, lang) }))
+  }
 
   // Les résultats distants ne valent que pour la recherche qui les a produits.
   useEffect(() => {
@@ -89,8 +103,10 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
         <button
           type="button"
           className={`icon-btn star${isFavorite ? ' on' : ''}`}
-          onClick={() => toggleFavorite(food.id)}
-          aria-label={t('cat.favorites')}
+          onClick={() => star(food)}
+          // Le nom de l'aliment doit figurer dans le libellé : sans lui, une
+          // lecture d'écran annonce trois cents boutons « Favoris » identiques.
+          aria-label={`${t('cat.favorites')} — ${foodName(food, lang)}`}
           aria-pressed={isFavorite}
         >
           <IconStar filled={isFavorite} />
@@ -140,10 +156,18 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
 
       {results.length === 0 ? (
         <div className="card stack">
-          <p className="hint">{t('add.noResults')}</p>
-          <button type="button" className="btn secondary" onClick={() => onCreate(query)}>
-            {query.trim() ? t('add.createFrom', { q: query.trim() }) : t('add.custom')}
-          </button>
+          {/* Un onglet Favoris vide n'appelle pas la création d'un aliment : il
+              appelle l'explication de ce que fait l'étoile. */}
+          {filter === 'favorites' && !query.trim() ? (
+            <p className="hint">{t('fav.empty')}</p>
+          ) : (
+            <>
+              <p className="hint">{t('add.noResults')}</p>
+              <button type="button" className="btn secondary" onClick={() => onCreate(query)}>
+                {query.trim() ? t('add.createFrom', { q: query.trim() }) : t('add.custom')}
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <>

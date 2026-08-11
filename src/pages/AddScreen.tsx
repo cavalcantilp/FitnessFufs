@@ -49,6 +49,7 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
         onSelect={(food) => setSelected(food.source === 'off' ? saveFood(food) : food)}
         onCreate={(query) => setCreating(query.trim())}
         onScan={() => setScanning(true)}
+        onToast={onAdded}
       />
 
       {scanning ? (

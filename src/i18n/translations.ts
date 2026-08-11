@@ -102,6 +102,10 @@ const fr = {
 
   'cat.all': 'Tous',
   'cat.favorites': 'Favoris',
+  'fav.added': "{name} en favori — touchez son nom pour l'ajouter au journal",
+  'fav.removed': '{name} retiré des favoris',
+  'fav.empty':
+    "Aucun favori pour l'instant. L'étoile épingle un aliment en haut de la liste ; elle ne l'ajoute pas au journal — pour cela, touchez son nom.",
   'cat.mine': 'Mes aliments',
   'cat.protein': 'Protéines',
   'cat.carbs': 'Féculents',
@@ -304,6 +308,10 @@ const pt: Dict = {
 
   'cat.all': 'Todos',
   'cat.favorites': 'Favoritos',
+  'fav.added': '{name} nos favoritos — toque no nome para adicionar ao diário',
+  'fav.removed': '{name} removido dos favoritos',
+  'fav.empty':
+    'Ainda não há favoritos. A estrela fixa um alimento no topo da lista; não o adiciona ao diário — para isso, toque no nome.',
   'cat.mine': 'Os meus alimentos',
   'cat.protein': 'Proteínas',
   'cat.carbs': 'Hidratos',
@@ -503,6 +511,10 @@ const es: Dict = {
 
   'cat.all': 'Todos',
   'cat.favorites': 'Favoritos',
+  'fav.added': '{name} en favoritos — toca su nombre para añadirlo al diario',
+  'fav.removed': '{name} eliminado de favoritos',
+  'fav.empty':
+    'Todavía no hay favoritos. La estrella fija un alimento arriba de la lista; no lo añade al diario — para eso, toca su nombre.',
   'cat.mine': 'Mis alimentos',
   'cat.protein': 'Proteínas',
   'cat.carbs': 'Cereales',
@@ -702,6 +714,10 @@ const en: Dict = {
 
   'cat.all': 'All',
   'cat.favorites': 'Favourites',
+  'fav.added': '{name} pinned to favourites — tap its name to add it to the diary',
+  'fav.removed': '{name} removed from favourites',
+  'fav.empty':
+    'No favourites yet. The star pins a food to the top of the list; it does not add it to the diary — tap its name for that.',
   'cat.mine': 'My foods',
   'cat.protein': 'Protein',
   'cat.carbs': 'Grains',
@@ -901,6 +917,10 @@ const it: Dict = {
 
   'cat.all': 'Tutti',
   'cat.favorites': 'Preferiti',
+  'fav.added': '{name} tra i preferiti — tocca il nome per aggiungerlo al diario',
+  'fav.removed': '{name} rimosso dai preferiti',
+  'fav.empty':
+    "Nessun preferito. La stella fissa un alimento in cima all'elenco; non lo aggiunge al diario — per farlo, tocca il nome.",
   'cat.mine': 'I miei alimenti',
   'cat.protein': 'Proteine',
   'cat.carbs': 'Cereali',

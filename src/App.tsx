@@ -34,9 +34,11 @@ export function App() {
     save(STORAGE_KEYS.ui, { tab, date })
   }, [tab, date])
 
+  // Durée proportionnée au texte : « Ajouté au journal » se lit en deux secondes,
+  // une explication d'une ligne et demie non.
   useEffect(() => {
     if (!toast) return
-    const timer = window.setTimeout(() => setToast(null), 2000)
+    const timer = window.setTimeout(() => setToast(null), Math.min(5000, 1600 + toast.length * 45))
     return () => window.clearTimeout(timer)
   }, [toast])
 

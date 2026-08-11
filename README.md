@@ -32,6 +32,11 @@ aucun serveur, aucun envoi de données.
   si elles ne sont pas saisies, mise en favori. Tout aliment personnel ou importé
   se corrige : les données Open Food Facts viennent de saisies communautaires et
   peuvent différer de l'étiquette qu'on a sous les yeux.
+- **Favoris** — l'étoile épingle un aliment en tête de liste, filtre compris, et
+  le confirme par un message nommant l'aliment. Ce retour n'est pas décoratif :
+  la première utilisatrice a cru que l'étoile remplissait le journal et s'est
+  étonnée de n'y rien voir arriver. L'onglet Favoris vide explique donc le geste
+  au lieu de proposer de créer un aliment.
 - **Mesures ménagères** — unité, cuillère, tranche, verre, pot, poignée,
   dosette : « deux cuillères de skyr » se saisit tel quel, sans convertir.
 - **Open Food Facts** — quand la table intégrée ne suffit pas, une recherche

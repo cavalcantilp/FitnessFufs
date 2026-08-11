@@ -94,6 +94,12 @@ export interface Food {
   serving: number
   category: FoodCategory
   custom?: boolean
+  /** Provenance : table intégrée, saisie manuelle, ou Open Food Facts. */
+  source?: 'builtin' | 'manual' | 'off'
+  /** Marque, renseignée pour les produits emballés. */
+  brand?: string
+  /** Code-barres, quand l'aliment vient d'un scan ou d'Open Food Facts. */
+  barcode?: string
   /** État décrit par per100. Renseigné uniquement si l'aliment a deux états. */
   state?: FoodState
   /** L'autre état de préparation : cru si per100 décrit le cuit, et inversement. */

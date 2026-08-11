@@ -30,6 +30,16 @@ aucun serveur, aucun envoi de données.
   et l'état pesé est mémorisé dans le journal.
 - **Aliments personnalisés** — création à la volée, calories déduites des macros
   si elles ne sont pas saisies, mise en favori.
+- **Mesures ménagères** — unité, cuillère, tranche, verre, pot, poignée,
+  dosette : « deux cuillères de skyr » se saisit tel quel, sans convertir.
+- **Open Food Facts** — quand la table intégrée ne suffit pas, une recherche
+  complémentaire interroge la base ouverte (licence ODbL, sans clé d'API), à la
+  demande seulement. Tout produit retenu est recopié dans les aliments
+  personnels et reste donc disponible hors ligne.
+- **Code-barres** — lecture par la caméra, native sur Chrome et Android, avec
+  un décodeur WebAssembly en repli ailleurs. Le binaire est servi depuis le
+  domaine de l'application, jamais depuis un CDN, et mis en cache au premier
+  usage.
 - **Objectifs** — métabolisme de base (Mifflin-St Jeor), dépense estimée selon le
   niveau d'activité, ajustement selon l'objectif de poids. L'apport ne descend
   jamais sous le métabolisme de base.

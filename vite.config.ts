@@ -15,8 +15,18 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       workbox: {
+        // Le décodeur WebAssembly (1 Mo) reste hors du précache : seuls les
+        // navigateurs sans lecteur de codes-barres natif en ont besoin. Il est
+        // mis en cache au premier scan, et disponible hors ligne ensuite.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            urlPattern: /zxing_reader\.wasm$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'barcode-decoder', expiration: { maxEntries: 1 } },
+          },
+        ],
       },
       manifest: {
         name: 'myFitnessFufs',

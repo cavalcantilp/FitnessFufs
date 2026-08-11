@@ -3,6 +3,8 @@ import { useApp } from '../state/AppContext'
 import { FoodPicker } from '../components/FoodPicker'
 import { QuantitySheet } from '../components/QuantitySheet'
 import { CustomFoodSheet } from '../components/CustomFoodSheet'
+import { BarcodeScanner } from '../components/BarcodeScanner'
+import { fetchByBarcode } from '../lib/openfoodfacts'
 import { formatDay } from '../lib/date'
 import type { Food, MealId } from '../lib/types'
 
@@ -13,9 +15,28 @@ interface AddScreenProps {
 }
 
 export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
-  const { t, lang, addEntry, removeCustomFood } = useApp()
+  const { t, lang, addEntry, removeCustomFood, saveFood } = useApp()
   const [selected, setSelected] = useState<Food | null>(null)
   const [creating, setCreating] = useState<string | null>(null)
+  const [scanning, setScanning] = useState(false)
+
+  /**
+   * Un code scanné est résolu chez Open Food Facts puis rangé dans les
+   * aliments personnels : le produit reste disponible hors ligne ensuite.
+   */
+  const resolveBarcode = async (barcode: string) => {
+    setScanning(false)
+    try {
+      const found = await fetchByBarcode(barcode, lang)
+      if (found) {
+        setSelected(saveFood(found))
+      } else {
+        onAdded(t('scan.notFound'))
+      }
+    } catch {
+      onAdded(t('scan.failed'))
+    }
+  }
 
   return (
     <div className="screen">
@@ -23,7 +44,15 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
         {t('add.title')} — {formatDay(date, lang)}
       </p>
 
-      <FoodPicker onSelect={setSelected} onCreate={(query) => setCreating(query.trim())} />
+      <FoodPicker
+        onSelect={(food) => setSelected(food.source === 'off' ? saveFood(food) : food)}
+        onCreate={(query) => setCreating(query.trim())}
+        onScan={() => setScanning(true)}
+      />
+
+      {scanning ? (
+        <BarcodeScanner onDetect={(code) => void resolveBarcode(code)} onClose={() => setScanning(false)} />
+      ) : null}
 
       {selected ? (
         <QuantitySheet

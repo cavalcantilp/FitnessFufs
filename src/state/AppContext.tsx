@@ -67,6 +67,8 @@ interface AppState {
   foods: Food[]
   customFoods: Food[]
   addCustomFood: (food: Omit<Food, 'id' | 'custom'>) => Food
+  /** Range un aliment déjà constitué, sans le dupliquer s'il est connu. */
+  saveFood: (food: Food) => Food
   removeCustomFood: (id: string) => void
 
   favorites: string[]
@@ -187,6 +189,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return created
   }, [])
 
+  const saveFood = useCallback((food: Food) => {
+    setCustomFoods((current) =>
+      current.some((item) => item.id === food.id) ? current : [food, ...current],
+    )
+    return food
+  }, [])
+
   const removeCustomFood = useCallback((id: string) => {
     setCustomFoods((current) => current.filter((food) => food.id !== id))
     setFavorites((current) => current.filter((favorite) => favorite !== id))
@@ -256,6 +265,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       foods,
       customFoods,
       addCustomFood,
+      saveFood,
       removeCustomFood,
       favorites,
       toggleFavorite,
@@ -281,6 +291,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       foods,
       customFoods,
       addCustomFood,
+      saveFood,
       removeCustomFood,
       favorites,
       toggleFavorite,

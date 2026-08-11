@@ -5,12 +5,15 @@
   "type": "module",
   "description": "myFitnessFufs — PWA de suivi nutritionnel et de poids, en React",
   "scripts": {
+    "predev": "node scripts/copy-wasm.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/copy-wasm.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
+    "barcode-detector": "^3.2.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

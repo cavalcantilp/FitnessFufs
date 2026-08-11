@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { FOOD_CATEGORIES, foodName, searchFoods } from '../lib/foods'
-import { IconStar } from './icons'
+import { searchOpenFoodFacts } from '../lib/openfoodfacts'
+import { IconBarcode, IconStar } from './icons'
 import type { Food, FoodCategory } from '../lib/types'
 import type { TranslationKey } from '../i18n/translations'
 
@@ -10,13 +11,16 @@ type Filter = 'all' | 'favorites' | 'mine' | FoodCategory
 interface FoodPickerProps {
   onSelect: (food: Food) => void
   onCreate: (query: string) => void
+  onScan: () => void
 }
 
 /** Recherche, filtres et liste d'aliments — partagés par l'onglet « Ajouter » et le journal. */
-export function FoodPicker({ onSelect, onCreate }: FoodPickerProps) {
+export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
   const { t, lang, foods, favorites, toggleFavorite } = useApp()
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
+  const [remote, setRemote] = useState<Food[] | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const filters: { id: Filter; label: string }[] = [
     { id: 'all', label: t('cat.all') },
@@ -38,15 +42,78 @@ export function FoodPicker({ onSelect, onCreate }: FoodPickerProps) {
     return searchFoods(pool, query, lang)
   }, [foods, filter, favorites, query, lang])
 
+  // Les résultats distants ne valent que pour la recherche qui les a produits.
+  useEffect(() => {
+    setRemote(null)
+  }, [query])
+
+  const searchRemote = async () => {
+    setLoading(true)
+    try {
+      setRemote(await searchOpenFoodFacts(query, lang))
+    } catch {
+      setRemote([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const row = (food: Food) => {
+    const isFavorite = favorites.includes(food.id)
+    return (
+      <div className="food-row" key={food.id}>
+        <button
+          type="button"
+          className="info"
+          style={{ textAlign: 'left', background: 'none' }}
+          onClick={() => onSelect(food)}
+        >
+          <div className="name">{foodName(food, lang)}</div>
+          <div className="macros">
+            {t('macro.protein.short')} {food.per100.protein} · {t('macro.carbs.short')}{' '}
+            {food.per100.carbs} · {t('macro.fat.short')} {food.per100.fat} — {t('add.per100')}
+            {food.state
+              ? ` ${t(food.state === 'raw' ? 'state.raw' : 'state.cooked').toLowerCase()}`
+              : ''}
+          </div>
+        </button>
+        <span className="kcal">{food.per100.kcal}</span>
+        <button
+          type="button"
+          className={`icon-btn star${isFavorite ? ' on' : ''}`}
+          onClick={() => toggleFavorite(food.id)}
+          aria-label={t('cat.favorites')}
+          aria-pressed={isFavorite}
+        >
+          <IconStar filled={isFavorite} />
+        </button>
+      </div>
+    )
+  }
+
+  const canSearchRemote = query.trim().length >= 3
+
+  // Un produit déjà retenu figure dans la liste locale : l'afficher une seconde
+  // fois côté Open Food Facts laisserait croire à un doublon.
+  const newRemote = useMemo(
+    () => (remote ?? []).filter((item) => !foods.some((known) => known.id === item.id)),
+    [remote, foods],
+  )
+
   return (
     <>
-      <input
-        type="search"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder={t('add.search')}
-        aria-label={t('add.search')}
-      />
+      <div className="search-row">
+        <input
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={t('add.search')}
+          aria-label={t('add.search')}
+        />
+        <button type="button" className="icon-btn scan" onClick={onScan} aria-label={t('scan.title')}>
+          <IconBarcode />
+        </button>
+      </div>
 
       <div className="chips">
         {filters.map((entry) => (
@@ -78,44 +145,34 @@ export function FoodPicker({ onSelect, onCreate }: FoodPickerProps) {
             </button>
           </div>
 
-          <div className="food-list">
-            {results.map((food) => {
-              const isFavorite = favorites.includes(food.id)
-              return (
-                <div className="food-row" key={food.id}>
-                  <button
-                    type="button"
-                    className="info"
-                    style={{ textAlign: 'left', background: 'none' }}
-                    onClick={() => onSelect(food)}
-                  >
-                    <div className="name">{foodName(food, lang)}</div>
-                    <div className="macros">
-                      {t('macro.protein.short')} {food.per100.protein} · {t('macro.carbs.short')}{' '}
-                      {food.per100.carbs} · {t('macro.fat.short')} {food.per100.fat} —{' '}
-                      {t('add.per100')}
-                      {/* Les chiffres affichés sont ceux de l'état par défaut : on le nomme. */}
-                      {food.state
-                        ? ` ${t(food.state === 'raw' ? 'state.raw' : 'state.cooked').toLowerCase()}`
-                        : ''}
-                    </div>
-                  </button>
-                  <span className="kcal">{food.per100.kcal}</span>
-                  <button
-                    type="button"
-                    className={`icon-btn star${isFavorite ? ' on' : ''}`}
-                    onClick={() => toggleFavorite(food.id)}
-                    aria-label={t('cat.favorites')}
-                    aria-pressed={isFavorite}
-                  >
-                    <IconStar filled={isFavorite} />
-                  </button>
-                </div>
-              )
-            })}
-          </div>
+          <div className="food-list">{results.map(row)}</div>
         </>
       )}
+
+      {/*
+        Open Food Facts complète la table intégrée pour les produits emballés,
+        à la demande : la table locale reste la réponse par défaut, et rien
+        n'est interrogé tant que l'utilisateur n'a pas trouvé son compte.
+      */}
+      {canSearchRemote ? (
+        remote === null ? (
+          <button type="button" className="btn secondary" disabled={loading} onClick={searchRemote}>
+            {loading ? t('off.searching') : t('off.search')}
+          </button>
+        ) : (
+          <>
+            <div className="list-head">
+              <span>{t('off.results', { n: newRemote.length })}</span>
+            </div>
+            {newRemote.length === 0 ? (
+              <p className="hint">{t('off.none')}</p>
+            ) : (
+              <div className="food-list">{newRemote.map(row)}</div>
+            )}
+            <p className="hint">{t('off.source')}</p>
+          </>
+        )
+      ) : null}
     </>
   )
 }

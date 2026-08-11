@@ -8,3 +8,4 @@ dist-ssr
 .env.*
 !.env.example
 npm-debug.log*
+public/zxing_reader.wasm

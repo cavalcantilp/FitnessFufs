@@ -75,6 +75,15 @@ export function IconChevronDown({ size = 18, open = false }: IconProps & { open?
   )
 }
 
+export function IconBarcode({ size = 20 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M3 7V5a1 1 0 0 1 1-1h2M21 7V5a1 1 0 0 0-1-1h-2M3 17v2a1 1 0 0 0 1 1h2M21 17v2a1 1 0 0 1-1 1h-2" />
+      <path d="M7 8v8M10.5 8v8M14 8v8M17 8v8" />
+    </svg>
+  )
+}
+
 export function IconTrash({ size = 18 }: IconProps) {
   return (
     <svg {...base(size)} aria-hidden="true">

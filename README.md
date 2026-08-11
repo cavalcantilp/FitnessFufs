@@ -29,7 +29,9 @@ aucun serveur, aucun envoi de données.
   130 kcal. Une bascule dans la fiche recalcule les macros et la portion usuelle,
   et l'état pesé est mémorisé dans le journal.
 - **Aliments personnalisés** — création à la volée, calories déduites des macros
-  si elles ne sont pas saisies, mise en favori.
+  si elles ne sont pas saisies, mise en favori. Tout aliment personnel ou importé
+  se corrige : les données Open Food Facts viennent de saisies communautaires et
+  peuvent différer de l'étiquette qu'on a sous les yeux.
 - **Mesures ménagères** — unité, cuillère, tranche, verre, pot, poignée,
   dosette : « deux cuillères de skyr » se saisit tel quel, sans convertir.
 - **Open Food Facts** — quand la table intégrée ne suffit pas, une recherche

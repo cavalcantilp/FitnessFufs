@@ -15,9 +15,10 @@ interface QuantitySheetProps {
   onConfirm: (grams: number, meal: MealId, state?: FoodState) => void
   onClose: () => void
   onDelete?: () => void
+  onEdit?: () => void
 }
 
-export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: QuantitySheetProps) {
+export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit }: QuantitySheetProps) {
   const { t, lang } = useApp()
   const states = statesOf(food)
   const [state, setState] = useState<FoodState | undefined>(food.state)
@@ -157,6 +158,12 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: Quan
       >
         {t('add.confirm')} · {preview.kcal} kcal
       </button>
+
+      {onEdit ? (
+        <button type="button" className="btn secondary" onClick={onEdit}>
+          {t('add.editFood')}
+        </button>
+      ) : null}
 
       {onDelete ? (
         <button type="button" className="btn danger" onClick={onDelete}>

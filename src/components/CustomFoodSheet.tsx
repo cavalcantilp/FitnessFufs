@@ -9,20 +9,32 @@ import type { TranslationKey } from '../i18n/translations'
 interface CustomFoodSheetProps {
   /** Nom pré-rempli depuis la recherche en cours. */
   initialName?: string
+  /**
+   * Aliment à corriger. Les valeurs d'Open Food Facts viennent de saisies
+   * communautaires et peuvent différer de l'étiquette qu'on a sous les yeux :
+   * il faut pouvoir les rectifier plutôt que subir un chiffre faux.
+   */
+  editing?: Food
   onCreated: (food: Food) => void
   onClose: () => void
 }
 
-export function CustomFoodSheet({ initialName = '', onCreated, onClose }: CustomFoodSheetProps) {
-  const { t, addCustomFood } = useApp()
-  const [name, setName] = useState(initialName)
-  const [kcal, setKcal] = useState('')
-  const [protein, setProtein] = useState('')
-  const [carbs, setCarbs] = useState('')
-  const [fat, setFat] = useState('')
-  const [fiber, setFiber] = useState('')
-  const [serving, setServing] = useState('100')
-  const [category, setCategory] = useState<FoodCategory>('dish')
+export function CustomFoodSheet({
+  initialName = '',
+  editing,
+  onCreated,
+  onClose,
+}: CustomFoodSheetProps) {
+  const { t, addCustomFood, updateCustomFood } = useApp()
+  const text = (value: number | undefined) => (value === undefined || value === 0 ? '' : String(value))
+  const [name, setName] = useState(editing?.name ?? initialName)
+  const [kcal, setKcal] = useState(text(editing?.per100.kcal))
+  const [protein, setProtein] = useState(text(editing?.per100.protein))
+  const [carbs, setCarbs] = useState(text(editing?.per100.carbs))
+  const [fat, setFat] = useState(text(editing?.per100.fat))
+  const [fiber, setFiber] = useState(text(editing?.per100.fiber))
+  const [serving, setServing] = useState(String(editing?.serving ?? 100))
+  const [category, setCategory] = useState<FoodCategory>(editing?.category ?? 'dish')
 
   const num = (value: string) => {
     const parsed = Number(value.replace(',', '.'))
@@ -36,6 +48,21 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
 
   const submit = () => {
     if (!valid) return
+    const per100 = {
+      kcal: finalKcal,
+      protein: num(protein),
+      carbs: num(carbs),
+      fat: num(fat),
+      fiber: num(fiber),
+    }
+    const portion = Math.max(1, Math.round(num(serving)) || 100)
+
+    if (editing) {
+      updateCustomFood(editing.id, { name: name.trim(), per100, serving: portion, category })
+      onCreated({ ...editing, name: name.trim(), per100, serving: portion, category })
+      return
+    }
+
     const created = addCustomFood({
       name: name.trim(),
       per100: {
@@ -52,7 +79,11 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
   }
 
   return (
-    <Sheet title={t('add.custom')} subtitle={t('add.customHint')} onClose={onClose}>
+    <Sheet
+      title={editing ? t('add.editFood') : t('add.custom')}
+      subtitle={t('add.customHint')}
+      onClose={onClose}
+    >
       <div className="field">
         <label htmlFor="cf-name">{t('add.customName')}</label>
         <input

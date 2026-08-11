@@ -67,6 +67,8 @@ const fr = {
   'add.servingHint': 'Portion usuelle : {n} g',
   'add.kcalMismatch': 'Calories recalculées depuis les macros : {n} kcal',
   'add.deleteFood': 'Supprimer cet aliment',
+  'add.editFood': 'Corriger cet aliment',
+  'add.updated': 'Valeurs mises à jour',
 
   'scan.title': 'Scanner un code-barres',
   'scan.hint': 'Cadrez le code-barres du produit',
@@ -266,6 +268,8 @@ const pt: Dict = {
   'add.servingHint': 'Porção habitual: {n} g',
   'add.kcalMismatch': 'Calorias recalculadas a partir dos macros: {n} kcal',
   'add.deleteFood': 'Eliminar este alimento',
+  'add.editFood': 'Corrigir este alimento',
+  'add.updated': 'Valores atualizados',
 
   'scan.title': 'Ler código de barras',
   'scan.hint': 'Enquadre o código de barras do produto',
@@ -461,6 +465,8 @@ const es: Dict = {
   'add.servingHint': 'Ración habitual: {n} g',
   'add.kcalMismatch': 'Calorías recalculadas desde los macros: {n} kcal',
   'add.deleteFood': 'Eliminar este alimento',
+  'add.editFood': 'Corregir este alimento',
+  'add.updated': 'Valores actualizados',
 
   'scan.title': 'Escanear código de barras',
   'scan.hint': 'Encuadra el código de barras del producto',
@@ -656,6 +662,8 @@ const en: Dict = {
   'add.servingHint': 'Usual serving: {n} g',
   'add.kcalMismatch': 'Calories recomputed from macros: {n} kcal',
   'add.deleteFood': 'Delete this food',
+  'add.editFood': 'Edit this food',
+  'add.updated': 'Values updated',
 
   'scan.title': 'Scan a barcode',
   'scan.hint': 'Frame the product barcode',
@@ -851,6 +859,8 @@ const it: Dict = {
   'add.servingHint': 'Porzione abituale: {n} g',
   'add.kcalMismatch': 'Calorie ricalcolate dai macro: {n} kcal',
   'add.deleteFood': 'Elimina questo alimento',
+  'add.editFood': 'Correggi questo alimento',
+  'add.updated': 'Valori aggiornati',
 
   'scan.title': 'Scansiona un codice a barre',
   'scan.hint': 'Inquadra il codice a barre del prodotto',

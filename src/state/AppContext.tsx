@@ -69,6 +69,8 @@ interface AppState {
   addCustomFood: (food: Omit<Food, 'id' | 'custom'>) => Food
   /** Range un aliment déjà constitué, sans le dupliquer s'il est connu. */
   saveFood: (food: Food) => Food
+  /** Corrige un aliment personnel — valeurs d'étiquette, nom, portion. */
+  updateCustomFood: (id: string, patch: Partial<Food>) => void
   removeCustomFood: (id: string) => void
 
   favorites: string[]
@@ -196,6 +198,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return food
   }, [])
 
+  const updateCustomFood = useCallback((id: string, patch: Partial<Food>) => {
+    setCustomFoods((current) =>
+      current.map((food) => (food.id === id ? { ...food, ...patch } : food)),
+    )
+  }, [])
+
   const removeCustomFood = useCallback((id: string) => {
     setCustomFoods((current) => current.filter((food) => food.id !== id))
     setFavorites((current) => current.filter((favorite) => favorite !== id))
@@ -266,6 +274,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       customFoods,
       addCustomFood,
       saveFood,
+      updateCustomFood,
       removeCustomFood,
       favorites,
       toggleFavorite,
@@ -292,6 +301,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       customFoods,
       addCustomFood,
       saveFood,
+      updateCustomFood,
       removeCustomFood,
       favorites,
       toggleFavorite,

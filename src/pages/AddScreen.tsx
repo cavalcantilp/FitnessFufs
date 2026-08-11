@@ -18,6 +18,7 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
   const { t, lang, addEntry, removeCustomFood, saveFood } = useApp()
   const [selected, setSelected] = useState<Food | null>(null)
   const [creating, setCreating] = useState<string | null>(null)
+  const [editing, setEditing] = useState<Food | null>(null)
   const [scanning, setScanning] = useState(false)
 
   /**
@@ -64,6 +65,7 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
             setSelected(null)
             onAdded(t('add.added'))
           }}
+          onEdit={selected.custom ? () => setEditing(selected) : undefined}
           onDelete={
             selected.custom
               ? () => {
@@ -82,6 +84,18 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
           onCreated={(food) => {
             setCreating(null)
             setSelected(food)
+          }}
+        />
+      ) : null}
+
+      {editing ? (
+        <CustomFoodSheet
+          editing={editing}
+          onClose={() => setEditing(null)}
+          onCreated={(food) => {
+            setEditing(null)
+            setSelected(food)
+            onAdded(t('add.updated'))
           }}
         />
       ) : null}

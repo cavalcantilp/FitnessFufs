@@ -2,26 +2,37 @@ import { useEffect, useState } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { useApp } from './state/AppContext'
 import { Onboarding } from './pages/Onboarding'
+import { CalendarScreen } from './pages/CalendarScreen'
 import { Diary } from './pages/Diary'
 import { AddScreen } from './pages/AddScreen'
 import { WeightScreen } from './pages/WeightScreen'
 import { ProfileScreen } from './pages/ProfileScreen'
-import { IconDiary, IconPlus, IconScale, IconUser } from './components/icons'
+import { IconCalendar, IconDiary, IconPlus, IconScale, IconUser } from './components/icons'
 import { LANGS } from './i18n/translations'
 import { todayKey } from './lib/date'
+import { load, save, STORAGE_KEYS } from './lib/storage'
 import { defaultMeal } from './lib/meals'
 import type { Lang, MealId } from './lib/types'
 
-type Tab = 'diary' | 'add' | 'weight' | 'profile'
+type Tab = 'calendar' | 'diary' | 'add' | 'weight' | 'profile'
 
 export function App() {
   const { t, lang, setLang, onboarded } = useApp()
-  const [tab, setTab] = useState<Tab>('diary')
-  const [date, setDate] = useState(todayKey())
+  /**
+   * L'onglet et le jour consultés survivent au rechargement : un simple
+   * « tirer pour rafraîchir » renvoyait sinon systématiquement au journal
+   * du jour, ce qui faisait perdre le fil.
+   */
+  const [tab, setTab] = useState<Tab>(() => load(STORAGE_KEYS.ui, { tab: 'diary' as Tab }).tab)
+  const [date, setDate] = useState(() => load(STORAGE_KEYS.ui, { date: todayKey() }).date)
   const [meal, setMeal] = useState<MealId>(() => defaultMeal())
   const [toast, setToast] = useState<string | null>(null)
 
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
+
+  useEffect(() => {
+    save(STORAGE_KEYS.ui, { tab, date })
+  }, [tab, date])
 
   useEffect(() => {
     if (!toast) return
@@ -36,7 +47,9 @@ export function App() {
 
   if (!onboarded) return <Onboarding />
 
+  // « Ajouter » occupe la position centrale : c'est le geste le plus fréquent.
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: 'calendar', label: t('nav.calendar'), icon: <IconCalendar /> },
     { id: 'diary', label: t('nav.diary'), icon: <IconDiary /> },
     { id: 'add', label: t('nav.add'), icon: <IconPlus /> },
     { id: 'weight', label: t('nav.weight'), icon: <IconScale /> },
@@ -82,6 +95,15 @@ export function App() {
         </div>
       ) : null}
 
+      {tab === 'calendar' ? (
+        <CalendarScreen
+          date={date}
+          onPick={(picked) => {
+            setDate(picked)
+            setTab('diary')
+          }}
+        />
+      ) : null}
       {tab === 'diary' ? (
         <Diary date={date} onDateChange={setDate} onAddTo={openAdd} onToast={setToast} />
       ) : null}

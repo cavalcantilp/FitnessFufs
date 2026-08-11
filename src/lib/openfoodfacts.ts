@@ -18,7 +18,7 @@ const PRODUCT_URL = 'https://world.openfoodfacts.org/api/v2/product'
 const SEARCH_URL = 'https://search.openfoodfacts.org/search'
 const LEGACY_SEARCH_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
 
-const FIELDS = [
+const PRODUCT_FIELDS = [
   'code',
   'product_name',
   'product_name_fr',
@@ -155,6 +155,26 @@ function productsOf(payload: unknown): OffProduct[] {
   return list as OffProduct[]
 }
 
+/** Signale que tous les services ont échoué, ce qui n'est pas « zéro résultat ». */
+export class OpenFoodFactsError extends Error {}
+
+/**
+ * Deux services de recherche coexistent chez Open Food Facts et l'ancien est
+ * progressivement retiré : on tente le nouveau puis l'ancien.
+ *
+ * Aucun paramètre `fields` n'est envoyé ici. Il allégerait les réponses, mais
+ * un nom de champ non reconnu fait échouer la requête entière — un compromis
+ * défavorable pour une recherche qui doit d'abord fonctionner.
+ */
+function searchUrls(term: string, lang: Lang): string[] {
+  const q = encodeURIComponent(term)
+  return [
+    `${SEARCH_URL}?q=${q}&langs=${lang}&page_size=25`,
+    `${SEARCH_URL}?q=${q}&page_size=25`,
+    `${LEGACY_SEARCH_URL}?search_terms=${q}&search_simple=1&action=process&json=1&page_size=25`,
+  ]
+}
+
 export async function searchOpenFoodFacts(
   query: string,
   lang: Lang,
@@ -163,14 +183,11 @@ export async function searchOpenFoodFacts(
   const term = query.trim()
   if (term.length < 3) return []
 
-  const attempts = [
-    `${SEARCH_URL}?q=${encodeURIComponent(term)}&page_size=25&fields=${FIELDS}`,
-    `${LEGACY_SEARCH_URL}?search_terms=${encodeURIComponent(term)}&search_simple=1&action=process&json=1&page_size=25&fields=${FIELDS}`,
-  ]
-
-  for (const url of attempts) {
+  let reached = false
+  for (const url of searchUrls(term, lang)) {
     try {
       const products = productsOf(await getJson(url, signal))
+      reached = true
       const foods = products
         .map((product) => toFood(product, lang))
         .filter((food): food is Food => food !== null)
@@ -180,6 +197,9 @@ export async function searchOpenFoodFacts(
       if (signal?.aborted) throw error
     }
   }
+
+  // Aucun service n'a répondu : le dire, plutôt que d'annoncer « zéro produit ».
+  if (!reached) throw new OpenFoodFactsError('Open Food Facts unreachable')
   return []
 }
 
@@ -190,7 +210,7 @@ export async function fetchByBarcode(
 ): Promise<Food | null> {
   const code = barcode.replace(/\D/g, '')
   if (!code) return null
-  const payload = (await getJson(`${PRODUCT_URL}/${code}.json?fields=${FIELDS}`, signal)) as {
+  const payload = (await getJson(`${PRODUCT_URL}/${code}.json?fields=${PRODUCT_FIELDS}`, signal)) as {
     status?: number
     product?: OffProduct
   }

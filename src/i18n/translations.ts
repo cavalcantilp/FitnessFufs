@@ -9,6 +9,7 @@ const fr = {
   'nav.add': 'Ajouter',
   'nav.weight': 'Poids',
   'nav.profile': 'Profil',
+  'nav.calendar': 'Calendrier',
 
   'meal.breakfast': 'Petit-déjeuner',
   'meal.lunch': 'Déjeuner',
@@ -77,6 +78,7 @@ const fr = {
   'off.searching': 'Recherche en cours…',
   'off.results': 'Produits trouvés : {n}',
   'off.none': 'Aucun produit trouvé dans Open Food Facts.',
+  'off.error': 'Open Food Facts est injoignable. Vérifiez votre connexion et réessayez.',
   'off.source': "Données Open Food Facts, contribuées par ses utilisateurs — à vérifier sur l'emballage.",
 
   'add.unit': 'Unité',
@@ -206,6 +208,7 @@ const pt: Dict = {
   'nav.add': 'Adicionar',
   'nav.weight': 'Peso',
   'nav.profile': 'Perfil',
+  'nav.calendar': 'Calendário',
 
   'meal.breakfast': 'Pequeno-almoço',
   'meal.lunch': 'Almoço',
@@ -274,6 +277,7 @@ const pt: Dict = {
   'off.searching': 'A procurar…',
   'off.results': 'Produtos encontrados: {n}',
   'off.none': 'Nenhum produto encontrado no Open Food Facts.',
+  'off.error': 'Open Food Facts está inacessível. Verifique a ligação e tente novamente.',
   'off.source': 'Dados do Open Food Facts, contribuídos pelos utilizadores — confirme na embalagem.',
 
   'add.unit': 'Unidade',
@@ -399,6 +403,7 @@ const es: Dict = {
   'nav.add': 'Añadir',
   'nav.weight': 'Peso',
   'nav.profile': 'Perfil',
+  'nav.calendar': 'Calendario',
 
   'meal.breakfast': 'Desayuno',
   'meal.lunch': 'Comida',
@@ -467,6 +472,7 @@ const es: Dict = {
   'off.searching': 'Buscando…',
   'off.results': 'Productos encontrados: {n}',
   'off.none': 'Ningún producto encontrado en Open Food Facts.',
+  'off.error': 'Open Food Facts no responde. Comprueba tu conexión e inténtalo de nuevo.',
   'off.source': 'Datos de Open Food Facts, aportados por sus usuarios — verifícalos en el envase.',
 
   'add.unit': 'Unidad',
@@ -592,6 +598,7 @@ const en: Dict = {
   'nav.add': 'Add',
   'nav.weight': 'Weight',
   'nav.profile': 'Profile',
+  'nav.calendar': 'Calendar',
 
   'meal.breakfast': 'Breakfast',
   'meal.lunch': 'Lunch',
@@ -660,6 +667,7 @@ const en: Dict = {
   'off.searching': 'Searching…',
   'off.results': 'Products found: {n}',
   'off.none': 'No product found on Open Food Facts.',
+  'off.error': 'Open Food Facts is unreachable. Check your connection and try again.',
   'off.source': 'Open Food Facts data, contributed by its users — check the packaging.',
 
   'add.unit': 'Unit',
@@ -785,6 +793,7 @@ const it: Dict = {
   'nav.add': 'Aggiungi',
   'nav.weight': 'Peso',
   'nav.profile': 'Profilo',
+  'nav.calendar': 'Calendario',
 
   'meal.breakfast': 'Colazione',
   'meal.lunch': 'Pranzo',
@@ -853,6 +862,7 @@ const it: Dict = {
   'off.searching': 'Ricerca in corso…',
   'off.results': 'Prodotti trovati: {n}',
   'off.none': 'Nessun prodotto trovato su Open Food Facts.',
+  'off.error': 'Open Food Facts non è raggiungibile. Controlla la connessione e riprova.',
   'off.source': 'Dati Open Food Facts, forniti dai suoi utenti — verifica sulla confezione.',
 
   'add.unit': 'Unità',

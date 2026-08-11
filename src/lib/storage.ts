@@ -48,4 +48,5 @@ export const STORAGE_KEYS = {
   favorites: 'favorites',
   lang: 'lang',
   onboarded: 'onboarded',
+  ui: 'ui',
 } as const

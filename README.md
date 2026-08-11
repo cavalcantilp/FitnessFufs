@@ -49,6 +49,9 @@ aucun serveur, aucun envoi de données.
   Cinq programmes (équilibré, riche en protéines, pauvre en glucides, cétogène,
   endurance) positionnent les curseurs ; les bouger repasse en « personnalisé ».
   Trois cartes et un anneau donnent le résultat en direct.
+- **Calendrier** — vue mensuelle avec une barre par repas renseigné ; un jour
+  cliqué ouvre le journal correspondant. L'onglet et le jour consultés sont
+  conservés au rechargement.
 - **Poids** — pesée quotidienne, courbe d'évolution, variations totale et sur
   7 jours, IMC.
 - **Multilingue** — français, portugais, espagnol, anglais, italien ; la langue de

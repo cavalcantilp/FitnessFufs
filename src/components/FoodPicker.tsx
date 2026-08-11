@@ -21,6 +21,7 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
   const [filter, setFilter] = useState<Filter>('all')
   const [remote, setRemote] = useState<Food[] | null>(null)
   const [loading, setLoading] = useState(false)
+  const [remoteError, setRemoteError] = useState(false)
 
   const filters: { id: Filter; label: string }[] = [
     { id: 'all', label: t('cat.all') },
@@ -45,13 +46,17 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
   // Les résultats distants ne valent que pour la recherche qui les a produits.
   useEffect(() => {
     setRemote(null)
+    setRemoteError(false)
   }, [query])
 
   const searchRemote = async () => {
     setLoading(true)
+    setRemoteError(false)
     try {
       setRemote(await searchOpenFoodFacts(query, lang))
     } catch {
+      // Une panne de service ne doit pas se lire comme « ce produit n'existe pas ».
+      setRemoteError(true)
       setRemote([])
     } finally {
       setLoading(false)
@@ -165,7 +170,9 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
               <span>{t('off.results', { n: newRemote.length })}</span>
             </div>
             {newRemote.length === 0 ? (
-              <p className="hint">{t('off.none')}</p>
+              <p className={remoteError ? 'notice' : 'hint'}>
+                {remoteError ? t('off.error') : t('off.none')}
+              </p>
             ) : (
               <div className="food-list">{newRemote.map(row)}</div>
             )}

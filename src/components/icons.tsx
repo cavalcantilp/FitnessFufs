@@ -127,6 +127,22 @@ export function IconCopy({ size = 16 }: IconProps) {
   )
 }
 
+export function IconFlame({ size = 16 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M12 22c4.4 0 7-2.7 7-6.5 0-3-2-5-3.3-7C15 10 14 11.3 14 11.3 14.4 8 13 4 9.8 2c.6 3 -.3 5-2 7-1.6 2-2.8 3.7-2.8 6.5C5 19.3 7.6 22 12 22Z" />
+    </svg>
+  )
+}
+
+export function IconComment({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)} fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4.4 3.3A1 1 0 0 1 3 19.5V5a1 1 0 0 1 1-1Z" />
+    </svg>
+  )
+}
+
 export function Logo({ size = 84 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 96 96" aria-hidden="true">

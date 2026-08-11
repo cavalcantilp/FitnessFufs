@@ -68,12 +68,21 @@ aucun serveur, aucun envoi de données.
   à l'avance : les journées non personnalisées suivent le profil, donc un
   réglage modifié après coup s'y propage. Une case du profil garde le panneau
   déplié sur toutes les journées.
-- **Calendrier** — vue mensuelle plein écran avec une barre par repas renseigné ;
-  un jour cliqué ouvre le journal correspondant. On change de mois par les
-  flèches ou, au doigt, par un balayage horizontal — retenu seulement s'il est
-  franchement horizontal, pour ne pas confisquer le défilement de la page. La
-  grille compte cinq ou six semaines selon le mois. L'onglet et le jour
-  consultés sont conservés au rechargement.
+- **Calendrier** — vue mensuelle plein écran, doublée d'un suivi d'habitude.
+  Chaque jour renseigné affiche quatre barres (calories, protéines, glucides,
+  lipides) remplies selon la part de l'objectif atteinte. Le contour d'un jour
+  verdit quand les calories sont respectées à 10 % près ; la case entière
+  verdit quand calories et les trois macros le sont toutes. Deux séries en
+  bas d'écran comptent les jours consécutifs dans chaque cas, en s'arrêtant
+  net au premier jour sans aucune saisie. Une pression brève ouvre une note
+  libre pour le jour ; il faut rester appuyé trois secondes — un anneau de
+  progression comble l'attente — pour ouvrir son journal, geste devenu moins
+  fréquent que la simple consultation ou l'annotation. Un jour noté porte une
+  petite icône. On change de mois par les flèches ou, au doigt, par un
+  balayage horizontal — retenu seulement s'il est franchement horizontal,
+  pour ne pas confisquer le défilement de la page. La grille compte cinq ou
+  six semaines selon le mois. L'onglet et le jour consultés sont conservés au
+  rechargement.
 - **Poids** — pesée quotidienne, courbe d'évolution, variations totale et sur
   7 jours, IMC.
 - **Multilingue** — français, portugais, espagnol, anglais, italien ; la langue de

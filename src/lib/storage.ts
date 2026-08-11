@@ -47,6 +47,7 @@ export const STORAGE_KEYS = {
   customFoods: 'customFoods',
   favorites: 'favorites',
   dayMacros: 'dayMacros',
+  notes: 'notes',
   lang: 'lang',
   onboarded: 'onboarded',
   ui: 'ui',

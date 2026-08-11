@@ -285,6 +285,16 @@ export function round1(value: number): number {
   return Math.round(value * 10) / 10
 }
 
+/**
+ * Vrai si la valeur reste à 10 % près de l'objectif, au-dessus comme
+ * en dessous — le repère que le calendrier utilise pour juger une journée
+ * « respectée » plutôt que d'exiger une correspondance exacte, illusoire au
+ * gramme près.
+ */
+export function withinTolerance(value: number, goal: number, tolerance = 0.1): boolean {
+  return goal > 0 && Math.abs(value - goal) / goal <= tolerance
+}
+
 export function bmi(weight: number, height: number): number {
   if (height <= 0) return 0
   return round1(weight / (height / 100) ** 2)

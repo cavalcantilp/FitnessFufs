@@ -1,22 +1,16 @@
 import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { IconChevronLeft, IconChevronRight } from '../components/icons'
-import { fromKey, localeOf, toKey, todayKey } from '../lib/date'
-import { MEALS } from '../lib/meals'
-import type { MealId } from '../lib/types'
+import { CalendarDay, type CalendarDayBar } from '../components/CalendarDay'
+import { DayNoteSheet } from '../components/DayNoteSheet'
+import { IconChevronLeft, IconChevronRight, IconFlame } from '../components/icons'
+import { fromKey, localeOf, shiftDay, toKey, todayKey } from '../lib/date'
+import { sumNutrients, withinTolerance } from '../lib/nutrition'
+import type { DiaryEntry } from '../lib/types'
 
 interface CalendarScreenProps {
   /** Jour actuellement ouvert dans le journal. */
   date: string
   onPick: (date: string) => void
-}
-
-/** Une couleur par repas, distincte de celles des macros pour éviter la confusion. */
-const MEAL_COLORS: Record<MealId, string> = {
-  breakfast: 'var(--meal-breakfast)',
-  lunch: 'var(--meal-lunch)',
-  dinner: 'var(--meal-dinner)',
-  snack: 'var(--meal-snack)',
 }
 
 /** Lundi en tête : la semaine commence ainsi dans les cinq langues visées. */
@@ -28,26 +22,68 @@ function startOfGrid(year: number, month: number): Date {
 }
 
 export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
-  const { t, lang, entries } = useApp()
+  const { t, lang, entries, targetsFor, notes } = useApp()
   const today = todayKey()
   const [cursor, setCursor] = useState(() => {
     const current = fromKey(date)
     return { year: current.getFullYear(), month: current.getMonth() }
   })
+  const [noteDate, setNoteDate] = useState<string | null>(null)
 
-  /**
-   * Repas renseignés par jour. Une barre par repas plutôt qu'un simple point :
-   * on voit d'un coup d'œil les journées complètes et celles où un repas manque.
-   */
-  const mealsByDay = useMemo(() => {
-    const map = new Map<string, Set<MealId>>()
+  const entriesByDate = useMemo(() => {
+    const map = new Map<string, DiaryEntry[]>()
     entries.forEach((entry) => {
-      const set = map.get(entry.date) ?? new Set<MealId>()
-      set.add(entry.meal)
-      map.set(entry.date, set)
+      const list = map.get(entry.date)
+      if (list) list.push(entry)
+      else map.set(entry.date, [entry])
     })
     return map
   }, [entries])
+
+  /**
+   * Série en cours : nombre de jours consécutifs, en remontant depuis
+   * aujourd'hui, où l'objectif calorique est respecté à 10 % près, et série
+   * distincte où calories et les trois macros le sont toutes. Un jour sans
+   * aucune saisie arrête les deux séries — le silence n'est pas un résultat.
+   * Aujourd'hui n'est ignoré que s'il est encore entièrement vide : une
+   * journée en cours ne doit pas casser la série de la veille.
+   */
+  const { calorieStreak, macroStreak } = useMemo(() => {
+    let cursorDate = entriesByDate.get(today)?.length ? today : shiftDay(today, -1)
+    let calories = 0
+    let macros = 0
+    let calorieBroken = false
+    let macroBroken = false
+
+    // Borne large mais finie : au-delà d'un an, la série n'a plus grand sens
+    // à afficher, et cela évite toute boucle sans fin sur un historique ancien.
+    for (let i = 0; i < 366; i++) {
+      const dayEntries = entriesByDate.get(cursorDate)
+      if (!dayEntries || dayEntries.length === 0) break
+
+      const eaten = sumNutrients(dayEntries.map((entry) => entry.nutrients))
+      const goal = targetsFor(cursorDate)
+      const calOk = withinTolerance(eaten.kcal, goal.kcal)
+      const macroOk =
+        calOk &&
+        withinTolerance(eaten.protein, goal.protein) &&
+        withinTolerance(eaten.carbs, goal.carbs) &&
+        withinTolerance(eaten.fat, goal.fat)
+
+      if (!calorieBroken) {
+        if (calOk) calories += 1
+        else calorieBroken = true
+      }
+      if (!macroBroken) {
+        if (macroOk) macros += 1
+        else macroBroken = true
+      }
+      if (calorieBroken && macroBroken) break
+      cursorDate = shiftDay(cursorDate, -1)
+    }
+
+    return { calorieStreak: calories, macroStreak: macros }
+  }, [entriesByDate, targetsFor, today])
 
   /**
    * Cinq ou six semaines selon le mois : afficher une sixième ligne entièrement
@@ -135,48 +171,67 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
         <div className="calendar-grid" style={{ gridTemplateRows: `repeat(${weeks}, minmax(0, 1fr))` }}>
           {days.map((day) => {
             const key = toKey(day)
-            const meals = mealsByDay.get(key)
-            const classes = [
-              'calendar-day',
-              day.getMonth() !== cursor.month ? 'outside' : '',
-              key === date ? 'selected' : '',
-              key === today ? 'today' : '',
-            ]
-              .filter(Boolean)
-              .join(' ')
+            const dayEntries = entriesByDate.get(key)
+            const goal = dayEntries?.length ? targetsFor(key) : null
+            const eaten = dayEntries?.length ? sumNutrients(dayEntries.map((entry) => entry.nutrients)) : null
+
+            const bars: CalendarDayBar[] | null =
+              eaten && goal
+                ? [
+                    { key: 'kcal', pct: goal.kcal > 0 ? Math.min(100, (eaten.kcal / goal.kcal) * 100) : 0, color: 'var(--calendar-kcal)' },
+                    { key: 'protein', pct: goal.protein > 0 ? Math.min(100, (eaten.protein / goal.protein) * 100) : 0, color: 'var(--protein)' },
+                    { key: 'carbs', pct: goal.carbs > 0 ? Math.min(100, (eaten.carbs / goal.carbs) * 100) : 0, color: 'var(--carbs)' },
+                    { key: 'fat', pct: goal.fat > 0 ? Math.min(100, (eaten.fat / goal.fat) * 100) : 0, color: 'var(--fat)' },
+                  ]
+                : null
+
+            const calOk = eaten && goal ? withinTolerance(eaten.kcal, goal.kcal) : false
+            const macroOk =
+              calOk && eaten && goal
+                ? withinTolerance(eaten.protein, goal.protein) &&
+                  withinTolerance(eaten.carbs, goal.carbs) &&
+                  withinTolerance(eaten.fat, goal.fat)
+                : false
+
             return (
-              <button
-                type="button"
+              <CalendarDay
                 key={key}
-                className={classes}
-                onClick={() => onPick(key)}
-                aria-current={key === today ? 'date' : undefined}
-              >
-                <span className="num">{day.getDate()}</span>
-                <span className="bars">
-                  {MEALS.filter((meal) => meals?.has(meal)).map((meal) => (
-                    <span key={meal} className="bar" style={{ background: MEAL_COLORS[meal] }} />
-                  ))}
-                </span>
-              </button>
+                date={key}
+                dayNumber={day.getDate()}
+                outside={day.getMonth() !== cursor.month}
+                selected={key === date}
+                isToday={key === today}
+                bars={bars}
+                onTrack={calOk}
+                onTarget={macroOk}
+                hasNote={Boolean(notes[key])}
+                onOpen={onPick}
+                onNote={setNoteDate}
+              />
             )
           })}
         </div>
       </div>
 
       <div className="calendar-footer">
-        <div className="calendar-legend">
-          {MEALS.map((meal) => (
-            <span key={meal}>
-              <span className="bar" style={{ background: MEAL_COLORS[meal] }} />
-              {t(`meal.${meal}`)}
-            </span>
-          ))}
+        <div className="calendar-streaks">
+          <span className="streak" aria-label={`${calorieStreak} ${t('calendar.streakCalories')}`}>
+            <IconFlame size={14} />
+            <strong>{calorieStreak}</strong>
+            <span className="streak-label">{t('calendar.streakCalories')}</span>
+          </span>
+          <span className="streak" aria-label={`${macroStreak} ${t('calendar.streakMacros')}`}>
+            <IconFlame size={14} />
+            <strong>{macroStreak}</strong>
+            <span className="streak-label">{t('calendar.streakMacros')}</span>
+          </span>
         </div>
         <button type="button" className="today-btn" onClick={() => onPick(today)}>
           {t('diary.today')}
         </button>
       </div>
+
+      {noteDate ? <DayNoteSheet date={noteDate} onClose={() => setNoteDate(null)} /> : null}
     </div>
   )
 }

@@ -43,6 +43,7 @@ export interface ExportPayload {
   customFoods: Food[]
   favorites: string[]
   dayMacros?: Record<string, DayMacros>
+  notes?: Record<string, string>
 }
 
 interface AppState {
@@ -60,6 +61,11 @@ interface AppState {
   targetsFor: (date: string) => Targets
   setDayMacrosFor: (date: string, macros: DayMacros) => void
   clearDayMacros: (date: string) => void
+
+  /** Notes libres par jour, indexées par date. */
+  notes: Record<string, string>
+  /** Enregistre la note d'un jour ; un texte vide ou blanc la supprime. */
+  setNoteFor: (date: string, text: string) => void
 
   onboarded: boolean
   completeOnboarding: () => void
@@ -111,6 +117,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [dayMacros, setDayMacros] = useState<Record<string, DayMacros>>(() =>
     load(STORAGE_KEYS.dayMacros, {}),
   )
+  const [notes, setNotes] = useState<Record<string, string>>(() => load(STORAGE_KEYS.notes, {}))
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
@@ -120,6 +127,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.customFoods, customFoods), [customFoods])
   useEffect(() => save(STORAGE_KEYS.favorites, favorites), [favorites])
   useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
+  useEffect(() => save(STORAGE_KEYS.notes, notes), [notes])
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -160,6 +168,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const next = { ...current }
       delete next[date]
       return next
+    })
+  }, [])
+
+  const setNoteFor = useCallback((date: string, text: string) => {
+    setNotes((current) => {
+      const trimmed = text.trim()
+      if (!trimmed) {
+        if (!(date in current)) return current
+        const next = { ...current }
+        delete next[date]
+        return next
+      }
+      return { ...current, [date]: trimmed }
     })
   }, [])
 
@@ -262,8 +283,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       customFoods,
       favorites,
       dayMacros,
+      notes,
     }),
-    [profile, entries, weights, customFoods, favorites, dayMacros],
+    [profile, entries, weights, customFoods, favorites, dayMacros, notes],
   )
 
   const importData = useCallback((payload: unknown) => {
@@ -276,8 +298,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setWeights(Array.isArray(data.weights) ? data.weights : [])
     setCustomFoods(Array.isArray(data.customFoods) ? data.customFoods : [])
     setFavorites(Array.isArray(data.favorites) ? data.favorites : [])
-    // Sauvegardes d'avant la fonctionnalité : aucune journée personnalisée.
+    // Sauvegardes d'avant la fonctionnalité : aucune journée personnalisée, aucune note.
     setDayMacros(data.dayMacros ?? {})
+    setNotes(data.notes ?? {})
     setOnboarded(true)
     return true
   }, [])
@@ -290,6 +313,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCustomFoods([])
     setFavorites([])
     setDayMacros({})
+    setNotes({})
     setOnboarded(false)
   }, [])
 
@@ -305,6 +329,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       targetsFor,
       setDayMacrosFor,
       clearDayMacros,
+      notes,
+      setNoteFor,
       onboarded,
       completeOnboarding: () => setOnboarded(true),
       entries,
@@ -337,6 +363,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       targetsFor,
       setDayMacrosFor,
       clearDayMacros,
+      notes,
+      setNoteFor,
       onboarded,
       entries,
       entriesFor,

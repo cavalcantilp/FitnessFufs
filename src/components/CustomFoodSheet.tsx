@@ -66,9 +66,8 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
           <label htmlFor="cf-kcal">{t('macro.kcal')}</label>
           <input
             id="cf-kcal"
-            type="number"
+            type="text"
             inputMode="decimal"
-            min="0"
             value={kcal}
             onChange={(event) => setKcal(event.target.value)}
             placeholder={String(derivedKcal)}
@@ -78,9 +77,8 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
           <label htmlFor="cf-serving">{t('add.quantity')}</label>
           <input
             id="cf-serving"
-            type="number"
+            type="text"
             inputMode="numeric"
-            min="1"
             value={serving}
             onChange={(event) => setServing(event.target.value)}
           />
@@ -92,9 +90,8 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
           <label htmlFor="cf-p">{t('macro.protein')}</label>
           <input
             id="cf-p"
-            type="number"
+            type="text"
             inputMode="decimal"
-            min="0"
             value={protein}
             onChange={(event) => setProtein(event.target.value)}
           />
@@ -103,9 +100,8 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
           <label htmlFor="cf-c">{t('macro.carbs')}</label>
           <input
             id="cf-c"
-            type="number"
+            type="text"
             inputMode="decimal"
-            min="0"
             value={carbs}
             onChange={(event) => setCarbs(event.target.value)}
           />
@@ -114,9 +110,8 @@ export function CustomFoodSheet({ initialName = '', onCreated, onClose }: Custom
           <label htmlFor="cf-f">{t('macro.fat')}</label>
           <input
             id="cf-f"
-            type="number"
+            type="text"
             inputMode="decimal"
-            min="0"
             value={fat}
             onChange={(event) => setFat(event.target.value)}
           />

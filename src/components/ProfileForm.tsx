@@ -1,5 +1,6 @@
 import { useApp } from '../state/AppContext'
 import { MacroDonut } from './MacroDonut'
+import { NumberField } from './NumberField'
 import {
   ACTIVITY_FACTORS,
   MACRO_PRESETS,
@@ -34,11 +35,6 @@ export function ProfileForm() {
   const gPerKg = (value: number) =>
     value.toLocaleString(localeOf(lang), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
-  const numberField = (value: number, apply: (parsed: number) => void) => (raw: string) => {
-    const parsed = Number(raw.replace(',', '.'))
-    apply(Number.isFinite(parsed) ? parsed : value)
-  }
-
   const macros = [
     { key: 'protein', label: t('macro.protein'), grams: targets.protein, kcal: targets.proteinKcal, color: 'var(--protein)' },
     { key: 'fat', label: t('macro.fat'), grams: targets.fat, kcal: targets.fatKcal, color: 'var(--fat)' },
@@ -48,52 +44,34 @@ export function ProfileForm() {
   return (
     <div className="stack">
       <div className="grid-2">
-        <div className="field">
-          <label htmlFor="p-height">{t('profile.height')}</label>
-          <input
-            id="p-height"
-            type="number"
-            inputMode="numeric"
-            min="80"
-            max="250"
-            value={profile.height}
-            onChange={(event) =>
-              numberField(profile.height, (height) => updateProfile({ height }))(event.target.value)
-            }
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="p-weight">{t('profile.weight')}</label>
-          <input
-            id="p-weight"
-            type="number"
-            inputMode="decimal"
-            step="0.1"
-            min="25"
-            max="400"
-            value={profile.weight}
-            onChange={(event) =>
-              numberField(profile.weight, (weight) => updateProfile({ weight }))(event.target.value)
-            }
-          />
-        </div>
+        <NumberField
+          id="p-height"
+          label={t('profile.height')}
+          value={profile.height}
+          min={80}
+          max={250}
+          onCommit={(height) => updateProfile({ height })}
+        />
+        <NumberField
+          id="p-weight"
+          label={t('profile.weight')}
+          value={profile.weight}
+          min={25}
+          max={400}
+          inputMode="decimal"
+          onCommit={(weight) => updateProfile({ weight })}
+        />
       </div>
 
       <div className="grid-2">
-        <div className="field">
-          <label htmlFor="p-age">{t('profile.age')}</label>
-          <input
-            id="p-age"
-            type="number"
-            inputMode="numeric"
-            min="12"
-            max="110"
-            value={profile.age}
-            onChange={(event) =>
-              numberField(profile.age, (age) => updateProfile({ age }))(event.target.value)
-            }
-          />
-        </div>
+        <NumberField
+          id="p-age"
+          label={t('profile.age')}
+          value={profile.age}
+          min={12}
+          max={110}
+          onCommit={(age) => updateProfile({ age })}
+        />
         <div className="field">
           <label>{t('profile.sex')}</label>
           <div className="segmented">

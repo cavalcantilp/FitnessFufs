@@ -64,9 +64,8 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: Quan
         <label htmlFor="grams">{t('add.quantity')}</label>
         <input
           id="grams"
-          type="number"
+          type="text"
           inputMode="decimal"
-          min="1"
           value={grams}
           onChange={(event) => setGrams(event.target.value)}
           autoFocus

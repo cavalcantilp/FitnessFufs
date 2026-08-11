@@ -1,4 +1,4 @@
-# myFitnessFufs
+# FitnessFufs
 
 PWA de suivi nutritionnel : journal alimentaire, objectifs caloriques et macros
 calculés à partir du profil, et suivi du poids. Application React construite avec
@@ -108,6 +108,11 @@ deployment → Source : GitHub Actions**, puis relancer le workflow. Le
 que ce réglage n'est pas fait l'étape `configure-pages` échoue.
 
 ### Domaine personnalisé
+
+L'application s'appelle **FitnessFufs**, mais le dépôt et le sous-domaine
+gardent leur nom d'origine `myFitnessFufs` : les renommer casserait le site le
+temps que le DNS et le réglage Pages suivent. Les identifiants ci-dessous sont
+donc à lire tels quels.
 
 Le site est servi depuis **https://myfitnessfufs.cavalcantilp.com**, déclaré
 dans `public/CNAME` (le fichier est copié tel quel dans `dist/`). Deux réglages

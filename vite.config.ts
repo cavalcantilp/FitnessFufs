@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // Le site est servi à la racine du domaine personnalisé déclaré dans
 // public/CNAME. Sans domaine personnalisé, GitHub Pages sert depuis
-// /<nom-du-dépôt>/ : builder alors avec BASE_PATH=/myFitnessFufs/
+// /<nom-du-dépôt>/ : builder alors avec BASE_PATH=/FitnessFufs/
 const base = process.env.BASE_PATH ?? '/'
 
 export default defineConfig({
@@ -29,7 +29,7 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'myFitnessFufs',
+        name: 'FitnessFufs',
         short_name: 'FitnessFufs',
         description: 'Suivi des calories, des macros et du poids — 100 % hors ligne.',
         lang: 'fr',

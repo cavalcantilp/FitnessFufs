@@ -2,7 +2,7 @@ import type { Lang } from '../lib/types'
 
 /** Le français fait référence : les autres langues doivent en couvrir toutes les clés. */
 const fr = {
-  'app.name': 'myFitnessFufs',
+  'app.name': 'FitnessFufs',
   'app.tagline': 'Calories, macros et poids',
 
   'nav.diary': 'Journal',
@@ -192,7 +192,7 @@ const fr = {
   'goal.gain025': 'Prise : +0,25 kg / semaine',
   'goal.gain050': 'Prise : +0,50 kg / semaine',
 
-  'onboarding.welcome': 'Bienvenue sur myFitnessFufs',
+  'onboarding.welcome': 'Bienvenue sur FitnessFufs',
   'onboarding.intro':
     'Quelques informations suffisent pour calculer vos objectifs quotidiens. Tout reste stocké sur votre téléphone.',
   'onboarding.start': 'Commencer',
@@ -215,7 +215,7 @@ export type TranslationKey = keyof typeof fr
 type Dict = Record<TranslationKey, string>
 
 const pt: Dict = {
-  'app.name': 'myFitnessFufs',
+  'app.name': 'FitnessFufs',
   'app.tagline': 'Calorias, macros e peso',
 
   'nav.diary': 'Diário',
@@ -405,7 +405,7 @@ const pt: Dict = {
   'goal.gain025': 'Ganho: +0,25 kg / semana',
   'goal.gain050': 'Ganho: +0,50 kg / semana',
 
-  'onboarding.welcome': 'Bem-vindo ao myFitnessFufs',
+  'onboarding.welcome': 'Bem-vindo ao FitnessFufs',
   'onboarding.intro':
     'Bastam algumas informações para calcular as suas metas diárias. Tudo fica guardado no seu telemóvel.',
   'onboarding.start': 'Começar',
@@ -425,7 +425,7 @@ const pt: Dict = {
 }
 
 const es: Dict = {
-  'app.name': 'myFitnessFufs',
+  'app.name': 'FitnessFufs',
   'app.tagline': 'Calorías, macros y peso',
 
   'nav.diary': 'Diario',
@@ -615,7 +615,7 @@ const es: Dict = {
   'goal.gain025': 'Ganancia: +0,25 kg / semana',
   'goal.gain050': 'Ganancia: +0,50 kg / semana',
 
-  'onboarding.welcome': 'Bienvenido a myFitnessFufs',
+  'onboarding.welcome': 'Bienvenido a FitnessFufs',
   'onboarding.intro':
     'Con unos pocos datos calculamos tus objetivos diarios. Todo se guarda en tu móvil.',
   'onboarding.start': 'Empezar',
@@ -635,7 +635,7 @@ const es: Dict = {
 }
 
 const en: Dict = {
-  'app.name': 'myFitnessFufs',
+  'app.name': 'FitnessFufs',
   'app.tagline': 'Calories, macros and weight',
 
   'nav.diary': 'Diary',
@@ -825,7 +825,7 @@ const en: Dict = {
   'goal.gain025': 'Gain: +0.25 kg / week',
   'goal.gain050': 'Gain: +0.50 kg / week',
 
-  'onboarding.welcome': 'Welcome to myFitnessFufs',
+  'onboarding.welcome': 'Welcome to FitnessFufs',
   'onboarding.intro':
     'A few details are enough to compute your daily targets. Everything stays on your phone.',
   'onboarding.start': 'Get started',
@@ -845,7 +845,7 @@ const en: Dict = {
 }
 
 const it: Dict = {
-  'app.name': 'myFitnessFufs',
+  'app.name': 'FitnessFufs',
   'app.tagline': 'Calorie, macro e peso',
 
   'nav.diary': 'Diario',
@@ -1035,7 +1035,7 @@ const it: Dict = {
   'goal.gain025': 'Aumento: +0,25 kg / settimana',
   'goal.gain050': 'Aumento: +0,50 kg / settimana',
 
-  'onboarding.welcome': 'Benvenuto su myFitnessFufs',
+  'onboarding.welcome': 'Benvenuto su FitnessFufs',
   'onboarding.intro':
     'Bastano poche informazioni per calcolare i tuoi obiettivi giornalieri. Tutto resta sul tuo telefono.',
   'onboarding.start': 'Inizia',

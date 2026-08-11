@@ -1,9 +1,9 @@
 {
-  "name": "myfitnessfufs",
+  "name": "fitnessfufs",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "myFitnessFufs — PWA de suivi nutritionnel et de poids, en React",
+  "description": "FitnessFufs — PWA de suivi nutritionnel et de poids, en React",
   "scripts": {
     "predev": "node scripts/copy-wasm.mjs",
     "dev": "vite",

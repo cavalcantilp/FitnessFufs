@@ -1376,12 +1376,30 @@ input[type='range']::-moz-range-thumb {
   cursor: pointer;
 }
 
-.check-row input {
+/*
+ * Le reset global met `appearance: none` sur tous les champs, ce qui efface
+ * aussi le rendu natif de la case à cocher : elle restait vide une fois cochée.
+ * La coche est donc dessinée ici, en SVG incorporé.
+ */
+.check-row input[type='checkbox'] {
   flex: none;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
   margin-top: 1px;
-  accent-color: var(--accent);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.check-row input[type='checkbox']:checked {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  background-size: 15px 15px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .check-row .hint {

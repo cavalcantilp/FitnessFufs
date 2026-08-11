@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { FOOD_CATEGORIES, foodName, searchFoods } from '../lib/foods'
 import { searchOpenFoodFacts } from '../lib/openfoodfacts'
+import { canScanBarcodes } from '../lib/device'
 import { IconBarcode, IconStar } from './icons'
 import type { Food, FoodCategory } from '../lib/types'
 import type { TranslationKey } from '../i18n/translations'
@@ -22,6 +23,8 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
   const [remote, setRemote] = useState<Food[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [remoteError, setRemoteError] = useState(false)
+  // Évalué une fois : la nature de l'appareil ne change pas en cours de session.
+  const [scannable] = useState(canScanBarcodes)
 
   const filters: { id: Filter; label: string }[] = [
     { id: 'all', label: t('cat.all') },
@@ -115,9 +118,11 @@ export function FoodPicker({ onSelect, onCreate, onScan }: FoodPickerProps) {
           placeholder={t('add.search')}
           aria-label={t('add.search')}
         />
-        <button type="button" className="icon-btn scan" onClick={onScan} aria-label={t('scan.title')}>
-          <IconBarcode />
-        </button>
+        {scannable ? (
+          <button type="button" className="icon-btn scan" onClick={onScan} aria-label={t('scan.title')}>
+            <IconBarcode />
+          </button>
+        ) : null}
       </div>
 
       <div className="chips">

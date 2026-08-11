@@ -1224,3 +1224,79 @@ input[type='range']::-moz-range-thumb {
 .tabbar button {
   font-size: 0.62rem;
 }
+
+/* ---------- Lecteur de codes-barres, plein écran ---------- */
+
+.scanner-full {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #000;
+  animation: fade 0.15s ease;
+}
+
+.scanner-full video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanner-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px 20px;
+  background: linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0));
+  color: var(--text-main);
+}
+
+.scanner-bar h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.scanner-bar span {
+  font-size: 0.8rem;
+  color: var(--text-sub);
+}
+
+.scanner-bar .icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.7);
+  color: var(--text-main);
+  flex: none;
+}
+
+/* Le viseur est haut dans l'image : on cadre en tenant le téléphone devant soi. */
+.scanner-target {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 30%;
+  height: 26%;
+  border: 2px solid var(--accent);
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.5);
+}
+
+.scanner-error {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 40%;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: var(--warning);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  text-align: center;
+}

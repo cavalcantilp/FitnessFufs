@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Sheet } from './Sheet'
 import { useApp } from '../state/AppContext'
+import { IconClose } from './icons'
 
 /**
  * Le repli WebAssembly va chercher son binaire sur un CDN par défaut, ce qui
@@ -38,12 +38,24 @@ interface BarcodeScannerProps {
   onClose: () => void
 }
 
+/**
+ * Plein écran plutôt qu'une feuille en bas : on vise un emballage avec la
+ * caméra du haut de l'appareil, et une image reléguée sous l'écran oblige à
+ * incliner le téléphone à l'aveugle.
+ */
 export function BarcodeScanner({ onDetect, onClose }: BarcodeScannerProps) {
   const { t } = useApp()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
     let stream: MediaStream | null = null
     let timer: number | undefined
     let stopped = false
@@ -86,19 +98,30 @@ export function BarcodeScanner({ onDetect, onClose }: BarcodeScannerProps) {
       stopped = true
       if (timer) window.clearTimeout(timer)
       stream?.getTracks().forEach((track) => track.stop())
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = previous
     }
-  }, [onDetect, t])
+  }, [onDetect, onClose, t])
 
   return (
-    <Sheet title={t('scan.title')} subtitle={t('scan.hint')} onClose={onClose}>
-      {error ? (
-        <p className="notice">{error}</p>
-      ) : (
-        <div className="scanner">
-          <video ref={videoRef} playsInline muted />
-          <div className="scanner-frame" />
+    <div className="scanner-full" role="dialog" aria-modal="true" aria-label={t('scan.title')}>
+      <video ref={videoRef} playsInline muted />
+
+      <header className="scanner-bar">
+        <div>
+          <h2>{t('scan.title')}</h2>
+          <span>{t('scan.hint')}</span>
         </div>
+        <button type="button" className="icon-btn" onClick={onClose} aria-label={t('common.close')}>
+          <IconClose />
+        </button>
+      </header>
+
+      {error ? (
+        <p className="scanner-error">{error}</p>
+      ) : (
+        <div className="scanner-target" aria-hidden="true" />
       )}
-    </Sheet>
+    </div>
   )
 }

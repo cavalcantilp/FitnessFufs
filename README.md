@@ -36,10 +36,11 @@ aucun serveur, aucun envoi de données.
   complémentaire interroge la base ouverte (licence ODbL, sans clé d'API), à la
   demande seulement. Tout produit retenu est recopié dans les aliments
   personnels et reste donc disponible hors ligne.
-- **Code-barres** — lecture par la caméra, native sur Chrome et Android, avec
-  un décodeur WebAssembly en repli ailleurs. Le binaire est servi depuis le
-  domaine de l'application, jamais depuis un CDN, et mis en cache au premier
-  usage.
+- **Code-barres** — lecture plein écran par la caméra, native sur Chrome et
+  Android, avec un décodeur WebAssembly en repli ailleurs. Le binaire est servi
+  depuis le domaine de l'application, jamais depuis un CDN, et mis en cache au
+  premier usage. Le bouton n'apparaît que sur les appareils à pointeur grossier
+  — téléphones et tablettes — un ordinateur de bureau ne s'y prêtant pas.
 - **Objectifs** — métabolisme de base (Mifflin-St Jeor), dépense estimée selon le
   niveau d'activité, ajustement selon l'objectif de poids. L'apport ne descend
   jamais sous le métabolisme de base.

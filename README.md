@@ -22,9 +22,12 @@ aucun serveur, aucun envoi de données.
 - **Aliments personnalisés** — création à la volée, calories déduites des macros
   si elles ne sont pas saisies, mise en favori.
 - **Objectifs** — métabolisme de base (Mifflin-St Jeor), dépense estimée selon le
-  niveau d'activité, ajustement selon l'objectif de poids, répartition des macros
-  parmi quatre préréglages ou une répartition personnalisée. L'apport ne descend
+  niveau d'activité, ajustement selon l'objectif de poids. L'apport ne descend
   jamais sous le métabolisme de base.
+- **Répartition des macros** — même modèle que le calculateur dédié du
+  portefeuille : deux curseurs en grammes par kilo de poids de corps, protéines
+  (0,8 à 2,2) et lipides (0,8 à 1,0), les glucides absorbant le solde calorique.
+  Trois cartes et un anneau donnent le résultat en direct.
 - **Poids** — pesée quotidienne, courbe d'évolution, variations totale et sur
   7 jours, IMC.
 - **Multilingue** — français, portugais, espagnol, anglais, italien ; la langue de

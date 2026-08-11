@@ -13,9 +13,10 @@
   --positive: #34d399;
   --negative: #f87171;
 
+  /* Mêmes couleurs de macros que le calculateur dédié : bleu, ambre, vert. */
   --protein: #38bdf8;
-  --carbs: #fbbf24;
-  --fat: #f472b6;
+  --fat: #f59e0b;
+  --carbs: #34d399;
 
   --radius: 16px;
   --radius-lg: 24px;
@@ -218,6 +219,156 @@ select {
   color: var(--text-sub);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.val-tag {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+input[type='range'] {
+  padding: 0;
+  height: 6px;
+  background: var(--input-bg);
+  border: none;
+  border-radius: 3px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+input[type='range']:focus {
+  box-shadow: none;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--card-bg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--card-bg);
+}
+
+/* ---------- Répartition des macros ---------- */
+
+.macro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.macro-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 12px 6px;
+  text-align: center;
+}
+
+.macro-card .macro-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.macro-card .macro-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  margin: 3px 0;
+}
+
+.macro-card .macro-sub {
+  font-size: 0.72rem;
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+.donut {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.donut-chart {
+  position: relative;
+  flex: none;
+}
+
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center strong {
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.donut-center span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.donut-legend {
+  flex: 1;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-sub);
+}
+
+.donut-legend .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.donut-legend em {
+  margin-left: auto;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
 }
 
 .grid-2 {

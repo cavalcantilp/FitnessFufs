@@ -94,8 +94,10 @@ const fr = {
   'profile.female': 'Femme',
   'profile.activity': "Niveau d'activité",
   'profile.goal': 'Objectif',
-  'profile.split': 'Répartition des macros',
   'profile.targets': 'Objectifs quotidiens',
+  'profile.carbsAuto': "Les glucides complètent automatiquement l'objectif calorique.",
+  'profile.warnMacros':
+    "Protéines et lipides dépassent déjà l'objectif calorique : il ne reste rien pour les glucides.",
   'profile.bmr': 'Métabolisme de base',
   'profile.tdee': 'Dépense estimée',
   'profile.adjustment': 'Ajustement',
@@ -109,7 +111,6 @@ const fr = {
   'profile.resetConfirm': 'Effacer définitivement toutes vos données ?',
   'profile.importError': 'Fichier invalide',
   'profile.imported': 'Données importées',
-  'profile.splitTotal': 'Le total doit faire 100 % (actuellement {n} %).',
   'profile.offline': 'Toutes vos données restent sur cet appareil.',
 
   'act.sedentary': 'Sédentaire (bureau)',
@@ -126,12 +127,6 @@ const fr = {
   'goal.maintain': 'Maintien du poids',
   'goal.gain025': 'Prise : +0,25 kg / semaine',
   'goal.gain050': 'Prise : +0,50 kg / semaine',
-
-  'split.balanced': 'Équilibrée (30/40/30)',
-  'split.lowcarb': 'Pauvre en glucides (35/25/40)',
-  'split.highprotein': 'Riche en protéines (40/35/25)',
-  'split.keto': 'Cétogène (25/10/65)',
-  'split.custom': 'Personnalisée',
 
   'onboarding.welcome': 'Bienvenue sur myFitnessFufs',
   'onboarding.intro':
@@ -248,8 +243,10 @@ const pt: Dict = {
   'profile.female': 'Mulher',
   'profile.activity': 'Nível de atividade',
   'profile.goal': 'Objetivo',
-  'profile.split': 'Distribuição dos macros',
   'profile.targets': 'Metas diárias',
+  'profile.carbsAuto': 'Os hidratos completam automaticamente a meta calórica.',
+  'profile.warnMacros':
+    'As proteínas e as gorduras já ultrapassam a meta calórica: não sobra nada para os hidratos.',
   'profile.bmr': 'Metabolismo basal',
   'profile.tdee': 'Gasto estimado',
   'profile.adjustment': 'Ajuste',
@@ -262,7 +259,6 @@ const pt: Dict = {
   'profile.resetConfirm': 'Apagar definitivamente todos os seus dados?',
   'profile.importError': 'Ficheiro inválido',
   'profile.imported': 'Dados importados',
-  'profile.splitTotal': 'O total tem de dar 100 % (atualmente {n} %).',
   'profile.offline': 'Todos os dados ficam neste dispositivo.',
 
   'act.sedentary': 'Sedentário (escritório)',
@@ -279,12 +275,6 @@ const pt: Dict = {
   'goal.maintain': 'Manutenção do peso',
   'goal.gain025': 'Ganho: +0,25 kg / semana',
   'goal.gain050': 'Ganho: +0,50 kg / semana',
-
-  'split.balanced': 'Equilibrada (30/40/30)',
-  'split.lowcarb': 'Baixa em hidratos (35/25/40)',
-  'split.highprotein': 'Rica em proteína (40/35/25)',
-  'split.keto': 'Cetogénica (25/10/65)',
-  'split.custom': 'Personalizada',
 
   'onboarding.welcome': 'Bem-vindo ao myFitnessFufs',
   'onboarding.intro':
@@ -398,8 +388,10 @@ const es: Dict = {
   'profile.female': 'Mujer',
   'profile.activity': 'Nivel de actividad',
   'profile.goal': 'Objetivo',
-  'profile.split': 'Distribución de macros',
   'profile.targets': 'Objetivos diarios',
+  'profile.carbsAuto': 'Los carbohidratos completan automáticamente el objetivo calórico.',
+  'profile.warnMacros':
+    'Las proteínas y las grasas ya superan el objetivo calórico: no queda nada para los carbohidratos.',
   'profile.bmr': 'Metabolismo basal',
   'profile.tdee': 'Gasto estimado',
   'profile.adjustment': 'Ajuste',
@@ -412,7 +404,6 @@ const es: Dict = {
   'profile.resetConfirm': '¿Borrar definitivamente todos tus datos?',
   'profile.importError': 'Archivo no válido',
   'profile.imported': 'Datos importados',
-  'profile.splitTotal': 'El total debe sumar 100 % (actualmente {n} %).',
   'profile.offline': 'Todos tus datos se quedan en este dispositivo.',
 
   'act.sedentary': 'Sedentario (oficina)',
@@ -429,12 +420,6 @@ const es: Dict = {
   'goal.maintain': 'Mantenimiento del peso',
   'goal.gain025': 'Ganancia: +0,25 kg / semana',
   'goal.gain050': 'Ganancia: +0,50 kg / semana',
-
-  'split.balanced': 'Equilibrada (30/40/30)',
-  'split.lowcarb': 'Baja en carbohidratos (35/25/40)',
-  'split.highprotein': 'Alta en proteína (40/35/25)',
-  'split.keto': 'Cetogénica (25/10/65)',
-  'split.custom': 'Personalizada',
 
   'onboarding.welcome': 'Bienvenido a myFitnessFufs',
   'onboarding.intro':
@@ -548,8 +533,10 @@ const en: Dict = {
   'profile.female': 'Female',
   'profile.activity': 'Activity level',
   'profile.goal': 'Goal',
-  'profile.split': 'Macro split',
   'profile.targets': 'Daily targets',
+  'profile.carbsAuto': 'Carbs automatically fill the rest of the calorie target.',
+  'profile.warnMacros':
+    'Protein and fat already exceed the calorie target: nothing left for carbs.',
   'profile.bmr': 'Basal metabolic rate',
   'profile.tdee': 'Estimated expenditure',
   'profile.adjustment': 'Adjustment',
@@ -562,7 +549,6 @@ const en: Dict = {
   'profile.resetConfirm': 'Permanently erase all your data?',
   'profile.importError': 'Invalid file',
   'profile.imported': 'Data imported',
-  'profile.splitTotal': 'The total must be 100% (currently {n}%).',
   'profile.offline': 'All your data stays on this device.',
 
   'act.sedentary': 'Sedentary (desk job)',
@@ -579,12 +565,6 @@ const en: Dict = {
   'goal.maintain': 'Maintain weight',
   'goal.gain025': 'Gain: +0.25 kg / week',
   'goal.gain050': 'Gain: +0.50 kg / week',
-
-  'split.balanced': 'Balanced (30/40/30)',
-  'split.lowcarb': 'Low carb (35/25/40)',
-  'split.highprotein': 'High protein (40/35/25)',
-  'split.keto': 'Keto (25/10/65)',
-  'split.custom': 'Custom',
 
   'onboarding.welcome': 'Welcome to myFitnessFufs',
   'onboarding.intro':
@@ -698,8 +678,10 @@ const it: Dict = {
   'profile.female': 'Donna',
   'profile.activity': 'Livello di attività',
   'profile.goal': 'Obiettivo',
-  'profile.split': 'Ripartizione dei macro',
   'profile.targets': 'Obiettivi giornalieri',
+  'profile.carbsAuto': "I carboidrati completano automaticamente l'obiettivo calorico.",
+  'profile.warnMacros':
+    "Proteine e grassi superano già l'obiettivo calorico: non resta nulla per i carboidrati.",
   'profile.bmr': 'Metabolismo basale',
   'profile.tdee': 'Dispendio stimato',
   'profile.adjustment': 'Aggiustamento',
@@ -712,7 +694,6 @@ const it: Dict = {
   'profile.resetConfirm': 'Cancellare definitivamente tutti i tuoi dati?',
   'profile.importError': 'File non valido',
   'profile.imported': 'Dati importati',
-  'profile.splitTotal': 'Il totale deve fare 100 % (attualmente {n} %).',
   'profile.offline': 'Tutti i dati restano su questo dispositivo.',
 
   'act.sedentary': 'Sedentario (ufficio)',
@@ -729,12 +710,6 @@ const it: Dict = {
   'goal.maintain': 'Mantenimento del peso',
   'goal.gain025': 'Aumento: +0,25 kg / settimana',
   'goal.gain050': 'Aumento: +0,50 kg / settimana',
-
-  'split.balanced': 'Equilibrata (30/40/30)',
-  'split.lowcarb': 'Pochi carboidrati (35/25/40)',
-  'split.highprotein': 'Ricca di proteine (40/35/25)',
-  'split.keto': 'Chetogenica (25/10/65)',
-  'split.custom': 'Personalizzata',
 
   'onboarding.welcome': 'Benvenuto su myFitnessFufs',
   'onboarding.intro':

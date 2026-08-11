@@ -6,15 +6,6 @@ export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'ath
 /** Variation de poids visée, en kg par semaine (négatif = prise de masse). */
 export type GoalRate = 1.5 | 1 | 0.75 | 0.5 | 0.25 | 0 | -0.25 | -0.5
 
-export type MacroSplitId = 'balanced' | 'lowcarb' | 'highprotein' | 'keto' | 'custom'
-
-export interface MacroSplit {
-  /** Part des calories totales, en pourcentage. Le total doit faire 100. */
-  protein: number
-  carbs: number
-  fat: number
-}
-
 export interface Profile {
   height: number
   weight: number
@@ -22,8 +13,13 @@ export interface Profile {
   sex: Sex
   activity: ActivityLevel
   goalRate: GoalRate
-  splitId: MacroSplitId
-  customSplit: MacroSplit
+  /**
+   * Protéines et lipides se fixent au poids de corps, pas en pourcentage des
+   * calories : ce sont des besoins physiologiques qui ne bougent pas quand
+   * l'objectif calorique change. Les glucides prennent ce qui reste.
+   */
+  proteinPerKg: number
+  fatPerKg: number
 }
 
 export interface Nutrients {

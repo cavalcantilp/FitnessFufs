@@ -1,6 +1,7 @@
 import { useApp } from '../state/AppContext'
-import { ACTIVITY_FACTORS, MACRO_SPLITS } from '../lib/nutrition'
-import type { ActivityLevel, GoalRate, MacroSplitId, Sex } from '../lib/types'
+import { MacroDonut } from './MacroDonut'
+import { ACTIVITY_FACTORS, MACRO_RANGES } from '../lib/nutrition'
+import type { ActivityLevel, GoalRate, Sex } from '../lib/types'
 import type { TranslationKey } from '../i18n/translations'
 
 const GOALS: { rate: GoalRate; key: TranslationKey }[] = [
@@ -15,19 +16,21 @@ const GOALS: { rate: GoalRate; key: TranslationKey }[] = [
 ]
 
 const ACTIVITIES = Object.keys(ACTIVITY_FACTORS) as ActivityLevel[]
-const SPLITS: MacroSplitId[] = [...(Object.keys(MACRO_SPLITS) as MacroSplitId[]), 'custom']
 
 /** Champs de profil, partagés entre l'accueil de première utilisation et l'onglet Profil. */
 export function ProfileForm() {
-  const { t, profile, updateProfile } = useApp()
+  const { t, profile, updateProfile, targets } = useApp()
 
   const numberField = (value: number, apply: (parsed: number) => void) => (raw: string) => {
     const parsed = Number(raw.replace(',', '.'))
     apply(Number.isFinite(parsed) ? parsed : value)
   }
 
-  const split = profile.customSplit
-  const splitTotal = split.protein + split.carbs + split.fat
+  const macros = [
+    { key: 'protein', label: t('macro.protein'), grams: targets.protein, kcal: targets.proteinKcal, color: 'var(--protein)' },
+    { key: 'fat', label: t('macro.fat'), grams: targets.fat, kcal: targets.fatKcal, color: 'var(--fat)' },
+    { key: 'carbs', label: t('macro.carbs'), grams: targets.carbs, kcal: targets.carbsKcal, color: 'var(--carbs)' },
+  ]
 
   return (
     <div className="stack">
@@ -125,52 +128,56 @@ export function ProfileForm() {
         </select>
       </div>
 
+      {/* Protéines et lipides au curseur, en g/kg ; les glucides suivent. */}
       <div className="field">
-        <label htmlFor="p-split">{t('profile.split')}</label>
-        <select
-          id="p-split"
-          value={profile.splitId}
-          onChange={(event) => updateProfile({ splitId: event.target.value as MacroSplitId })}
-        >
-          {SPLITS.map((id) => (
-            <option key={id} value={id}>
-              {t(`split.${id}` as TranslationKey)}
-            </option>
-          ))}
-        </select>
+        <div className="label-row">
+          <label htmlFor="p-protein">{t('macro.protein')}</label>
+          <span className="val-tag">{profile.proteinPerKg.toFixed(1)} g/kg</span>
+        </div>
+        <input
+          id="p-protein"
+          type="range"
+          min={MACRO_RANGES.protein.min}
+          max={MACRO_RANGES.protein.max}
+          step={MACRO_RANGES.protein.step}
+          value={profile.proteinPerKg}
+          onChange={(event) => updateProfile({ proteinPerKg: Number(event.target.value) })}
+        />
       </div>
 
-      {profile.splitId === 'custom' ? (
-        <>
-          <div className="grid-3">
-            {(['protein', 'carbs', 'fat'] as const).map((macro) => (
-              <div className="field" key={macro}>
-                <label htmlFor={`p-${macro}`}>{t(`macro.${macro}` as TranslationKey)}</label>
-                <input
-                  id={`p-${macro}`}
-                  type="number"
-                  inputMode="numeric"
-                  min="0"
-                  max="100"
-                  value={split[macro]}
-                  onChange={(event) => {
-                    const parsed = Number(event.target.value)
-                    updateProfile({
-                      customSplit: {
-                        ...split,
-                        [macro]: Number.isFinite(parsed) ? parsed : split[macro],
-                      },
-                    })
-                  }}
-                />
-              </div>
-            ))}
+      <div className="field">
+        <div className="label-row">
+          <label htmlFor="p-fat">{t('macro.fat')}</label>
+          <span className="val-tag">{profile.fatPerKg.toFixed(1)} g/kg</span>
+        </div>
+        <input
+          id="p-fat"
+          type="range"
+          min={MACRO_RANGES.fat.min}
+          max={MACRO_RANGES.fat.max}
+          step={MACRO_RANGES.fat.step}
+          value={profile.fatPerKg}
+          onChange={(event) => updateProfile({ fatPerKg: Number(event.target.value) })}
+        />
+      </div>
+
+      <div className="macro-grid">
+        {macros.map((macro) => (
+          <div className="macro-card" key={macro.key}>
+            <div className="macro-title">{macro.label}</div>
+            <div className="macro-value" style={{ color: macro.color }}>
+              {macro.grams} g
+            </div>
+            <div className="macro-sub">{macro.kcal} kcal</div>
           </div>
-          {splitTotal !== 100 ? (
-            <p className="notice">{t('profile.splitTotal', { n: splitTotal })}</p>
-          ) : null}
-        </>
-      ) : null}
+        ))}
+      </div>
+
+      {targets.macrosOverflow ? <p className="notice">{t('profile.warnMacros')}</p> : null}
+
+      <MacroDonut targets={targets} />
+
+      <p className="hint">{t('profile.carbsAuto')}</p>
     </div>
   )
 }

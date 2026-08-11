@@ -3,8 +3,6 @@ import type {
   Food,
   FoodPortion,
   FoodState,
-  MacroSplit,
-  MacroSplitId,
   Nutrients,
   Profile,
   Sex,
@@ -18,12 +16,11 @@ export const ACTIVITY_FACTORS: Record<ActivityLevel, number> = {
   athlete: 1.9,
 }
 
-export const MACRO_SPLITS: Record<Exclude<MacroSplitId, 'custom'>, MacroSplit> = {
-  balanced: { protein: 30, carbs: 40, fat: 30 },
-  lowcarb: { protein: 35, carbs: 25, fat: 40 },
-  highprotein: { protein: 40, carbs: 35, fat: 25 },
-  keto: { protein: 25, carbs: 10, fat: 65 },
-}
+/** Bornes des curseurs, en grammes par kilo de poids de corps. */
+export const MACRO_RANGES = {
+  protein: { min: 0.8, max: 2.2, step: 0.1 },
+  fat: { min: 0.8, max: 1, step: 0.1 },
+} as const
 
 /** Calories par gramme de chaque macronutriment. */
 export const KCAL_PER_GRAM = { protein: 4, carbs: 4, fat: 9 } as const
@@ -42,10 +39,6 @@ export function tdee(profile: Profile): number {
   return bmr(profile.weight, profile.height, profile.age, profile.sex) * ACTIVITY_FACTORS[profile.activity]
 }
 
-export function splitOf(profile: Profile): MacroSplit {
-  return profile.splitId === 'custom' ? profile.customSplit : MACRO_SPLITS[profile.splitId]
-}
-
 export interface Targets extends Nutrients {
   bmr: number
   tdee: number
@@ -53,29 +46,48 @@ export interface Targets extends Nutrients {
   adjustment: number
   /** Vrai si l'objectif descend sous le métabolisme de base. */
   belowBmr: boolean
+  /** Calories apportées par chaque macronutriment, pour la répartition visuelle. */
+  proteinKcal: number
+  carbsKcal: number
+  fatKcal: number
+  /** Vrai si protéines et lipides dépassent déjà l'objectif : plus de place pour les glucides. */
+  macrosOverflow: boolean
 }
 
 /**
  * Objectifs quotidiens déduits du profil. L'apport est plafonné au métabolisme
  * de base afin de ne jamais proposer un objectif dangereusement bas.
+ *
+ * Protéines et lipides viennent du poids de corps ; les glucides absorbent le
+ * solde calorique, quitte à tomber à zéro si l'objectif est trop serré.
  */
 export function computeTargets(profile: Profile): Targets {
   const base = bmr(profile.weight, profile.height, profile.age, profile.sex)
   const maintenance = base * ACTIVITY_FACTORS[profile.activity]
   const adjustment = (-profile.goalRate * KCAL_PER_KG) / 7
-  const raw = maintenance + adjustment
-  const kcal = Math.max(raw, base)
-  const split = splitOf(profile)
+  const rawTarget = maintenance + adjustment
+  const kcal = Math.max(rawTarget, base)
+
+  const protein = profile.weight * profile.proteinPerKg
+  const fat = profile.weight * profile.fatPerKg
+  const proteinKcal = protein * KCAL_PER_GRAM.protein
+  const fatKcal = fat * KCAL_PER_GRAM.fat
+  const remaining = kcal - proteinKcal - fatKcal
+  const carbsKcal = Math.max(0, remaining)
 
   return {
     bmr: Math.round(base),
     tdee: Math.round(maintenance),
     adjustment: Math.round(adjustment),
-    belowBmr: raw < base,
+    belowBmr: rawTarget < base,
     kcal: Math.round(kcal),
-    protein: Math.round((kcal * split.protein) / 100 / KCAL_PER_GRAM.protein),
-    carbs: Math.round((kcal * split.carbs) / 100 / KCAL_PER_GRAM.carbs),
-    fat: Math.round((kcal * split.fat) / 100 / KCAL_PER_GRAM.fat),
+    protein: Math.round(protein),
+    fat: Math.round(fat),
+    carbs: Math.round(carbsKcal / KCAL_PER_GRAM.carbs),
+    proteinKcal: Math.round(proteinKcal),
+    fatKcal: Math.round(fatKcal),
+    carbsKcal: Math.round(carbsKcal),
+    macrosOverflow: remaining < 0,
   }
 }
 

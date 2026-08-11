@@ -28,8 +28,8 @@ export const DEFAULT_PROFILE: Profile = {
   sex: 'male',
   activity: 'light',
   goalRate: 0.5,
-  splitId: 'balanced',
-  customSplit: { protein: 30, carbs: 40, fat: 30 },
+  proteinPerKg: 2,
+  fatPerKg: 0.9,
 }
 
 export interface ExportPayload {

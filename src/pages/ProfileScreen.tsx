@@ -38,22 +38,11 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
 
       <div className="card">
         <div className="card-title">{t('profile.targets')}</div>
+        {/* Les macros sont détaillées au-dessus, sous les curseurs : ici, l'énergétique. */}
         <div className="stack" style={{ gap: 10 }}>
           <div className="figure-row">
             <span className="name">{t('macro.kcal')}</span>
             <span className="value">{targets.kcal} kcal</span>
-          </div>
-          <div className="figure-row">
-            <span className="name">{t('macro.protein')}</span>
-            <span className="value">{targets.protein} g</span>
-          </div>
-          <div className="figure-row">
-            <span className="name">{t('macro.carbs')}</span>
-            <span className="value">{targets.carbs} g</span>
-          </div>
-          <div className="figure-row">
-            <span className="name">{t('macro.fat')}</span>
-            <span className="value">{targets.fat} g</span>
           </div>
           <div className="figure-row">
             <span className="name">{t('profile.bmr')}</span>

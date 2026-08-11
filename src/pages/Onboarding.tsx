@@ -6,7 +6,7 @@ import type { Lang } from '../lib/types'
 
 /** Première ouverture : langue, profil, puis calcul immédiat des objectifs. */
 export function Onboarding() {
-  const { t, lang, setLang, targets, completeOnboarding } = useApp()
+  const { t, lang, setLang, completeOnboarding } = useApp()
 
   return (
     <div className="onboarding">
@@ -31,25 +31,8 @@ export function Onboarding() {
         </select>
       </div>
 
+      {/* ProfileForm affiche déjà les objectifs en direct sous les curseurs. */}
       <ProfileForm />
-
-      <div className="card">
-        <div className="card-title">{t('profile.targets')}</div>
-        <div className="stat-row">
-          <div className="stat">
-            <div className="label">{t('macro.kcal')}</div>
-            <div className="value">{targets.kcal}</div>
-          </div>
-          <div className="stat">
-            <div className="label">{t('macro.protein')}</div>
-            <div className="value">{targets.protein} g</div>
-          </div>
-          <div className="stat">
-            <div className="label">{t('macro.carbs')}</div>
-            <div className="value">{targets.carbs} g</div>
-          </div>
-        </div>
-      </div>
 
       <button type="button" className="btn" onClick={completeOnboarding}>
         {t('onboarding.start')}

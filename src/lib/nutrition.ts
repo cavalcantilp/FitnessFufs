@@ -16,11 +16,58 @@ export const ACTIVITY_FACTORS: Record<ActivityLevel, number> = {
   athlete: 1.9,
 }
 
-/** Bornes des curseurs, en grammes par kilo de poids de corps. */
+/**
+ * Bornes des curseurs, en grammes par kilo de poids de corps. Assez larges pour
+ * qu'aucun préréglage ne bute contre une extrémité : le plancher des lipides
+ * (0,5) correspond au minimum couramment retenu pour la fonction hormonale, le
+ * plafond (2,5) couvre le cétogène, et les protéines montent jusqu'à 3,0 pour
+ * les approches très riches en protéines.
+ */
 export const MACRO_RANGES = {
-  protein: { min: 0.8, max: 2.2, step: 0.1 },
-  fat: { min: 0.8, max: 1, step: 0.1 },
+  protein: { min: 0.8, max: 3, step: 0.1 },
+  fat: { min: 0.5, max: 2.5, step: 0.1 },
 } as const
+
+export type MacroPresetId = 'balanced' | 'highprotein' | 'lowcarb' | 'keto' | 'endurance'
+
+/** Un préréglage ne fixe que protéines et lipides : les glucides suivent. */
+export interface MacroPreset {
+  proteinPerKg: number
+  fatPerKg: number
+}
+
+export const MACRO_PRESETS: Record<MacroPresetId, MacroPreset> = {
+  balanced: { proteinPerKg: 2, fatPerKg: 0.9 },
+  highprotein: { proteinPerKg: 2.5, fatPerKg: 0.8 },
+  lowcarb: { proteinPerKg: 2, fatPerKg: 1.5 },
+  // 1,9 g/kg laisse une trentaine de grammes de glucides sur un objectif en
+  // déficit, là où 2,2 saturait déjà l'apport et affichait l'alerte d'emblée.
+  keto: { proteinPerKg: 1.8, fatPerKg: 1.9 },
+  endurance: { proteinPerKg: 1.6, fatPerKg: 0.7 },
+}
+
+export const MACRO_PRESET_ORDER: MacroPresetId[] = [
+  'balanced',
+  'highprotein',
+  'lowcarb',
+  'keto',
+  'endurance',
+]
+
+/**
+ * Préréglage correspondant aux curseurs, déduit des valeurs plutôt que stocké :
+ * bouger une glissière bascule donc sur « personnalisé », et revenir pile sur
+ * les valeurs d'un programme le re-sélectionne.
+ */
+export function presetOf(profile: Profile): MacroPresetId | 'custom' {
+  const near = (a: number, b: number) => Math.abs(a - b) < 0.001
+  const match = MACRO_PRESET_ORDER.find(
+    (id) =>
+      near(MACRO_PRESETS[id].proteinPerKg, profile.proteinPerKg) &&
+      near(MACRO_PRESETS[id].fatPerKg, profile.fatPerKg),
+  )
+  return match ?? 'custom'
+}
 
 /** Calories par gramme de chaque macronutriment. */
 export const KCAL_PER_GRAM = { protein: 4, carbs: 4, fat: 9 } as const

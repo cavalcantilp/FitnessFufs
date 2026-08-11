@@ -1,6 +1,14 @@
 import { useApp } from '../state/AppContext'
 import { MacroDonut } from './MacroDonut'
-import { ACTIVITY_FACTORS, MACRO_RANGES } from '../lib/nutrition'
+import {
+  ACTIVITY_FACTORS,
+  MACRO_PRESETS,
+  MACRO_PRESET_ORDER,
+  MACRO_RANGES,
+  presetOf,
+  type MacroPresetId,
+} from '../lib/nutrition'
+import { localeOf } from '../lib/date'
 import type { ActivityLevel, GoalRate, Sex } from '../lib/types'
 import type { TranslationKey } from '../i18n/translations'
 
@@ -19,7 +27,12 @@ const ACTIVITIES = Object.keys(ACTIVITY_FACTORS) as ActivityLevel[]
 
 /** Champs de profil, partagés entre l'accueil de première utilisation et l'onglet Profil. */
 export function ProfileForm() {
-  const { t, profile, updateProfile, targets } = useApp()
+  const { t, lang, profile, updateProfile, targets } = useApp()
+  const preset = presetOf(profile)
+
+  /** Une décimale, avec le séparateur de la langue courante. */
+  const gPerKg = (value: number) =>
+    value.toLocaleString(localeOf(lang), { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 
   const numberField = (value: number, apply: (parsed: number) => void) => (raw: string) => {
     const parsed = Number(raw.replace(',', '.'))
@@ -128,11 +141,31 @@ export function ProfileForm() {
         </select>
       </div>
 
-      {/* Protéines et lipides au curseur, en g/kg ; les glucides suivent. */}
+      {/* Un programme positionne les deux curseurs ; les bouger repasse en personnalisé. */}
+      <div className="field">
+        <label htmlFor="p-preset">{t('profile.preset')}</label>
+        <select
+          id="p-preset"
+          value={preset}
+          onChange={(event) => {
+            const id = event.target.value as MacroPresetId | 'custom'
+            if (id !== 'custom') updateProfile(MACRO_PRESETS[id])
+          }}
+        >
+          {MACRO_PRESET_ORDER.map((id) => (
+            <option key={id} value={id}>
+              {t(`preset.${id}` as TranslationKey)} · {gPerKg(MACRO_PRESETS[id].proteinPerKg)} /{' '}
+              {gPerKg(MACRO_PRESETS[id].fatPerKg)} g/kg
+            </option>
+          ))}
+          <option value="custom">{t('preset.custom')}</option>
+        </select>
+      </div>
+
       <div className="field">
         <div className="label-row">
           <label htmlFor="p-protein">{t('macro.protein')}</label>
-          <span className="val-tag">{profile.proteinPerKg.toFixed(1)} g/kg</span>
+          <span className="val-tag">{gPerKg(profile.proteinPerKg)} g/kg</span>
         </div>
         <input
           id="p-protein"
@@ -148,7 +181,7 @@ export function ProfileForm() {
       <div className="field">
         <div className="label-row">
           <label htmlFor="p-fat">{t('macro.fat')}</label>
-          <span className="val-tag">{profile.fatPerKg.toFixed(1)} g/kg</span>
+          <span className="val-tag">{gPerKg(profile.fatPerKg)} g/kg</span>
         </div>
         <input
           id="p-fat"

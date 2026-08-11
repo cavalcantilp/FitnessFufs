@@ -26,7 +26,9 @@ aucun serveur, aucun envoi de données.
   jamais sous le métabolisme de base.
 - **Répartition des macros** — même modèle que le calculateur dédié du
   portefeuille : deux curseurs en grammes par kilo de poids de corps, protéines
-  (0,8 à 2,2) et lipides (0,8 à 1,0), les glucides absorbant le solde calorique.
+  (0,8 à 3,0) et lipides (0,5 à 2,5), les glucides absorbant le solde calorique.
+  Cinq programmes (équilibré, riche en protéines, pauvre en glucides, cétogène,
+  endurance) positionnent les curseurs ; les bouger repasse en « personnalisé ».
   Trois cartes et un anneau donnent le résultat en direct.
 - **Poids** — pesée quotidienne, courbe d'évolution, variations totale et sur
   7 jours, IMC.

@@ -33,7 +33,9 @@ export function FoodPicker({ onSelect, onCreate }: FoodPickerProps) {
     if (filter === 'favorites') pool = pool.filter((food) => favorites.includes(food.id))
     else if (filter === 'mine') pool = pool.filter((food) => food.custom)
     else if (filter !== 'all') pool = pool.filter((food) => food.category === filter)
-    return searchFoods(pool, query, lang).slice(0, 60)
+    // Pas de troncature : une liste coupée à 60 rendait la moitié de la base
+    // introuvable pour qui parcourt au lieu de chercher.
+    return searchFoods(pool, query, lang)
   }, [foods, filter, favorites, query, lang])
 
   return (
@@ -68,6 +70,14 @@ export function FoodPicker({ onSelect, onCreate }: FoodPickerProps) {
         </div>
       ) : (
         <>
+          {/* Créer un aliment doit rester atteignable sans dérouler la liste. */}
+          <div className="list-head">
+            <span>{t('add.results', { n: results.length })}</span>
+            <button type="button" onClick={() => onCreate(query)}>
+              + {t('add.custom')}
+            </button>
+          </div>
+
           <div className="food-list">
             {results.map((food) => {
               const isFavorite = favorites.includes(food.id)
@@ -104,9 +114,6 @@ export function FoodPicker({ onSelect, onCreate }: FoodPickerProps) {
               )
             })}
           </div>
-          <button type="button" className="btn secondary" onClick={() => onCreate(query)}>
-            {t('add.custom')}
-          </button>
         </>
       )}
     </>

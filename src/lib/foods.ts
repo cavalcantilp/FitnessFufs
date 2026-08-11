@@ -1,4 +1,4 @@
-import type { Food, FoodCategory, FoodState, Lang, Micros } from './types'
+import type { Food, FoodCategory, FoodState, Lang, Micros, PortionUnit } from './types'
 
 /** Libellés dans l'ordre : fr, pt, es, en, it. */
 type Names = [string, string, string, string, string]
@@ -324,6 +324,183 @@ export const BUILTIN_FOODS: Food[] = [
   food('creatine', ['Créatine', 'Creatina', 'Creatina', 'Creatine monohydrate', 'Creatina'], 0, 0, 0, 0, 0, 5, 'supplement'),
 ]
 
+/**
+ * Mesures ménagères, par identifiant d'aliment. Un premier utilisateur a
+ * renoncé à saisir « deux cuillères de skyr » faute de trouver autre chose que
+ * des grammes : peser est l'exception, pas la règle.
+ */
+const PORTIONS: Record<string, PortionUnit[]> = {
+  // Fruits et œufs, comptés à l'unité
+  banana: [{ key: 'unit', grams: 120 }],
+  apple: [{ key: 'unit', grams: 150 }],
+  orange: [{ key: 'unit', grams: 150 }],
+  kiwi: [{ key: 'unit', grams: 75 }],
+  mango: [{ key: 'unit', grams: 200 }],
+  guava: [{ key: 'unit', grams: 100 }],
+  passion_fruit: [{ key: 'unit', grams: 60 }],
+  papaya: [{ key: 'slice', grams: 150 }],
+  egg: [{ key: 'unit', grams: 55 }],
+  egg_white: [{ key: 'unit', grams: 33 }],
+
+  // Laitages : cuillère et pot
+  skyr: [{ key: 'spoon', grams: 20 }, { key: 'pot', grams: 150 }],
+  yogurt_plain: [{ key: 'pot', grams: 125 }, { key: 'spoon', grams: 20 }],
+  greek_yogurt: [{ key: 'pot', grams: 150 }, { key: 'spoon', grams: 20 }],
+  cottage: [{ key: 'spoon', grams: 30 }],
+  requeijao: [{ key: 'spoon', grams: 20 }],
+  milk_semi: [{ key: 'glass', grams: 200 }],
+
+  // Fromages
+  emmental: [{ key: 'slice', grams: 25 }],
+  comte: [{ key: 'slice', grams: 25 }],
+  cheddar: [{ key: 'slice', grams: 25 }],
+  mozzarella: [{ key: 'unit', grams: 125 }],
+  parmesan: [{ key: 'spoon', grams: 10 }],
+  processed_cheese: [{ key: 'unit', grams: 20 }],
+  cream_cheese: [{ key: 'spoon', grams: 20 }],
+
+  // Pains et céréales
+  bread_whole: [{ key: 'slice', grams: 30 }],
+  baguette: [{ key: 'slice', grams: 30 }],
+  bread_cereal: [{ key: 'slice', grams: 30 }],
+  sandwich_bread: [{ key: 'slice', grams: 25 }],
+  pao_frances: [{ key: 'unit', grams: 50 }],
+  rusk: [{ key: 'unit', grams: 8 }],
+  tortilla: [{ key: 'unit', grams: 60 }],
+  oats: [{ key: 'spoon', grams: 15 }],
+  cornflakes: [{ key: 'glass', grams: 30 }],
+  muesli: [{ key: 'spoon', grams: 20 }],
+  granola: [{ key: 'spoon', grams: 20 }],
+
+  // Charcuterie et poisson tranchés
+  ham: [{ key: 'slice', grams: 40 }],
+  cured_ham: [{ key: 'slice', grams: 15 }],
+  bacon: [{ key: 'slice', grams: 15 }],
+  smoked_salmon: [{ key: 'slice', grams: 25 }],
+  sausage: [{ key: 'unit', grams: 60 }],
+  merguez: [{ key: 'unit', grams: 60 }],
+
+  // Matières grasses et oléagineux
+  olive_oil: [{ key: 'spoon', grams: 10 }, { key: 'teaspoon', grams: 5 }],
+  butter: [{ key: 'teaspoon', grams: 5 }, { key: 'spoon', grams: 15 }],
+  cream: [{ key: 'spoon', grams: 15 }],
+  peanut_butter: [{ key: 'spoon', grams: 20 }],
+  chia: [{ key: 'spoon', grams: 12 }],
+  almonds: [{ key: 'handful', grams: 25 }],
+  walnuts: [{ key: 'handful', grams: 25 }],
+  cashews: [{ key: 'handful', grams: 25 }],
+  brazil_nuts: [{ key: 'unit', grams: 5 }],
+  avocado: [{ key: 'unit', grams: 150 }],
+
+  // Boissons
+  coffee: [{ key: 'glass', grams: 100 }],
+  tea: [{ key: 'glass', grams: 200 }],
+  cappuccino: [{ key: 'glass', grams: 150 }],
+  hot_chocolate: [{ key: 'glass', grams: 200 }],
+  orange_juice: [{ key: 'glass', grams: 200 }],
+  apple_juice: [{ key: 'glass', grams: 200 }],
+  smoothie: [{ key: 'glass', grams: 250 }],
+  almond_milk: [{ key: 'glass', grams: 200 }],
+  cola: [{ key: 'glass', grams: 250 }],
+  cola_zero: [{ key: 'glass', grams: 250 }],
+  guarana: [{ key: 'glass', grams: 250 }],
+  beer: [{ key: 'glass', grams: 250 }],
+  red_wine: [{ key: 'glass', grams: 125 }],
+
+  // Sucré et en-cas
+  honey: [{ key: 'teaspoon', grams: 7 }, { key: 'spoon', grams: 20 }],
+  jam: [{ key: 'spoon', grams: 20 }],
+  choco_spread: [{ key: 'spoon', grams: 20 }],
+  doce_de_leite: [{ key: 'spoon', grams: 20 }],
+  cookies: [{ key: 'unit', grams: 8 }],
+  dark_chocolate: [{ key: 'unit', grams: 5 }],
+  milk_chocolate: [{ key: 'unit', grams: 5 }],
+  croissant: [{ key: 'unit', grams: 60 }],
+  pain_chocolat: [{ key: 'unit', grams: 70 }],
+  brioche: [{ key: 'slice', grams: 40 }],
+  pastel_nata: [{ key: 'unit', grams: 50 }],
+  pao_de_queijo: [{ key: 'unit', grams: 40 }],
+  brigadeiro: [{ key: 'unit', grams: 20 }],
+  crepe: [{ key: 'unit', grams: 60 }],
+  pancake: [{ key: 'unit', grams: 60 }],
+  waffle: [{ key: 'unit', grams: 60 }],
+  ice_cream: [{ key: 'pot', grams: 100 }],
+
+  // Compléments : la dosette est la mesure de référence
+  whey: [{ key: 'dose', grams: 30 }],
+  casein: [{ key: 'dose', grams: 30 }],
+  gainer: [{ key: 'dose', grams: 50 }],
+  maltodextrin: [{ key: 'dose', grams: 15 }],
+  bcaa: [{ key: 'dose', grams: 10 }],
+  creatine: [{ key: 'teaspoon', grams: 5 }],
+  protein_bar: [{ key: 'unit', grams: 60 }],
+  energy_bar: [{ key: 'unit', grams: 50 }],
+  energy_gel: [{ key: 'unit', grams: 40 }],
+
+  // Légumes comptés à l'unité
+  tomato: [{ key: 'unit', grams: 120 }],
+  carrot: [{ key: 'unit', grams: 100 }],
+  onion: [{ key: 'unit', grams: 60 }],
+  potato: [{ key: 'unit', grams: 150 }],
+}
+
+/**
+ * Termes alternatifs pour la recherche. Le portugais du Brésil et celui du
+ * Portugal divergent beaucoup sur les aliments — « biscoito » contre
+ * « bolacha », « suco » contre « sumo », « abobrinha » contre « courgette » —
+ * et un utilisateur qui ne trouve pas son aliment abandonne la saisie.
+ */
+const ALIASES: Record<string, string[]> = {
+  cookies: ['biscoito', 'biscoitos', 'bolacha', 'bolachas', 'cream cracker', 'petit-beurre'],
+  orange_juice: ['suco de laranja', 'jugo de naranja'],
+  apple_juice: ['suco de maca', 'jugo de manzana'],
+  tea: ['infusion', 'infusao', 'tisane', 'cha de ervas', 'cha de frutas', 'cha verde', 'cha preto'],
+  ham: ['presunto cozido', 'presunto', 'jambon cuit'],
+  cured_ham: ['presunto cru', 'jamon serrano', 'parma'],
+  bacon: ['toucinho', 'lardon', 'panceta'],
+  pao_frances: ['paozinho', 'pao de sal', 'cacetinho'],
+  sandwich_bread: ['pao de forma', 'pao de sanduiche', 'pain de mie'],
+  cornflakes: ['sucrilhos', 'cereais matinais', 'cereales'],
+  peanut_butter: ['pasta de amendoim'],
+  cream_cheese: ['philadelphia', 'queijo creme', 'saint moret'],
+  skyr: ['quark', 'fromage blanc', 'queijo fresco batido', 'yaourt grec maigre'],
+  milk_semi: ['leite', 'lait'],
+  tuna_can: ['atum em lata', 'atum enlatado', 'thon en boite'],
+  chips: ['batata chips', 'salgadinho', 'patatas'],
+  fries: ['batata frita', 'patatas fritas'],
+  zucchini: ['abobrinha'],
+  green_beans: ['vagem'],
+  cabbage_kale: ['couve', 'couve manteiga'],
+  sweet_potato: ['batata doce'],
+  cassava: ['aipim', 'macaxeira', 'mandioca', 'manioc'],
+  corn: ['milho verde', 'mais doux'],
+  watermelon: ['melancia'],
+  pineapple: ['abacaxi'],
+  papaya: ['mamao', 'papaia'],
+  passion_fruit: ['maracuja'],
+  guava: ['goiaba'],
+  oats: ['aveia', 'porridge', 'flocons'],
+  rice_white: ['arroz'],
+  black_beans: ['feijao preto', 'feijao'],
+  kidney_beans: ['feijao vermelho'],
+  feijao_carioca: ['feijao carioca', 'feijao cozido'],
+  dark_chocolate: ['chocolate amargo', 'chocolate 70'],
+  whey: ['proteina em po', 'dose de whey', 'proteine en poudre'],
+  olive_oil: ['azeite de oliva'],
+  egg: ['ovo cozido', 'ovo frito', 'oeuf dur', 'omelette'],
+  chicken_breast: ['file de frango', 'filet de poulet'],
+  beef_mince: ['carne moida', 'viande hachee'],
+  yogurt_plain: ['iogurte', 'yaourt'],
+  strawberry: ['morango'],
+  grapes: ['uva'],
+}
+
+// Les mesures et synonymes sont rattachés après coup : la table reste lisible.
+for (const item of BUILTIN_FOODS) {
+  if (PORTIONS[item.id]) item.portions = PORTIONS[item.id]
+  if (ALIASES[item.id]) item.aliases = ALIASES[item.id]
+}
+
 export const FOOD_CATEGORIES: FoodCategory[] = [
   'protein',
   'carbs',
@@ -361,10 +538,16 @@ export function normalize(value: string): string {
  */
 export function searchFoods(foods: Food[], query: string, lang: Lang): Food[] {
   const q = normalize(query)
-  if (!q) return foods
+  // Sans recherche, la liste sert à parcourir : l'ordre du fichier source
+  // reléguait fruits, légumes et boissons hors de portée.
+  if (!q) return [...foods].sort((a, b) => foodName(a, lang).localeCompare(foodName(b, lang)))
   const scored = foods
     .map((item) => {
-      const labelList = [item.name, ...Object.values(item.i18n ?? {})].map(normalize)
+      const labelList = [
+        item.name,
+        ...Object.values(item.i18n ?? {}),
+        ...(item.aliases ?? []),
+      ].map(normalize)
       const best = labelList.reduce((acc, label) => {
         if (label.startsWith(q)) return Math.max(acc, 2)
         if (label.includes(q)) return Math.max(acc, 1)

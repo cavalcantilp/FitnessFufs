@@ -5,7 +5,8 @@ import { useApp } from '../state/AppContext'
 import { foodName, statesOf } from '../lib/foods'
 import { microsFor, nutrientsFor, portionOf } from '../lib/nutrition'
 import { MEALS } from '../lib/meals'
-import type { Food, FoodState, MealId } from '../lib/types'
+import type { TranslationKey } from '../i18n/translations'
+import type { Food, FoodState, MealId, PortionKey } from '../lib/types'
 
 interface QuantitySheetProps {
   food: Food
@@ -20,13 +21,23 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: Quan
   const { t, lang } = useApp()
   const states = statesOf(food)
   const [state, setState] = useState<FoodState | undefined>(food.state)
-  const [grams, setGrams] = useState(String(food.serving))
   const [selectedMeal, setSelectedMeal] = useState<MealId>(meal)
 
+  /**
+   * Unité de saisie : les grammes conviennent à la balance, pas au quotidien.
+   * « Deux cuillères de skyr » ou « trois biscuits » doivent se saisir tels quels.
+   */
+  const units = food.portions ?? []
+  const [unit, setUnit] = useState<PortionKey | 'g'>('g')
+  const gramsPerUnit = unit === 'g' ? 1 : (units.find((entry) => entry.key === unit)?.grams ?? 1)
+
   const portion = portionOf(food, state)
-  const amount = Number(grams.replace(',', '.'))
-  const valid = Number.isFinite(amount) && amount > 0
-  const preview = nutrientsFor(food, valid ? amount : 0, state)
+  const [count, setCount] = useState(String(portion.serving))
+
+  const typed = Number(count.replace(',', '.'))
+  const valid = Number.isFinite(typed) && typed > 0
+  const amount = valid ? typed * gramsPerUnit : 0
+  const preview = nutrientsFor(food, amount, state)
 
   /**
    * Changer d'état change la nature de ce qu'on pèse : la quantité saisie pour
@@ -34,7 +45,15 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: Quan
    */
   const switchState = (next: FoodState) => {
     setState(next)
-    setGrams(String(portionOf(food, next).serving))
+    setCount(String(portionOf(food, next).serving / gramsPerUnit))
+  }
+
+  /** Changer d'unité conserve la quantité réelle plutôt que le nombre saisi. */
+  const switchUnit = (next: PortionKey | 'g') => {
+    const nextGrams = next === 'g' ? 1 : (units.find((entry) => entry.key === next)?.grams ?? 1)
+    const converted = amount > 0 ? amount / nextGrams : portion.serving / nextGrams
+    setUnit(next)
+    setCount(String(Math.round(converted * 100) / 100))
   }
 
   return (
@@ -63,15 +82,35 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete }: Quan
 
       <div className="field">
         <label htmlFor="grams">{t('add.quantity')}</label>
-        <input
-          id="grams"
-          type="text"
-          inputMode="decimal"
-          value={grams}
-          onChange={(event) => setGrams(event.target.value)}
-          autoFocus
-        />
-        <span className="hint">{t('add.servingHint', { n: portion.serving })}</span>
+        <div className={units.length > 0 ? 'amount-row' : undefined}>
+          <input
+            id="grams"
+            type="text"
+            inputMode="decimal"
+            value={count}
+            onChange={(event) => setCount(event.target.value)}
+            autoFocus
+          />
+          {units.length > 0 ? (
+            <select
+              value={unit}
+              onChange={(event) => switchUnit(event.target.value as PortionKey | 'g')}
+              aria-label={t('add.unit')}
+            >
+              <option value="g">g</option>
+              {units.map((entry) => (
+                <option key={entry.key} value={entry.key}>
+                  {t(`portion.${entry.key}` as TranslationKey)} ({entry.grams} g)
+                </option>
+              ))}
+            </select>
+          ) : null}
+        </div>
+        <span className="hint">
+          {unit === 'g'
+            ? t('add.servingHint', { n: portion.serving })
+            : t('add.totalHint', { n: Math.round(amount) })}
+        </span>
       </div>
 
       <div className="field">

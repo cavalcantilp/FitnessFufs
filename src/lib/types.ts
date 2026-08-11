@@ -50,6 +50,23 @@ export interface Micros {
 
 export type MicroKey = keyof Micros
 
+/** Mesures ménagères : personne ne pèse un œuf ou une cuillère de yaourt. */
+export type PortionKey =
+  | 'unit'
+  | 'spoon'
+  | 'teaspoon'
+  | 'slice'
+  | 'glass'
+  | 'pot'
+  | 'handful'
+  | 'dose'
+
+export interface PortionUnit {
+  key: PortionKey
+  /** Poids d'une mesure, en grammes. */
+  grams: number
+}
+
 export type MealId = 'breakfast' | 'lunch' | 'dinner' | 'snack'
 
 /**
@@ -87,6 +104,14 @@ export interface Food {
    * industriels, compléments : mieux vaut ne rien afficher qu'un chiffre inventé.
    */
   micros?: Micros
+  /** Mesures ménagères proposées à la saisie, en plus des grammes. */
+  portions?: PortionUnit[]
+  /**
+   * Termes alternatifs pris en compte par la recherche : variantes régionales
+   * (« biscoito » au Brésil, « bolacha » au Portugal), marques usuelles,
+   * préparations. Invisibles dans l'interface.
+   */
+  aliases?: string[]
 }
 
 export type FoodCategory =

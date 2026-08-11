@@ -1042,3 +1042,28 @@ input[type='range']::-moz-range-thumb {
 .disclosure-body .notice {
   margin-top: 10px;
 }
+
+/* ---------- Saisie de quantité avec unité ---------- */
+
+.amount-row {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 8px;
+}
+
+.list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+.list-head button {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 4px 0;
+}

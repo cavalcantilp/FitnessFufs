@@ -1300,3 +1300,49 @@ input[type='range']::-moz-range-thumb {
   line-height: 1.45;
   text-align: center;
 }
+
+/* ---------- Calendrier pleine page ---------- */
+
+.calendar-screen {
+  gap: 12px;
+  padding-bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+}
+
+/* La grille prend la hauteur restante plutôt qu'une hauteur de case fixe. */
+.calendar-screen .calendar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Le nombre de lignes vient du composant : cinq ou six selon le mois. */
+.calendar-screen .calendar-grid {
+  flex: 1;
+}
+
+.calendar-screen .calendar-day {
+  min-height: 0;
+}
+
+/* Cases hautes : les barres se lisent mieux en bas qu'accrochées au numéro. */
+.calendar-screen .calendar-day .bars {
+  margin-top: auto;
+}
+
+.calendar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.today-btn {
+  flex: none;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+}

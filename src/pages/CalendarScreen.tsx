@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { IconChevronLeft, IconChevronRight } from '../components/icons'
 import { fromKey, localeOf, toKey, todayKey } from '../lib/date'
@@ -49,13 +49,22 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
     return map
   }, [entries])
 
-  const days = useMemo(() => {
+  /**
+   * Cinq ou six semaines selon le mois : afficher une sixième ligne entièrement
+   * hors mois gaspillerait un sixième de la page maintenant qu'elle est pleine.
+   */
+  const { days, weeks } = useMemo(() => {
     const start = startOfGrid(cursor.year, cursor.month)
-    return Array.from({ length: 42 }, (_, index) => {
-      const day = new Date(start)
-      day.setDate(start.getDate() + index)
-      return day
-    })
+    const lead = Math.round((new Date(cursor.year, cursor.month, 1).getTime() - start.getTime()) / 86400000)
+    const length = Math.ceil((lead + new Date(cursor.year, cursor.month + 1, 0).getDate()) / 7)
+    return {
+      weeks: length,
+      days: Array.from({ length: length * 7 }, (_, index) => {
+        const day = new Date(start)
+        day.setDate(start.getDate() + index)
+        return day
+      }),
+    }
   }, [cursor])
 
   const locale = localeOf(lang)
@@ -81,8 +90,29 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
     })
   }
 
+  /**
+   * Balayage horizontal pour changer de mois. Le geste n'est retenu que s'il
+   * est franchement horizontal : sinon on confisquerait le défilement vertical
+   * de la page à la moindre inclinaison du pouce.
+   */
+  const swipe = useRef<{ x: number; y: number } | null>(null)
+  const onTouchStart = (event: React.TouchEvent) => {
+    const touch = event.touches[0]
+    swipe.current = { x: touch.clientX, y: touch.clientY }
+  }
+  const onTouchEnd = (event: React.TouchEvent) => {
+    const start = swipe.current
+    swipe.current = null
+    if (!start) return
+    const touch = event.changedTouches[0]
+    const dx = touch.clientX - start.x
+    const dy = touch.clientY - start.y
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+    shiftMonth(dx < 0 ? 1 : -1)
+  }
+
   return (
-    <div className="screen">
+    <div className="screen calendar-screen">
       <div className="day-nav">
         <button type="button" className="arrow" onClick={() => shiftMonth(-1)} aria-label={monthLabel}>
           <IconChevronLeft />
@@ -95,14 +125,14 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
         </button>
       </div>
 
-      <div className="calendar">
+      <div className="calendar" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <div className="calendar-weekdays">
           {weekdays.map((label, index) => (
             <span key={index}>{label}</span>
           ))}
         </div>
 
-        <div className="calendar-grid">
+        <div className="calendar-grid" style={{ gridTemplateRows: `repeat(${weeks}, minmax(0, 1fr))` }}>
           {days.map((day) => {
             const key = toKey(day)
             const meals = mealsByDay.get(key)
@@ -134,18 +164,19 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
         </div>
       </div>
 
-      <div className="calendar-legend">
-        {MEALS.map((meal) => (
-          <span key={meal}>
-            <span className="bar" style={{ background: MEAL_COLORS[meal] }} />
-            {t(`meal.${meal}`)}
-          </span>
-        ))}
+      <div className="calendar-footer">
+        <div className="calendar-legend">
+          {MEALS.map((meal) => (
+            <span key={meal}>
+              <span className="bar" style={{ background: MEAL_COLORS[meal] }} />
+              {t(`meal.${meal}`)}
+            </span>
+          ))}
+        </div>
+        <button type="button" className="today-btn" onClick={() => onPick(today)}>
+          {t('diary.today')}
+        </button>
       </div>
-
-      <button type="button" className="btn secondary" onClick={() => onPick(today)}>
-        {t('diary.today')}
-      </button>
     </div>
   )
 }

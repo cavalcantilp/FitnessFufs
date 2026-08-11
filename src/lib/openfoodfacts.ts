@@ -17,6 +17,8 @@ const PRODUCT_URL = 'https://world.openfoodfacts.org/api/v2/product'
 /** Recherche plein texte : le service dédié d'abord, l'ancien script en repli. */
 const SEARCH_URL = 'https://search.openfoodfacts.org/search'
 const LEGACY_SEARCH_URL = 'https://world.openfoodfacts.org/cgi/search.pl'
+/** Même hôte et même famille de chemins que la fiche produit, dont on sait qu'elle répond. */
+const V2_SEARCH_URL = 'https://world.openfoodfacts.org/api/v2/search'
 
 const PRODUCT_FIELDS = [
   'code',
@@ -138,7 +140,7 @@ async function getJson(url: string, signal?: AbortSignal): Promise<unknown> {
   const onAbort = () => controller.abort()
   signal?.addEventListener('abort', onAbort)
   try {
-    const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } })
+    const response = await fetch(url, { signal: controller.signal })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } finally {
@@ -174,9 +176,12 @@ export class OpenFoodFactsError extends Error {
 function searchUrls(term: string, lang: Lang): string[] {
   const q = encodeURIComponent(term)
   return [
-    `${SEARCH_URL}?q=${q}&langs=${lang}&page_size=25`,
-    `${SEARCH_URL}?q=${q}&page_size=25`,
+    // L'hôte world.* répond aux fiches produit ; on l'essaie d'abord pour la
+    // recherche, plutôt qu'un sous-domaine dédié dont rien ne garantit qu'il
+    // autorise les requêtes depuis une autre origine.
+    `${V2_SEARCH_URL}?search_terms=${q}&page_size=25`,
     `${LEGACY_SEARCH_URL}?search_terms=${q}&search_simple=1&action=process&json=1&page_size=25`,
+    `${SEARCH_URL}?q=${q}&langs=${lang}&page_size=25`,
   ]
 }
 

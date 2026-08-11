@@ -36,13 +36,18 @@
 html,
 body {
   min-height: 100%;
+  /*
+   * Le tiré-vers-le-bas pour rafraîchir est intercepté par le document, pas
+   * par body : le poser seulement sur body ne suffisait pas, Chrome Android
+   * continuait de déclencher le rafraîchissement natif depuis `html`.
+   */
+  overscroll-behavior-y: none;
 }
 
 body {
   background: var(--bg);
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
-  overscroll-behavior-y: none;
 }
 
 button {
@@ -102,6 +107,13 @@ select {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /*
+   * N'autoriser que le défilement vertical natif exclut le pincement pour
+   * zoomer et le glissement à deux doigts : sans cette ligne, le balayage à
+   * deux doigts du journal était lu par le navigateur comme un zoom en même
+   * temps que par notre geste, d'où le zoom involontaire et l'écran qui bouge.
+   */
+  touch-action: pan-y;
 }
 
 .app-header {

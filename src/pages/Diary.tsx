@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useApp } from '../state/AppContext'
 import { Ring } from '../components/Ring'
 import { MacroBars } from '../components/MacroBars'
@@ -71,14 +71,47 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
     onToast(copied > 0 ? t('diary.copied') : t('diary.nothingToCopy'))
   }
 
+  /**
+   * Balayage à deux doigts pour changer de jour. Le journal défile
+   * verticalement en continu, contrairement à la grille du calendrier : un
+   * balayage à un doigt y entrerait sans cesse en conflit avec le défilement
+   * de la page, d'où le second doigt qui désambiguïse le geste.
+   */
+  const swipe = useRef<{ id: number; x: number; y: number }[] | null>(null)
+  const onTouchStart = (event: React.TouchEvent) => {
+    if (event.touches.length !== 2) {
+      swipe.current = null
+      return
+    }
+    swipe.current = Array.from(event.touches).map((touch) => ({
+      id: touch.identifier,
+      x: touch.clientX,
+      y: touch.clientY,
+    }))
+  }
+  const onTouchEnd = (event: React.TouchEvent) => {
+    const start = swipe.current
+    swipe.current = null
+    if (!start) return
+    const lifted = Array.from(event.changedTouches).find((touch) =>
+      start.some((entry) => entry.id === touch.identifier),
+    )
+    const origin = lifted && start.find((entry) => entry.id === lifted.identifier)
+    if (!lifted || !origin) return
+    const dx = lifted.clientX - origin.x
+    const dy = lifted.clientY - origin.y
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return
+    onDateChange(shiftDay(date, dx < 0 ? 1 : -1))
+  }
+
   return (
-    <div className="screen">
+    <div className="screen" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <div className="day-nav">
         <button
           type="button"
           className="arrow"
           onClick={() => onDateChange(shiftDay(date, -1))}
-          aria-label={t('diary.copyPrev')}
+          aria-label={t('diary.prevDay')}
         >
           <IconChevronLeft />
         </button>
@@ -98,8 +131,7 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
           type="button"
           className="arrow"
           onClick={() => onDateChange(shiftDay(date, 1))}
-          disabled={date >= today}
-          aria-label={t('diary.today')}
+          aria-label={t('diary.nextDay')}
         >
           <IconChevronRight />
         </button>

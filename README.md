@@ -109,26 +109,36 @@ que ce réglage n'est pas fait l'étape `configure-pages` échoue.
 
 ### Domaine personnalisé
 
-L'application s'appelle **FitnessFufs**, mais le dépôt et le sous-domaine
-gardent leur nom d'origine `myFitnessFufs` : les renommer casserait le site le
-temps que le DNS et le réglage Pages suivent. Les identifiants ci-dessous sont
-donc à lire tels quels.
-
-Le site est servi depuis **https://myfitnessfufs.cavalcantilp.com**, déclaré
-dans `public/CNAME` (le fichier est copié tel quel dans `dist/`). Deux réglages
-à faire une fois :
+Le site est servi depuis **https://fitnessfufs.cavalcantilp.com**, déclaré dans
+`public/CNAME` (le fichier est copié tel quel dans `dist/`). Deux réglages à
+faire une fois :
 
 1. **DNS** — chez le registrar de `cavalcantilp.com`, ajouter un enregistrement
-   `CNAME` : `myfitnessfufs` → `cavalcantilp.github.io`.
-2. **GitHub** — Settings → Pages → Custom domain : `myfitnessfufs.cavalcantilp.com`,
+   `CNAME` : `fitnessfufs` → `cavalcantilp.github.io`.
+2. **GitHub** — Settings → Pages → Custom domain : `fitnessfufs.cavalcantilp.com`,
    puis cocher *Enforce HTTPS* une fois le certificat émis.
+
+**L'ordre compte.** Fusionner cette branche déclenche le déploiement, qui écrit
+`fitnessfufs.cavalcantilp.com` dans les réglages Pages du dépôt. Si le CNAME
+DNS n'existe pas encore, GitHub ne peut pas vérifier le domaine et le site
+devient inaccessible — l'ancien sous-domaine ayant déjà été remplacé. Créer
+donc l'enregistrement DNS **avant** de fusionner, puis rouvrir Settings → Pages
+pour recocher *Enforce HTTPS* une fois le certificat émis, ce qui prend
+quelques minutes.
+
+L'ancien sous-domaine `myfitnessfufs.cavalcantilp.com` cesse alors de répondre.
+Le laisser pointer vers `cavalcantilp.github.io` ne sert à rien : un dépôt Pages
+ne reconnaît qu'un seul domaine personnalisé, les autres reçoivent une erreur.
+Autant supprimer l'ancien enregistrement DNS une fois la bascule constatée.
 
 Le domaine apex `cavalcantilp.com` reste au dépôt `cavalcantilp-web-apps` : un
 domaine ne peut pointer que vers un seul site Pages, d'où le sous-domaine.
 
 Le build utilise donc `base: '/'`. Sans domaine personnalisé, GitHub Pages sert
-depuis `https://cavalcantilp.github.io/myFitnessFufs/` : builder alors avec
-`BASE_PATH=/myFitnessFufs/ npm run build`.
+depuis `https://cavalcantilp.github.io/<nom-du-dépôt>/` : builder alors avec
+`BASE_PATH=/<nom-du-dépôt>/ npm run build`. Le dépôt s'appelle aujourd'hui
+`myFitnessFufs` ; le renommer ne touche pas au domaine personnalisé, qui ne
+dépend que de `public/CNAME`.
 
 ## Ajouter un aliment
 

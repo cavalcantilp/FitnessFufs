@@ -45,13 +45,17 @@ aucun serveur, aucun envoi de données.
   — téléphones et tablettes — un ordinateur de bureau ne s'y prêtant pas.
 - **Objectifs** — métabolisme de base (Mifflin-St Jeor), dépense estimée selon le
   niveau d'activité, ajustement selon l'objectif de poids. L'apport ne descend
-  jamais sous le métabolisme de base.
+  jamais sous le métabolisme de base ; sous ce plancher l'objectif retenu cesse
+  de suivre les réglages, alors une ligne « objectif demandé » et un message
+  disent lequel bouge encore et pourquoi l'autre est bloqué.
 - **Répartition des macros** — même modèle que le calculateur dédié du
   portefeuille : deux curseurs en grammes par kilo de poids de corps, protéines
   (0,8 à 3,0) et lipides (0,5 à 2,5), les glucides absorbant le solde calorique.
   Cinq programmes (équilibré, riche en protéines, pauvre en glucides, cétogène,
   endurance) positionnent les curseurs ; les bouger repasse en « personnalisé ».
-  Trois cartes et un anneau donnent le résultat en direct.
+  Trois cartes et un anneau donnent le résultat en direct. Si protéines et
+  lipides saturent l'objectif, les glucides tombent à zéro et l'alerte chiffre
+  le dépassement plutôt que de laisser croire l'affichage figé.
 - **Calendrier** — vue mensuelle plein écran avec une barre par repas renseigné ;
   un jour cliqué ouvre le journal correspondant. On change de mois par les
   flèches ou, au doigt, par un balayage horizontal — retenu seulement s'il est

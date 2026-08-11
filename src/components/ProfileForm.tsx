@@ -172,6 +172,15 @@ export function ProfileForm() {
         />
       </div>
 
+      {/*
+        Sous le plancher du métabolisme de base, l'objectif ne suit plus les
+        réglages : sans ce message, l'application paraît figée. Il vit ici et
+        non dans l'onglet Profil pour être visible dès la première ouverture.
+      */}
+      {targets.belowBmr ? (
+        <p className="notice">{t('profile.warnBmr', { n: targets.kcal, req: targets.requestedKcal })}</p>
+      ) : null}
+
       <div className="macro-grid">
         {macros.map((macro) => (
           <div className="macro-card" key={macro.key}>
@@ -184,7 +193,9 @@ export function ProfileForm() {
         ))}
       </div>
 
-      {targets.macrosOverflow ? <p className="notice">{t('profile.warnMacros')}</p> : null}
+      {targets.macrosOverflow ? (
+        <p className="notice">{t('profile.warnMacros', { n: targets.macrosExcess })}</p>
+      ) : null}
 
       <MacroDonut targets={targets} />
 

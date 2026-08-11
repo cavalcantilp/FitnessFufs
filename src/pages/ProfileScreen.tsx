@@ -44,6 +44,13 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
             <span className="name">{t('macro.kcal')}</span>
             <span className="value">{targets.kcal} kcal</span>
           </div>
+          {/* Quand le plancher s'applique, la ligne retenue ne bouge plus : celle-ci si. */}
+          {targets.belowBmr ? (
+            <div className="figure-row">
+              <span className="name">{t('profile.requested')}</span>
+              <span className="value">{targets.requestedKcal} kcal</span>
+            </div>
+          ) : null}
           <div className="figure-row">
             <span className="name">{t('profile.bmr')}</span>
             <span className="value">{targets.bmr} kcal</span>
@@ -61,11 +68,7 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
             </span>
           </div>
         </div>
-        {targets.belowBmr ? (
-          <p className="notice" style={{ marginTop: 14 }}>
-            {t('profile.warnBmr', { n: targets.kcal })}
-          </p>
-        ) : null}
+        {/* L'explication du plancher est donnée sous les curseurs, avec les macros. */}
       </div>
 
       <div className="card stack">

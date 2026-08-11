@@ -93,6 +93,12 @@ export interface Targets extends Nutrients {
   tdee: number
   /** Écart calorique quotidien appliqué : négatif en déficit, positif en surplus. */
   adjustment: number
+  /**
+   * Objectif avant le plancher du métabolisme de base. Sous ce plancher, c'est
+   * la seule valeur qui suit encore le poids, l'âge, l'activité et l'objectif —
+   * l'afficher évite de croire l'application figée.
+   */
+  requestedKcal: number
   /** Vrai si l'objectif descend sous le métabolisme de base. */
   belowBmr: boolean
   /** Calories apportées par chaque macronutriment, pour la répartition visuelle. */
@@ -101,6 +107,8 @@ export interface Targets extends Nutrients {
   fatKcal: number
   /** Vrai si protéines et lipides dépassent déjà l'objectif : plus de place pour les glucides. */
   macrosOverflow: boolean
+  /** De combien protéines et lipides débordent l'objectif, en kcal. */
+  macrosExcess: number
 }
 
 /**
@@ -128,6 +136,7 @@ export function computeTargets(profile: Profile): Targets {
     bmr: Math.round(base),
     tdee: Math.round(maintenance),
     adjustment: Math.round(adjustment),
+    requestedKcal: Math.round(rawTarget),
     belowBmr: rawTarget < base,
     kcal: Math.round(kcal),
     protein: Math.round(protein),
@@ -138,6 +147,7 @@ export function computeTargets(profile: Profile): Targets {
     fatKcal: Math.round(fatKcal),
     carbsKcal: Math.round(carbsKcal),
     macrosOverflow: remaining < 0,
+    macrosExcess: Math.round(Math.max(0, -remaining)),
   }
 }
 

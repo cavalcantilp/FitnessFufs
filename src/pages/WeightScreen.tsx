@@ -21,16 +21,7 @@ const MEASURE_COLOR: Record<MeasurementKey, string> = {
 }
 
 export function WeightScreen({ onToast }: WeightScreenProps) {
-  const {
-    t,
-    weights,
-    logWeight,
-    profile,
-    measurements,
-    logMeasurements,
-    bodyFat,
-    logBodyFat,
-  } = useApp()
+  const { t, weights, logWeight, profile, measurements, logMeasurements } = useApp()
 
   const [showHistory, setShowHistory] = useState(false)
   const [draft, setDraft] = useState('')
@@ -40,9 +31,6 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
     hips: '',
     chest: '',
   })
-  const [bodyFatOpen, setBodyFatOpen] = useState(false)
-  const [bodyFatDraft, setBodyFatDraft] = useState('')
-
   if (showHistory) return <HistoryScreen onBack={() => setShowHistory(false)} />
 
   const today = todayKey()
@@ -51,10 +39,6 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
 
   const bmiValue = bmi(current, profile.height)
   const band = bmiBand(bmiValue)
-
-  const latestBodyFat = bodyFat.length ? bodyFat[bodyFat.length - 1] : null
-  const bodyFatDelta =
-    bodyFat.length > 1 ? round1(bodyFat[bodyFat.length - 1].percent - bodyFat[0].percent) : null
 
   const submit = () => {
     const value = Number(draft.replace(',', '.'))
@@ -81,14 +65,6 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
     onToast(t('measure.logged'))
   }
 
-  const submitBodyFat = () => {
-    const value = Number(bodyFatDraft.replace(',', '.'))
-    if (!Number.isFinite(value) || value <= 0 || value >= 100) return
-    logBodyFat(today, round1(value))
-    setBodyFatDraft('')
-    onToast(t('bodyfat.logged'))
-  }
-
   const deltaClass = (value: number) => (value < 0 ? ' down' : value > 0 ? ' up' : '')
   const signed = (value: number) => `${value > 0 ? '+' : ''}${value}`
 
@@ -106,15 +82,6 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
           <div className="macro-value">{bmiValue}</div>
           <div className="macro-sub">{t(`bmi.${band}` as TranslationKey)}</div>
         </div>
-        {latestBodyFat ? (
-          <div className="macro-card">
-            <div className="macro-title">{t('bodyfat.title')}</div>
-            <div className="macro-value">{latestBodyFat.percent} %</div>
-            {bodyFatDelta !== null ? (
-              <div className={`macro-sub${deltaClass(bodyFatDelta)}`}>{signed(bodyFatDelta)} %</div>
-            ) : null}
-          </div>
-        ) : null}
       </div>
 
       <button type="button" className="btn secondary" onClick={() => setShowHistory(true)}>
@@ -145,12 +112,14 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
         <p className="hint">{t('weight.syncProfile')}</p>
       </div>
 
-      {weights.length >= 2 ? (
-        <div className="card">
-          <div className="card-title">{t('weight.title')}</div>
+      <div className="card">
+        <div className="card-title">{t('weight.trend')}</div>
+        {weights.length >= 2 ? (
           <WeightChart entries={weights} />
-        </div>
-      ) : null}
+        ) : (
+          <p className="hint">{t('weight.chartHint')}</p>
+        )}
+      </div>
 
       {measurements.length ? (
         <div className="card stack">
@@ -214,40 +183,6 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
             <button type="button" className="btn" onClick={submitMeasurements} disabled={!hasMeasureDraft}>
               {t('measure.log')}
             </button>
-          </div>
-        ) : null}
-      </div>
-
-      <div className="disclosure">
-        <button
-          type="button"
-          className="disclosure-head"
-          onClick={() => setBodyFatOpen((value) => !value)}
-          aria-expanded={bodyFatOpen}
-        >
-          <span>{t('bodyfat.title')}</span>
-          <IconChevronDown open={bodyFatOpen} />
-        </button>
-
-        {bodyFatOpen ? (
-          <div className="disclosure-body stack">
-            <div className="field">
-              <label htmlFor="bodyfat-input">{t('bodyfat.input')} (%)</label>
-              <input
-                id="bodyfat-input"
-                name="bodyfat-input"
-                type="text"
-                inputMode="decimal"
-                autoComplete="off"
-                value={bodyFatDraft}
-                onChange={(event) => setBodyFatDraft(event.target.value)}
-                placeholder={latestBodyFat ? String(latestBodyFat.percent) : undefined}
-              />
-            </div>
-            <button type="button" className="btn" onClick={submitBodyFat} disabled={!bodyFatDraft.trim()}>
-              {t('bodyfat.log')}
-            </button>
-            <p className="hint">{t('bodyfat.hint')}</p>
           </div>
         ) : null}
       </div>

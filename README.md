@@ -85,15 +85,14 @@ aucun serveur, aucun envoi de données.
   pour ne pas confisquer le défilement de la page. La grille compte cinq ou
   six semaines selon le mois. L'onglet et le jour consultés sont conservés au
   rechargement.
-- **Suivi** — poids actuel, IMC et matière grasse mis en avant en tête d'écran ;
-  pesée quotidienne et courbe d'évolution juste en dessous. Mesures corporelles
-  (tour de taille, de hanches, de poitrine) et matière grasse estimée (à
-  renseigner depuis une balance à impédancemétrie ou une mesure au pli cutané,
-  l'application ne l'évalue pas elle-même), toutes deux facultatives et
-  repliées derrière une flèche pour ne pas alourdir l'écran. Les mesures sont
-  indépendantes les unes des autres : une entrée peut n'en renseigner qu'une
-  seule. L'historique — poids, mesures, matière grasse — vit sur une page à
-  part, ouverte par un bouton dédié plutôt qu'affiché en permanence.
+- **Suivi** — poids actuel et IMC mis en avant en tête d'écran ; pesée
+  quotidienne et courbe d'évolution juste en dessous, avec un message
+  explicite tant qu'il manque une seconde pesée pour la tracer. Mesures
+  corporelles (tour de taille, de hanches, de poitrine), facultatives et
+  indépendantes les unes des autres — une entrée peut n'en renseigner qu'une
+  seule — repliées derrière une flèche pour ne pas alourdir l'écran.
+  L'historique — poids et mesures — vit sur une page à part, ouverte par un
+  bouton dédié plutôt qu'affiché en permanence.
 - **Multilingue** — français, portugais, espagnol, anglais, italien ; la langue de
   l'appareil est détectée à la première ouverture.
 - **Import / export JSON** — sauvegarde et restauration complètes des données.
@@ -188,5 +187,5 @@ src/
 ├── state/        contexte applicatif et persistance
 ├── components/   anneau, barres de macros, graphique de poids, feuilles modales
 └── pages/        onboarding, calendrier, journal, ajout, suivi (poids,
-                mesures, matière grasse, historique), profil
+                mesures, historique), profil
 ```

@@ -20,13 +20,12 @@ const MEASURE_COLOR: Record<MeasurementKey, string> = {
 const signed = (value: number) => `${value > 0 ? '+' : ''}${value}`
 
 /**
- * Historique complet — poids, mesures, matière grasse — à part de l'écran
- * principal : les trois listes mises bout à bout l'alourdissaient, pour un
- * usage de consultation ponctuelle plutôt que quotidien.
+ * Historique complet — poids, mesures — à part de l'écran principal : les
+ * deux listes mises bout à bout l'alourdissaient, pour un usage de
+ * consultation ponctuelle plutôt que quotidien.
  */
 export function HistoryScreen({ onBack }: HistoryScreenProps) {
-  const { t, lang, weights, removeWeight, measurements, removeMeasurement, bodyFat, removeBodyFat } =
-    useApp()
+  const { t, lang, weights, removeWeight, measurements, removeMeasurement } = useApp()
 
   return (
     <FormPage title={t('history.title')} onBack={onBack}>
@@ -91,35 +90,6 @@ export function HistoryScreen({ onBack }: HistoryScreenProps) {
                 </button>
               </div>
             ))
-        )}
-      </div>
-
-      <div className="card">
-        <div className="card-title">{t('bodyfat.history')}</div>
-        {bodyFat.length === 0 ? (
-          <p className="hint">{t('bodyfat.empty')}</p>
-        ) : (
-          [...bodyFat]
-            .reverse()
-            .map((entry, index, list) => {
-              const previous = list[index + 1]
-              const delta = previous ? round1(entry.percent - previous.percent) : null
-              return (
-                <div className="weight-row" key={entry.date}>
-                  <span className="date">{formatDay(entry.date, lang)}</span>
-                  <span className="kg">{entry.percent} %</span>
-                  <span className="delta">{delta === null ? '' : signed(delta)}</span>
-                  <button
-                    type="button"
-                    className="icon-btn danger"
-                    onClick={() => removeBodyFat(entry.date)}
-                    aria-label={t('common.delete')}
-                  >
-                    <IconTrash />
-                  </button>
-                </div>
-              )
-            })
         )}
       </div>
     </FormPage>

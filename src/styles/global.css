@@ -1511,7 +1511,7 @@ input[type='range']::-moz-range-thumb {
   text-align: left;
   overflow: hidden;
   /* Barre le double-tap-zoom et la surbrillance de sélection au doigt : la
-     pression sur ces cases dure jusqu'à 3 secondes et ne doit rien laisser
+     pression sur ces cases dure jusqu'à 1,5 seconde et ne doit rien laisser
      surligner ni proposer de menu contextuel entre-temps. */
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
@@ -1635,9 +1635,10 @@ input[type='range']::-moz-range-thumb {
 
 /*
  * Anneau de progression de la pression : un remplissage de gauche à droite
- * sur 3 secondes exactes pendant qu'on maintient le doigt, un retour instantané
- * sinon — sans lui, une pression de 3 secondes sans aucun retour visuel se lit
- * comme une application qui ne répond plus.
+ * sur 1,5 seconde exactement pendant qu'on maintient le doigt (durée à garder
+ * alignée sur HOLD_MS dans CalendarDay.tsx), un retour instantané sinon —
+ * sans lui, une pression prolongée sans aucun retour visuel se lit comme une
+ * application qui ne répond plus.
  */
 .calendar-day .hold-ring {
   position: absolute;
@@ -1651,7 +1652,7 @@ input[type='range']::-moz-range-thumb {
 
 .calendar-day.pressing .hold-ring {
   transform: scaleX(1);
-  transition-duration: 3000ms;
+  transition-duration: 1500ms;
   transition-timing-function: linear;
 }
 

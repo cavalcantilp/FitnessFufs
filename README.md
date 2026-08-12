@@ -79,7 +79,7 @@ aucun serveur, aucun envoi de données.
   calories et les trois macros le sont toutes. Deux séries en
   bas d'écran comptent les jours consécutifs dans chaque cas, en s'arrêtant
   net au premier jour sans aucune saisie. Une pression brève ne fait que
-  déplacer le contour du jour ; il faut rester appuyé trois secondes — un
+  déplacer le contour du jour ; il faut rester appuyé 1,5 seconde — un
   anneau de progression comble l'attente — pour ouvrir son journal. La note
   libre d'un jour, elle, se consulte et se modifie depuis le journal, par une
   icône à côté de la date : un simple toucher du calendrier ne doit jamais

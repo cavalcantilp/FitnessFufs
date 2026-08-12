@@ -80,7 +80,14 @@ export function CalendarDay({
     setPressing(false)
   }
 
-  const onPointerDown = (event: React.PointerEvent) => arm(event.clientX, event.clientY)
+  const onPointerDown = (event: React.PointerEvent) => {
+    // Sans ceci, le clic de compatibilité que le navigateur synthétise après
+    // le relâchement rendait ensuite le focus au bouton — juste après que la
+    // note ouverte l'ait donné à son champ de texte, ce qui refermait le
+    // clavier aussitôt ouvert.
+    event.preventDefault()
+    arm(event.clientX, event.clientY)
+  }
 
   const onPointerMove = (event: React.PointerEvent) => {
     if (!origin.current) return

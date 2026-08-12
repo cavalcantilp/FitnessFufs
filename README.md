@@ -85,14 +85,16 @@ aucun serveur, aucun envoi de données.
   pour ne pas confisquer le défilement de la page. La grille compte cinq ou
   six semaines selon le mois. L'onglet et le jour consultés sont conservés au
   rechargement.
-- **Suivi** — poids actuel et IMC mis en avant en tête d'écran ; pesée
-  quotidienne et courbe d'évolution juste en dessous, avec un message
-  explicite tant qu'il manque une seconde pesée pour la tracer. Mesures
-  corporelles (tour de taille, de hanches, de poitrine), facultatives et
-  indépendantes les unes des autres — une entrée peut n'en renseigner qu'une
-  seule — repliées derrière une flèche pour ne pas alourdir l'écran.
-  L'historique — poids et mesures — vit sur une page à part, ouverte par un
-  bouton dédié plutôt qu'affiché en permanence.
+- **Suivi** — deux colonnes en tête d'écran : la courbe de poids à gauche (avec
+  un message explicite tant qu'il manque une seconde pesée pour la tracer),
+  poids actuel et résultats (IMC, dernières mesures) à droite. Un bouton « + »
+  sur le poids actuel déplie un champ de saisie compact, sans carte permanente.
+  Mesures corporelles (tour de taille, de hanches, de poitrine), facultatives
+  et indépendantes les unes des autres — une entrée peut n'en renseigner
+  qu'une seule — repliées derrière une flèche, avec leur propre courbe
+  d'évolution une fois deux mesures enregistrées. L'historique — poids et
+  mesures — vit sur une page à part, ouverte par un bouton en bas d'écran
+  plutôt qu'affiché en permanence.
 - **Multilingue** — français, portugais, espagnol, anglais, italien ; la langue de
   l'appareil est détectée à la première ouverture.
 - **Import / export JSON** — sauvegarde et restauration complètes des données.

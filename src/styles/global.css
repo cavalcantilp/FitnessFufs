@@ -1056,6 +1056,95 @@ input[type='range']::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Suivi : résultats en deux colonnes ---------- */
+
+.track-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.track-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.track-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.track-current {
+  position: relative;
+  text-align: center;
+}
+
+.track-current .label,
+.track-bmi .label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.track-current .value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Le seul geste pour ajouter une pesée : plus de carte de saisie permanente,
+   juste ce bouton au-dessus du poids actuel qui déplie un champ compact. */
+.track-add {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--accent);
+  color: #0f172a;
+  width: 28px;
+  height: 28px;
+}
+
+.track-quick-add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.track-results {
+  gap: 10px;
+}
+
+.track-bmi {
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.25);
+}
+
+.track-bmi .value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 2px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.track-bmi .sub {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+}
+
+.track-measure-chart {
+  padding-top: 12px;
+  border-top: 1px solid rgba(71, 85, 105, 0.25);
+}
+
 /* ---------- Divers ---------- */
 
 .notice {

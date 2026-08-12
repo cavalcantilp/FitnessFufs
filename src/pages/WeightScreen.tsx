@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { WeightChart } from '../components/WeightChart'
+import { LineChart } from '../components/LineChart'
 import { HistoryScreen } from './HistoryScreen'
-import { IconChevronDown } from '../components/icons'
+import { IconChevronDown, IconPlus } from '../components/icons'
 import { bmi, bmiBand, round1 } from '../lib/nutrition'
 import { MEASUREMENT_KEYS, MEASUREMENT_UNIT, seriesFor } from '../lib/measurements'
 import { todayKey } from '../lib/date'
@@ -13,7 +13,7 @@ interface WeightScreenProps {
   onToast: (message: string) => void
 }
 
-/** Une couleur par mesure, pour relier d'un coup d'œil son nom et ses puces dans l'historique. */
+/** Une couleur par mesure, pour relier d'un coup d'œil son nom, ses puces et son graphique. */
 const MEASURE_COLOR: Record<MeasurementKey, string> = {
   waist: 'var(--measure-waist)',
   hips: 'var(--measure-hips)',
@@ -24,6 +24,7 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
   const { t, weights, logWeight, profile, measurements, logMeasurements } = useApp()
 
   const [showHistory, setShowHistory] = useState(false)
+  const [quickAdd, setQuickAdd] = useState(false)
   const [draft, setDraft] = useState('')
   const [measureOpen, setMeasureOpen] = useState(false)
   const [measureDrafts, setMeasureDrafts] = useState<Record<MeasurementKey, string>>({
@@ -31,6 +32,7 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
     hips: '',
     chest: '',
   })
+
   if (showHistory) return <HistoryScreen onBack={() => setShowHistory(false)} />
 
   const today = todayKey()
@@ -45,6 +47,7 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
     if (!Number.isFinite(value) || value <= 0) return
     logWeight(today, round1(value))
     setDraft('')
+    setQuickAdd(false)
     onToast(t('weight.log'))
   }
 
@@ -65,87 +68,87 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
     onToast(t('measure.logged'))
   }
 
-  const deltaClass = (value: number) => (value < 0 ? ' down' : value > 0 ? ' up' : '')
-  const signed = (value: number) => `${value > 0 ? '+' : ''}${value}`
-
   return (
     <div className="screen">
-      {/* Les trois résultats qu'on vient chercher en premier, mis en avant
-          plutôt que noyés parmi les cartes de saisie. */}
-      <div className="macro-grid">
-        <div className="macro-card">
-          <div className="macro-title">{t('weight.current')}</div>
-          <div className="macro-value">{current} kg</div>
+      <div className="track-hero">
+        <div className="card track-chart">
+          <div className="card-title">{t('weight.trend')}</div>
+          {weights.length >= 2 ? (
+            <LineChart
+              points={weights.map((entry) => ({ date: entry.date, value: entry.weight }))}
+              unit="kg"
+              color="var(--accent)"
+            />
+          ) : (
+            <p className="hint">{t('weight.chartHint')}</p>
+          )}
         </div>
-        <div className="macro-card">
-          <div className="macro-title">{t('weight.bmi')}</div>
-          <div className="macro-value">{bmiValue}</div>
-          <div className="macro-sub">{t(`bmi.${band}` as TranslationKey)}</div>
-        </div>
-      </div>
 
-      <button type="button" className="btn secondary" onClick={() => setShowHistory(true)}>
-        {t('history.open')}
-      </button>
+        <div className="track-side">
+          <div className="card track-current">
+            <button
+              type="button"
+              className="icon-btn track-add"
+              onClick={() => setQuickAdd((value) => !value)}
+              aria-label={t('weight.log')}
+              aria-expanded={quickAdd}
+            >
+              <IconPlus size={18} />
+            </button>
+            <div className="label">{t('weight.current')}</div>
+            <div className="value">{current} kg</div>
 
-      <div className="card stack">
-        <div className="card-title">{t('weight.title')}</div>
-        <div className="field">
-          <label htmlFor="weight-input">{t('weight.input')}</label>
-          <input
-            id="weight-input"
-            name="weight-input"
-            type="text"
-            inputMode="decimal"
-            autoComplete="off"
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            placeholder={String(current)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') submit()
-            }}
-          />
-        </div>
-        <button type="button" className="btn" onClick={submit} disabled={!draft.trim()}>
-          {t('weight.log')}
-        </button>
-        <p className="hint">{t('weight.syncProfile')}</p>
-      </div>
-
-      <div className="card">
-        <div className="card-title">{t('weight.trend')}</div>
-        {weights.length >= 2 ? (
-          <WeightChart entries={weights} />
-        ) : (
-          <p className="hint">{t('weight.chartHint')}</p>
-        )}
-      </div>
-
-      {measurements.length ? (
-        <div className="card stack">
-          <div className="card-title">{t('measure.title')}</div>
-          {MEASUREMENT_KEYS.map((key) => {
-            const series = seriesFor(measurements, key)
-            if (!series.length) return null
-            const latestValue = series[series.length - 1].value
-            const delta = series.length > 1 ? round1(latestValue - series[0].value) : 0
-            return (
-              <div className="figure-row" key={key}>
-                <span className="name">
-                  <span className="measure-dot" style={{ background: MEASURE_COLOR[key] }} />
-                  {t(`measure.${key}` as TranslationKey)}
-                </span>
-                <span className="value">
-                  {latestValue} {MEASUREMENT_UNIT}
-                  {series.length > 1 ? (
-                    <span className={`measure-delta${deltaClass(delta)}`}> ({signed(delta)})</span>
-                  ) : null}
-                </span>
+            {quickAdd ? (
+              <div className="track-quick-add">
+                <input
+                  id="weight-input"
+                  name="weight-input"
+                  type="text"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  value={draft}
+                  onChange={(event) => setDraft(event.target.value)}
+                  placeholder={String(current)}
+                  autoFocus
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') submit()
+                  }}
+                />
+                <button type="button" className="btn" onClick={submit} disabled={!draft.trim()}>
+                  {t('weight.log')}
+                </button>
               </div>
-            )
-          })}
+            ) : null}
+          </div>
+
+          <div className="card track-results stack">
+            <div className="track-bmi">
+              <div className="label">{t('weight.bmi')}</div>
+              <div className="value">{bmiValue}</div>
+              <div className="sub">{t(`bmi.${band}` as TranslationKey)}</div>
+            </div>
+
+            {measurements.length
+              ? MEASUREMENT_KEYS.map((key) => {
+                  const series = seriesFor(measurements, key)
+                  if (!series.length) return null
+                  const latestValue = series[series.length - 1].value
+                  return (
+                    <div className="figure-row" key={key}>
+                      <span className="name">
+                        <span className="measure-dot" style={{ background: MEASURE_COLOR[key] }} />
+                        {t(`measure.${key}` as TranslationKey)}
+                      </span>
+                      <span className="value">
+                        {latestValue} {MEASUREMENT_UNIT}
+                      </span>
+                    </div>
+                  )
+                })
+              : null}
+          </div>
         </div>
-      ) : null}
+      </div>
 
       <div className="disclosure">
         <button
@@ -183,9 +186,29 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
             <button type="button" className="btn" onClick={submitMeasurements} disabled={!hasMeasureDraft}>
               {t('measure.log')}
             </button>
+
+            {MEASUREMENT_KEYS.map((key) => {
+              const series = seriesFor(measurements, key)
+              if (series.length < 2) return null
+              return (
+                <div className="track-measure-chart" key={key}>
+                  <div className="figure-row">
+                    <span className="name">
+                      <span className="measure-dot" style={{ background: MEASURE_COLOR[key] }} />
+                      {t(`measure.${key}` as TranslationKey)}
+                    </span>
+                  </div>
+                  <LineChart points={series} unit={MEASUREMENT_UNIT} color={MEASURE_COLOR[key]} />
+                </div>
+              )
+            })}
           </div>
         ) : null}
       </div>
+
+      <button type="button" className="btn secondary" onClick={() => setShowHistory(true)}>
+        {t('history.open')}
+      </button>
     </div>
   )
 }

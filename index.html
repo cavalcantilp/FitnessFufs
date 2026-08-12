@@ -2,7 +2,16 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!--
+      interactive-widget=resizes-content : sans lui, Android ne réduit pas la
+      fenêtre visuelle quand le clavier s'ouvre, et le bandeau de suggestions
+      Chrome (mots de passe / cartes / adresses) recouvre alors le bas de
+      l'écran — bouton de validation compris — sans que la page ne le sache.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
     <meta name="theme-color" content="#0f172a" />
     <meta name="description" content="FitnessFufs — suivi des calories, des macros et du poids, 100 % hors ligne." />
 

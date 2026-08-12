@@ -447,6 +447,18 @@ input[type='range']::-moz-range-thumb {
   font-size: 0.8rem;
 }
 
+/*
+ * Reste visible juste au-dessus du clavier même quand la page défile en
+ * dessous : sur un long formulaire, l'action principale ne doit pas
+ * dépendre de la position de défilement au moment où le clavier s'ouvre.
+ */
+.btn.sticky-cta {
+  position: sticky;
+  bottom: calc(var(--tabbar-height) + env(safe-area-inset-bottom, 0px) + 12px);
+  z-index: 6;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
 .segmented {
   display: flex;
   gap: 6px;

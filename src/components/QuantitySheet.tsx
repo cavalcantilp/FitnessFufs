@@ -83,6 +83,13 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
 
       <div className="field">
         <label htmlFor="grams">{t('add.quantity')}</label>
+        {/*
+          Sans focus automatique : la portion usuelle est déjà pré-remplie, et
+          la plupart des ajouts la valident telle quelle. Un focus imposé ici
+          ouvrait le clavier — et la bande de saisie automatique de Chrome au-
+          dessus, carte bancaire et mot de passe compris — à chaque aliment
+          choisi, masquant le bouton de validation pour rien.
+        */}
         <div className={units.length > 0 ? 'amount-row' : undefined}>
           <input
             id="grams"
@@ -92,7 +99,6 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
             autoComplete="off"
             value={count}
             onChange={(event) => setCount(event.target.value)}
-            autoFocus
           />
           {units.length > 0 ? (
             <select

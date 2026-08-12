@@ -65,7 +65,14 @@ export function AddScreen({ date, meal, onAdded, onLogged }: AddScreenProps) {
           onAdded(t('add.added'))
           onLogged()
         }}
-        onEdit={selected.custom ? () => setEditing(selected) : undefined}
+        onEdit={
+          selected.custom
+            ? () => {
+                setEditing(selected)
+                setSelected(null)
+              }
+            : undefined
+        }
         onDelete={
           selected.custom
             ? () => {

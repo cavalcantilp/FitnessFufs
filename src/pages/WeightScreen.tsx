@@ -47,8 +47,10 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
           <label htmlFor="weight-input">{t('weight.input')}</label>
           <input
             id="weight-input"
+            name="weight-input"
             type="text"
             inputMode="decimal"
+            autoComplete="off"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
             placeholder={String(current)}

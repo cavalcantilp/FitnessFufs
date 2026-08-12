@@ -129,6 +129,8 @@ export function FoodPicker({ onSelect, onCreate, onScan, onToast }: FoodPickerPr
       <div className="search-row">
         <input
           type="search"
+          name="food-search"
+          autoComplete="off"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t('add.search')}

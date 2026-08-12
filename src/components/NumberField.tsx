@@ -96,8 +96,10 @@ export function NumberField({
       <label htmlFor={id}>{label}</label>
       <input
         id={id}
+        name={id}
         type="text"
         inputMode={inputMode}
+        autoComplete="off"
         value={draft}
         onChange={(event) => handleChange(event.target.value)}
         onBlur={handleBlur}

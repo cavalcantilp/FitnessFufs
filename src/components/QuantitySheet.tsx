@@ -86,8 +86,10 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
         <div className={units.length > 0 ? 'amount-row' : undefined}>
           <input
             id="grams"
+            name="grams"
             type="text"
             inputMode="decimal"
+            autoComplete="off"
             value={count}
             onChange={(event) => setCount(event.target.value)}
             autoFocus

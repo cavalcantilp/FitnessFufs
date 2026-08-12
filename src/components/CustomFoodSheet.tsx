@@ -88,6 +88,8 @@ export function CustomFoodSheet({
         <label htmlFor="cf-name">{t('add.customName')}</label>
         <input
           id="cf-name"
+          name="cf-name"
+          autoComplete="off"
           value={name}
           onChange={(event) => setName(event.target.value)}
           autoFocus
@@ -99,8 +101,10 @@ export function CustomFoodSheet({
           <label htmlFor="cf-kcal">{t('macro.kcal')}</label>
           <input
             id="cf-kcal"
+            name="cf-kcal"
             type="text"
             inputMode="decimal"
+            autoComplete="off"
             value={kcal}
             onChange={(event) => setKcal(event.target.value)}
             placeholder={String(derivedKcal)}
@@ -110,8 +114,10 @@ export function CustomFoodSheet({
           <label htmlFor="cf-serving">{t('add.quantity')}</label>
           <input
             id="cf-serving"
+            name="cf-serving"
             type="text"
             inputMode="numeric"
+            autoComplete="off"
             value={serving}
             onChange={(event) => setServing(event.target.value)}
           />
@@ -123,8 +129,10 @@ export function CustomFoodSheet({
           <label htmlFor="cf-fiber">{t('macro.fiber')}</label>
           <input
             id="cf-fiber"
+            name="cf-fiber"
             type="text"
             inputMode="decimal"
+            autoComplete="off"
             value={fiber}
             onChange={(event) => setFiber(event.target.value)}
           />
@@ -150,8 +158,10 @@ export function CustomFoodSheet({
           <label htmlFor="cf-p">{t('macro.protein')}</label>
           <input
             id="cf-p"
+            name="cf-p"
             type="text"
             inputMode="decimal"
+            autoComplete="off"
             value={protein}
             onChange={(event) => setProtein(event.target.value)}
           />
@@ -160,8 +170,10 @@ export function CustomFoodSheet({
           <label htmlFor="cf-c">{t('macro.carbs')}</label>
           <input
             id="cf-c"
+            name="cf-c"
             type="text"
             inputMode="decimal"
+            autoComplete="off"
             value={carbs}
             onChange={(event) => setCarbs(event.target.value)}
           />
@@ -170,8 +182,10 @@ export function CustomFoodSheet({
           <label htmlFor="cf-f">{t('macro.fat')}</label>
           <input
             id="cf-f"
+            name="cf-f"
             type="text"
             inputMode="decimal"
+            autoComplete="off"
             value={fat}
             onChange={(event) => setFat(event.target.value)}
           />

@@ -49,6 +49,12 @@ aucun serveur, aucun envoi de données.
   depuis le domaine de l'application, jamais depuis un CDN, et mis en cache au
   premier usage. Le bouton n'apparaît que sur les appareils à pointeur grossier
   — téléphones et tablettes — un ordinateur de bureau ne s'y prêtant pas.
+- **Objectif nutritionnel** — depuis l'onglet Ajouter, compare tous les
+  aliments d'une catégorie (cru et cuit affichés séparément mais groupés) selon
+  les grammes nécessaires pour atteindre une quantité cible d'un nutriment
+  (calories, protéines, glucides ou lipides), triés du plus « rentable » au
+  moins. Toucher un résultat l'ajoute directement au journal, à la quantité
+  calculée.
 - **Objectifs** — métabolisme de base (Mifflin-St Jeor), dépense estimée selon le
   niveau d'activité, ajustement selon l'objectif de poids. L'apport ne descend
   jamais sous le métabolisme de base ; sous ce plancher l'objectif retenu cesse

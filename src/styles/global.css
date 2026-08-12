@@ -823,6 +823,45 @@ input[type='range']::-moz-range-thumb {
   overflow: hidden;
 }
 
+/* ---------- Objectif nutritionnel ---------- */
+
+.target-result {
+  display: block;
+  width: 100%;
+  text-align: left;
+  transition: transform 0.1s ease;
+}
+
+.target-result:active {
+  transform: scale(0.98);
+}
+
+.target-result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.target-result-head .name {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+/* Le résultat du calcul, pas un simple filtre : distinct des puces et chips
+   par sa couleur pleine plutôt qu'un contour. */
+.target-grams {
+  flex: none;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--positive);
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .food-row {
   display: flex;
   align-items: center;

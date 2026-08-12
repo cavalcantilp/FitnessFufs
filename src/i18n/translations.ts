@@ -73,6 +73,14 @@ const fr = {
   'add.editFood': 'Corriger cet aliment',
   'add.updated': 'Valeurs mises à jour',
 
+  'target.title': 'Objectif nutritionnel',
+  'target.subtitle': 'Comparez les aliments d\'une catégorie',
+  'target.category': 'Catégorie d\'aliments',
+  'target.nutrient': 'Nutriment cible',
+  'target.quantity': 'Quantité cible',
+  'target.goal': 'Objectif : {qty} {unit} de {nutrient}',
+  'target.empty': 'Aucun aliment de cette catégorie n\'apporte ce nutriment.',
+
   'scan.title': 'Scanner un code-barres',
   'scan.hint': 'Cadrez le code-barres du produit',
   'scan.denied': 'Accès à la caméra refusé. Autorisez-le dans les réglages du navigateur.',
@@ -312,6 +320,14 @@ const pt: Dict = {
   'add.editFood': 'Corrigir este alimento',
   'add.updated': 'Valores atualizados',
 
+  'target.title': 'Meta nutricional',
+  'target.subtitle': 'Compare os alimentos de uma categoria',
+  'target.category': 'Categoria de alimentos',
+  'target.nutrient': 'Nutriente alvo',
+  'target.quantity': 'Quantidade alvo',
+  'target.goal': 'Meta: {qty} {unit} de {nutrient}',
+  'target.empty': 'Nenhum alimento desta categoria fornece este nutriente.',
+
   'scan.title': 'Ler código de barras',
   'scan.hint': 'Enquadre o código de barras do produto',
   'scan.denied': 'Acesso à câmara recusado. Autorize nas definições do navegador.',
@@ -547,6 +563,14 @@ const es: Dict = {
   'add.deleteFood': 'Eliminar este alimento',
   'add.editFood': 'Corregir este alimento',
   'add.updated': 'Valores actualizados',
+
+  'target.title': 'Objetivo nutricional',
+  'target.subtitle': 'Compara los alimentos de una categoría',
+  'target.category': 'Categoría de alimentos',
+  'target.nutrient': 'Nutriente objetivo',
+  'target.quantity': 'Cantidad objetivo',
+  'target.goal': 'Objetivo: {qty} {unit} de {nutrient}',
+  'target.empty': 'Ningún alimento de esta categoría aporta este nutriente.',
 
   'scan.title': 'Escanear código de barras',
   'scan.hint': 'Encuadra el código de barras del producto',
@@ -784,6 +808,14 @@ const en: Dict = {
   'add.editFood': 'Edit this food',
   'add.updated': 'Values updated',
 
+  'target.title': 'Nutrition target',
+  'target.subtitle': 'Compare the foods in a category',
+  'target.category': 'Food category',
+  'target.nutrient': 'Target nutrient',
+  'target.quantity': 'Target amount',
+  'target.goal': 'Target: {qty} {unit} of {nutrient}',
+  'target.empty': 'No food in this category provides this nutrient.',
+
   'scan.title': 'Scan a barcode',
   'scan.hint': 'Frame the product barcode',
   'scan.denied': 'Camera access denied. Allow it in your browser settings.',
@@ -1019,6 +1051,14 @@ const it: Dict = {
   'add.deleteFood': 'Elimina questo alimento',
   'add.editFood': 'Correggi questo alimento',
   'add.updated': 'Valori aggiornati',
+
+  'target.title': 'Obiettivo nutrizionale',
+  'target.subtitle': 'Confronta gli alimenti di una categoria',
+  'target.category': 'Categoria di alimenti',
+  'target.nutrient': 'Nutriente obiettivo',
+  'target.quantity': 'Quantità obiettivo',
+  'target.goal': 'Obiettivo: {qty} {unit} di {nutrient}',
+  'target.empty': 'Nessun alimento di questa categoria fornisce questo nutriente.',
 
   'scan.title': 'Scansiona un codice a barre',
   'scan.hint': 'Inquadra il codice a barre del prodotto',

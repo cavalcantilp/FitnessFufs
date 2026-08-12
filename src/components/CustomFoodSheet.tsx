@@ -115,7 +115,7 @@ export function CustomFoodSheet({
       </div>
 
       <button type="button" className="btn secondary" onClick={() => setShowRecipe(true)}>
-        {t('recipe.title')}
+        + {t('recipe.add')}
       </button>
 
       <div className="grid-2">

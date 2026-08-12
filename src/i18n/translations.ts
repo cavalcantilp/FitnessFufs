@@ -73,6 +73,7 @@ const fr = {
     "Les calories saisies ({entered} kcal) ne correspondent pas à celles calculées depuis les macros ({computed} kcal). Laissez le champ vide pour utiliser la valeur calculée automatiquement.",
 
   'recipe.title': 'Recette',
+  'recipe.add': 'Ajouter une recette',
   'recipe.subtitle': "Combinez des aliments déjà enregistrés",
   'recipe.empty': 'Ajoutez des aliments pour composer la recette.',
   'recipe.ingredients': 'Ingrédients',
@@ -330,6 +331,7 @@ const pt: Dict = {
     'As calorias inseridas ({entered} kcal) não correspondem às calculadas a partir dos macros ({computed} kcal). Deixe o campo vazio para usar o valor calculado automaticamente.',
 
   'recipe.title': 'Receita',
+  'recipe.add': 'Adicionar uma receita',
   'recipe.subtitle': 'Combine alimentos já registrados',
   'recipe.empty': 'Adicione alimentos para compor a receita.',
   'recipe.ingredients': 'Ingredientes',
@@ -584,6 +586,7 @@ const es: Dict = {
     'Las calorías introducidas ({entered} kcal) no coinciden con las calculadas a partir de los macros ({computed} kcal). Deja el campo vacío para usar el valor calculado automáticamente.',
 
   'recipe.title': 'Receta',
+  'recipe.add': 'Añadir una receta',
   'recipe.subtitle': 'Combina alimentos ya registrados',
   'recipe.empty': 'Añade alimentos para componer la receta.',
   'recipe.ingredients': 'Ingredientes',
@@ -838,6 +841,7 @@ const en: Dict = {
     "The calories entered ({entered} kcal) don't match those calculated from the macros ({computed} kcal). Leave the field empty to use the calculated value automatically.",
 
   'recipe.title': 'Recipe',
+  'recipe.add': 'Add a recipe',
   'recipe.subtitle': 'Combine foods already in the app',
   'recipe.empty': 'Add foods to build the recipe.',
   'recipe.ingredients': 'Ingredients',
@@ -1092,6 +1096,7 @@ const it: Dict = {
     'Le calorie inserite ({entered} kcal) non corrispondono a quelle calcolate dai macro ({computed} kcal). Lascia il campo vuoto per usare il valore calcolato automaticamente.',
 
   'recipe.title': 'Ricetta',
+  'recipe.add': 'Aggiungi una ricetta',
   'recipe.subtitle': 'Combina alimenti già registrati',
   'recipe.empty': 'Aggiungi alimenti per comporre la ricetta.',
   'recipe.ingredients': 'Ingredienti',

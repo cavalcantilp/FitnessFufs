@@ -29,6 +29,18 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
     return { year: current.getFullYear(), month: current.getMonth() }
   })
   const [noteDate, setNoteDate] = useState<string | null>(null)
+  /**
+   * Jour entouré. Une pression brève n'ouvre plus le journal — elle ouvre la
+   * note — donc `date` (le jour du journal, propriété du parent) ne bouge
+   * plus au toucher : sans cet état local, le contour restait figé sur le
+   * dernier jour ouvert par une pression longue, sans jamais suivre le doigt.
+   */
+  const [viewed, setViewed] = useState(date)
+
+  const openNote = (key: string) => {
+    setViewed(key)
+    setNoteDate(key)
+  }
 
   const entriesByDate = useMemo(() => {
     const map = new Map<string, DiaryEntry[]>()
@@ -199,14 +211,14 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
                 date={key}
                 dayNumber={day.getDate()}
                 outside={day.getMonth() !== cursor.month}
-                selected={key === date}
+                selected={key === viewed}
                 isToday={key === today}
                 bars={bars}
                 onTrack={calOk}
                 onTarget={macroOk}
                 hasNote={Boolean(notes[key])}
                 onOpen={onPick}
-                onNote={setNoteDate}
+                onNote={openNote}
               />
             )
           })}

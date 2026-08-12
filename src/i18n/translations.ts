@@ -7,7 +7,7 @@ const fr = {
 
   'nav.diary': 'Journal',
   'nav.add': 'Ajouter',
-  'nav.weight': 'Corps',
+  'nav.weight': 'Suivi',
   'nav.profile': 'Profil',
   'nav.calendar': 'Calendrier',
 
@@ -129,7 +129,7 @@ const fr = {
   'weight.since': 'Depuis le début',
   'weight.last7': 'Sur 7 jours',
   'weight.bmi': 'IMC',
-  'weight.history': 'Historique',
+  'weight.history': 'Historique du poids',
   'weight.syncProfile': 'Le profil utilise toujours la dernière pesée.',
   'measure.title': 'Mesures corporelles',
   'measure.waist': 'Tour de taille',
@@ -139,6 +139,16 @@ const fr = {
   'measure.logged': 'Mesures enregistrées',
   'measure.empty': 'Aucune mesure enregistrée.',
   'measure.history': 'Historique des mesures',
+  'history.title': 'Historique',
+  'history.open': "Voir l'historique",
+  'bodyfat.title': 'Matière grasse',
+  'bodyfat.input': 'Matière grasse estimée',
+  'bodyfat.log': 'Enregistrer',
+  'bodyfat.logged': 'Matière grasse enregistrée',
+  'bodyfat.empty': 'Aucune estimation enregistrée.',
+  'bodyfat.history': 'Historique de la matière grasse',
+  'bodyfat.hint':
+    "À renseigner à partir d'une balance à impédancemétrie, d'un pèse-personne connecté ou d'une mesure au pli cutané — l'application ne l'estime pas elle-même.",
 
   'bmi.under': 'Insuffisance pondérale',
   'bmi.normal': 'Corpulence normale',
@@ -238,7 +248,7 @@ const pt: Dict = {
 
   'nav.diary': 'Diário',
   'nav.add': 'Adicionar',
-  'nav.weight': 'Corpo',
+  'nav.weight': 'Registro',
   'nav.profile': 'Perfil',
   'nav.calendar': 'Calendário',
 
@@ -360,7 +370,7 @@ const pt: Dict = {
   'weight.since': 'Desde o início',
   'weight.last7': 'Em 7 dias',
   'weight.bmi': 'IMC',
-  'weight.history': 'Histórico',
+  'weight.history': 'Histórico de peso',
   'weight.syncProfile': 'O perfil usa sempre a última pesagem.',
   'measure.title': 'Medidas corporais',
   'measure.waist': 'Cintura',
@@ -370,6 +380,16 @@ const pt: Dict = {
   'measure.logged': 'Medidas guardadas',
   'measure.empty': 'Nenhuma medida registada.',
   'measure.history': 'Histórico de medidas',
+  'history.title': 'Histórico',
+  'history.open': 'Ver histórico',
+  'bodyfat.title': 'Massa gorda',
+  'bodyfat.input': 'Massa gorda estimada',
+  'bodyfat.log': 'Guardar',
+  'bodyfat.logged': 'Massa gorda registada',
+  'bodyfat.empty': 'Nenhuma estimativa registada.',
+  'bodyfat.history': 'Histórico de massa gorda',
+  'bodyfat.hint':
+    'A preencher a partir de uma balança de bioimpedância, uma balança conectada ou uma medição por prega cutânea — a aplicação não a estima sozinha.',
 
   'bmi.under': 'Peso abaixo do normal',
   'bmi.normal': 'Peso normal',
@@ -466,7 +486,7 @@ const es: Dict = {
 
   'nav.diary': 'Diario',
   'nav.add': 'Añadir',
-  'nav.weight': 'Cuerpo',
+  'nav.weight': 'Seguimiento',
   'nav.profile': 'Perfil',
   'nav.calendar': 'Calendario',
 
@@ -588,7 +608,7 @@ const es: Dict = {
   'weight.since': 'Desde el inicio',
   'weight.last7': 'En 7 días',
   'weight.bmi': 'IMC',
-  'weight.history': 'Historial',
+  'weight.history': 'Historial de peso',
   'weight.syncProfile': 'El perfil usa siempre el último pesaje.',
   'measure.title': 'Medidas corporales',
   'measure.waist': 'Cintura',
@@ -598,6 +618,16 @@ const es: Dict = {
   'measure.logged': 'Medidas guardadas',
   'measure.empty': 'No hay medidas registradas.',
   'measure.history': 'Historial de medidas',
+  'history.title': 'Historial',
+  'history.open': 'Ver historial',
+  'bodyfat.title': 'Grasa corporal',
+  'bodyfat.input': 'Grasa corporal estimada',
+  'bodyfat.log': 'Guardar',
+  'bodyfat.logged': 'Grasa corporal registrada',
+  'bodyfat.empty': 'No hay estimaciones registradas.',
+  'bodyfat.history': 'Historial de grasa corporal',
+  'bodyfat.hint':
+    'A partir de una báscula de bioimpedancia, una báscula conectada o una medición con plicómetro — la aplicación no la estima por sí misma.',
 
   'bmi.under': 'Peso insuficiente',
   'bmi.normal': 'Peso normal',
@@ -694,7 +724,7 @@ const en: Dict = {
 
   'nav.diary': 'Diary',
   'nav.add': 'Add',
-  'nav.weight': 'Body',
+  'nav.weight': 'Tracking',
   'nav.profile': 'Profile',
   'nav.calendar': 'Calendar',
 
@@ -816,7 +846,7 @@ const en: Dict = {
   'weight.since': 'Since the start',
   'weight.last7': 'Over 7 days',
   'weight.bmi': 'BMI',
-  'weight.history': 'History',
+  'weight.history': 'Weight history',
   'weight.syncProfile': 'The profile always uses your latest weigh-in.',
   'measure.title': 'Body measurements',
   'measure.waist': 'Waist',
@@ -826,6 +856,16 @@ const en: Dict = {
   'measure.logged': 'Measurements saved',
   'measure.empty': 'No measurements logged yet.',
   'measure.history': 'Measurement history',
+  'history.title': 'History',
+  'history.open': 'View history',
+  'bodyfat.title': 'Body fat',
+  'bodyfat.input': 'Estimated body fat',
+  'bodyfat.log': 'Save',
+  'bodyfat.logged': 'Body fat saved',
+  'bodyfat.empty': 'No estimate logged yet.',
+  'bodyfat.history': 'Body fat history',
+  'bodyfat.hint':
+    'Enter a value from a bioimpedance scale, a smart scale, or a skinfold measurement — the app does not estimate it itself.',
 
   'bmi.under': 'Underweight',
   'bmi.normal': 'Healthy weight',
@@ -922,7 +962,7 @@ const it: Dict = {
 
   'nav.diary': 'Diario',
   'nav.add': 'Aggiungi',
-  'nav.weight': 'Corpo',
+  'nav.weight': 'Monitoraggio',
   'nav.profile': 'Profilo',
   'nav.calendar': 'Calendario',
 
@@ -1044,7 +1084,7 @@ const it: Dict = {
   'weight.since': "Dall'inizio",
   'weight.last7': 'In 7 giorni',
   'weight.bmi': 'IMC',
-  'weight.history': 'Cronologia',
+  'weight.history': 'Cronologia del peso',
   'weight.syncProfile': "Il profilo usa sempre l'ultima pesata.",
   'measure.title': 'Misure corporee',
   'measure.waist': 'Vita',
@@ -1054,6 +1094,16 @@ const it: Dict = {
   'measure.logged': 'Misure salvate',
   'measure.empty': 'Nessuna misura registrata.',
   'measure.history': 'Cronologia misure',
+  'history.title': 'Cronologia',
+  'history.open': 'Vedi cronologia',
+  'bodyfat.title': 'Massa grassa',
+  'bodyfat.input': 'Massa grassa stimata',
+  'bodyfat.log': 'Salva',
+  'bodyfat.logged': 'Massa grassa salvata',
+  'bodyfat.empty': 'Nessuna stima registrata.',
+  'bodyfat.history': 'Cronologia massa grassa',
+  'bodyfat.hint':
+    'Da inserire da una bilancia impedenziometrica, una bilancia smart o una plicometria — l\'app non la stima da sola.',
 
   'bmi.under': 'Sottopeso',
   'bmi.normal': 'Normopeso',

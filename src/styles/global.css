@@ -324,6 +324,14 @@ input[type='range']::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
 }
 
+.macro-card .macro-sub.down {
+  color: var(--positive);
+}
+
+.macro-card .macro-sub.up {
+  color: var(--negative);
+}
+
 .donut {
   display: flex;
   align-items: center;

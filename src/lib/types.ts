@@ -167,6 +167,12 @@ export interface WeightEntry {
   weight: number
 }
 
+export interface BodyFatEntry {
+  /** Date au format YYYY-MM-DD, unique : une estimation par jour. */
+  date: string
+  percent: number
+}
+
 /** Tour de taille, de hanches, de poitrine — en centimètres. */
 export type MeasurementKey = 'waist' | 'hips' | 'chest'
 

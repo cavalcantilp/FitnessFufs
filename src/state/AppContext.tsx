@@ -12,6 +12,7 @@ import { computeTargets, nutrientsFor, type Targets } from '../lib/nutrition'
 import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
 import type {
+  BodyFatEntry,
   DayMacros,
   DiaryEntry,
   Food,
@@ -47,6 +48,7 @@ export interface ExportPayload {
   dayMacros?: Record<string, DayMacros>
   notes?: Record<string, string>
   measurements?: MeasurementEntry[]
+  bodyFat?: BodyFatEntry[]
 }
 
 interface AppState {
@@ -90,6 +92,11 @@ interface AppState {
   /** Retire une seule mesure d'un jour ; l'entrée disparaît si elle devient vide. */
   removeMeasurement: (date: string, key: MeasurementKey) => void
 
+  /** Estimation du taux de matière grasse, une entrée par jour. */
+  bodyFat: BodyFatEntry[]
+  logBodyFat: (date: string, percent: number) => void
+  removeBodyFat: (date: string) => void
+
   foods: Food[]
   customFoods: Food[]
   addCustomFood: (food: Omit<Food, 'id' | 'custom'>) => Food
@@ -131,6 +138,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     load(STORAGE_KEYS.dayMacros, {}),
   )
   const [notes, setNotes] = useState<Record<string, string>>(() => load(STORAGE_KEYS.notes, {}))
+  const [bodyFat, setBodyFat] = useState<BodyFatEntry[]>(() => load(STORAGE_KEYS.bodyFat, []))
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
@@ -142,6 +150,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.favorites, favorites), [favorites])
   useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
   useEffect(() => save(STORAGE_KEYS.notes, notes), [notes])
+  useEffect(() => save(STORAGE_KEYS.bodyFat, bodyFat), [bodyFat])
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -284,6 +293,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     )
   }, [])
 
+  const logBodyFat = useCallback((date: string, percent: number) => {
+    setBodyFat((current) => {
+      const next = current.filter((entry) => entry.date !== date)
+      next.push({ date, percent })
+      next.sort((a, b) => a.date.localeCompare(b.date))
+      return next
+    })
+  }, [])
+
+  const removeBodyFat = useCallback((date: string) => {
+    setBodyFat((current) => current.filter((entry) => entry.date !== date))
+  }, [])
+
   const addCustomFood = useCallback((food: Omit<Food, 'id' | 'custom'>) => {
     const created: Food = { ...food, id: `custom-${newId()}`, custom: true }
     setCustomFoods((current) => [created, ...current])
@@ -326,8 +348,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       dayMacros,
       notes,
       measurements,
+      bodyFat,
     }),
-    [profile, entries, weights, customFoods, favorites, dayMacros, notes, measurements],
+    [profile, entries, weights, customFoods, favorites, dayMacros, notes, measurements, bodyFat],
   )
 
   const importData = useCallback((payload: unknown) => {
@@ -344,6 +367,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setDayMacros(data.dayMacros ?? {})
     setNotes(data.notes ?? {})
     setMeasurements(Array.isArray(data.measurements) ? data.measurements : [])
+    setBodyFat(Array.isArray(data.bodyFat) ? data.bodyFat : [])
     setOnboarded(true)
     return true
   }, [])
@@ -354,6 +378,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setEntries([])
     setWeights([])
     setMeasurements([])
+    setBodyFat([])
     setCustomFoods([])
     setFavorites([])
     setDayMacros({})
@@ -388,6 +413,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       measurements,
       logMeasurements,
       removeMeasurement,
+      bodyFat,
+      logBodyFat,
+      removeBodyFat,
       foods,
       customFoods,
       addCustomFood,
@@ -424,6 +452,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       measurements,
       logMeasurements,
       removeMeasurement,
+      bodyFat,
+      logBodyFat,
+      removeBodyFat,
       foods,
       customFoods,
       addCustomFood,

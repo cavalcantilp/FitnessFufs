@@ -171,6 +171,7 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
               ))}
             </div>
             <button type="button" className="btn" onClick={submitMeasurements} disabled={!hasMeasureDraft}>
+              <IconPlus size={16} />
               {t('measure.log')}
             </button>
 

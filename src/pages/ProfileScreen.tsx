@@ -7,7 +7,7 @@ interface ProfileScreenProps {
 }
 
 export function ProfileScreen({ onToast }: ProfileScreenProps) {
-  const { t, targets, exportData, importData, resetAll } = useApp()
+  const { t, targets, exportData, importData, resetAll, tutorialsEnabled, setTutorialsEnabled } = useApp()
   const fileInput = useRef<HTMLInputElement>(null)
 
   const download = () => {
@@ -74,6 +74,17 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
       <div className="card stack">
         <div className="card-title">{t('profile.data')}</div>
         <p className="hint">{t('profile.offline')}</p>
+        <label className="check-row" id="tutorials-toggle">
+          <input
+            type="checkbox"
+            checked={tutorialsEnabled}
+            onChange={(event) => setTutorialsEnabled(event.target.checked)}
+          />
+          <span>
+            {t('profile.tutorials')}
+            <span className="hint">{t('profile.tutorialsHint')}</span>
+          </span>
+        </label>
         <button type="button" className="btn secondary" onClick={download}>
           {t('profile.export')}
         </button>

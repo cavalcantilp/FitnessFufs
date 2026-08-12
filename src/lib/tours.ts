@@ -1,0 +1,22 @@
+import type { CoachStep } from '../components/Coachmark'
+
+/** Étapes de la visite guidée de chaque onglet, déclenchée au premier passage. */
+export const TOURS: Record<string, CoachStep[]> = {
+  calendar: [
+    { target: '.calendar-grid', textKey: 'tour.calendar.1' },
+    { target: '.calendar-key', textKey: 'tour.calendar.2' },
+  ],
+  diary: [
+    { target: '.summary', textKey: 'tour.diary.1' },
+    { target: '.label-with-note .icon-btn', textKey: 'tour.diary.2' },
+  ],
+  add: [
+    { target: 'input[name="food-search"]', textKey: 'tour.add.1' },
+    { target: '.list-head-actions button:first-child', textKey: 'tour.add.2' },
+  ],
+  weight: [
+    { target: '.track-chart', textKey: 'tour.weight.1' },
+    { target: '.bmi-gauge', textKey: 'tour.weight.2' },
+  ],
+  profile: [{ target: '#tutorials-toggle', textKey: 'tour.profile.1' }],
+}

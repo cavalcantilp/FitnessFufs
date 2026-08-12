@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { useApp } from './state/AppContext'
 import { Onboarding } from './pages/Onboarding'
@@ -7,17 +7,19 @@ import { Diary } from './pages/Diary'
 import { AddScreen } from './pages/AddScreen'
 import { WeightScreen } from './pages/WeightScreen'
 import { ProfileScreen } from './pages/ProfileScreen'
+import { Coachmark } from './components/Coachmark'
 import { IconCalendar, IconDiary, IconPlus, IconScale, IconUser } from './components/icons'
 import { LANGS } from './i18n/translations'
 import { todayKey } from './lib/date'
 import { load, save, STORAGE_KEYS } from './lib/storage'
 import { defaultMeal } from './lib/meals'
+import { TOURS } from './lib/tours'
 import type { Lang, MealId } from './lib/types'
 
 type Tab = 'calendar' | 'diary' | 'add' | 'weight' | 'profile'
 
 export function App() {
-  const { t, lang, setLang, onboarded } = useApp()
+  const { t, lang, setLang, onboarded, tutorialsEnabled, tutorialSeen, markTutorialSeen } = useApp()
   /**
    * L'onglet et le jour consultés survivent au rechargement : un simple
    * « tirer pour rafraîchir » renvoyait sinon systématiquement au journal
@@ -27,8 +29,25 @@ export function App() {
   const [date, setDate] = useState(() => load(STORAGE_KEYS.ui, { date: todayKey() }).date)
   const [meal, setMeal] = useState<MealId>(() => defaultMeal())
   const [toast, setToast] = useState<string | null>(null)
+  const [activeTour, setActiveTour] = useState<Tab | null>(null)
 
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
+
+  /**
+   * Un léger délai laisse l'onglet finir de se peindre avant de mesurer les
+   * éléments ciblés — sans lui, la première visite mesurait parfois un
+   * élément pas encore à sa position finale.
+   */
+  useEffect(() => {
+    if (!tutorialsEnabled || tutorialSeen[tab] || !TOURS[tab]) return
+    const timer = window.setTimeout(() => setActiveTour(tab), 500)
+    return () => window.clearTimeout(timer)
+  }, [tab, tutorialsEnabled, tutorialSeen])
+
+  const handleTourDone = useCallback(() => {
+    markTutorialSeen(tab)
+    setActiveTour(null)
+  }, [tab, markTutorialSeen])
 
   useEffect(() => {
     save(STORAGE_KEYS.ui, { tab, date })
@@ -70,18 +89,30 @@ export function App() {
           <h1>{t('app.name')}</h1>
           <span className="subtitle">{t('app.tagline')}</span>
         </div>
-        <select
-          className="lang-select"
-          value={lang}
-          onChange={(event) => setLang(event.target.value as Lang)}
-          aria-label={t('profile.language')}
-        >
-          {LANGS.map((entry) => (
-            <option key={entry.id} value={entry.id}>
-              {entry.label}
-            </option>
-          ))}
-        </select>
+        <div className="header-actions">
+          {TOURS[tab] ? (
+            <button
+              type="button"
+              className="help-btn"
+              onClick={() => setActiveTour(tab)}
+              aria-label={t('tour.help')}
+            >
+              ?
+            </button>
+          ) : null}
+          <select
+            className="lang-select"
+            value={lang}
+            onChange={(event) => setLang(event.target.value as Lang)}
+            aria-label={t('profile.language')}
+          >
+            {LANGS.map((entry) => (
+              <option key={entry.id} value={entry.id}>
+                {entry.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </header>
 
       {needRefresh ? (
@@ -116,6 +147,8 @@ export function App() {
       {tab === 'profile' ? <ProfileScreen onToast={setToast} /> : null}
 
       {toast ? <div className="toast">{toast}</div> : null}
+
+      {activeTour ? <Coachmark key={activeTour} steps={TOURS[activeTour]} onDone={handleTourDone} /> : null}
 
       <nav className="tabbar">
         {tabs.map((entry) => (

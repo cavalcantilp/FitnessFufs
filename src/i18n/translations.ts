@@ -223,6 +223,9 @@ const fr = {
   'profile.importError': 'Fichier invalide',
   'profile.imported': 'Données importées',
   'profile.offline': 'Toutes vos données restent sur cet appareil.',
+  'profile.tutorials': 'Tutoriels automatiques',
+  'profile.tutorialsHint':
+    "Affiche une visite guidée au premier passage sur chaque onglet. Le bouton « ? » de l'en-tête reste toujours disponible.",
 
   'act.sedentary': 'Sédentaire (bureau)',
   'act.light': 'Léger (1-3× / semaine)',
@@ -244,6 +247,24 @@ const fr = {
     'Quelques informations suffisent pour calculer vos objectifs quotidiens. Tout reste stocké sur votre téléphone.',
   'onboarding.start': 'Commencer',
   'onboarding.skip': 'Plus tard',
+
+  'tour.help': 'Aide',
+  'tour.skip': 'Passer',
+  'tour.next': 'Suivant',
+  'tour.done': 'Terminé',
+  'tour.calendar.1': 'Touchez un jour pour le sélectionner ; restez appuyé pour ouvrir directement son journal.',
+  'tour.calendar.2':
+    "Chaque barre montre l'écart par rapport à votre objectif : verte si proche, rouge si loin, dans les deux sens.",
+  'tour.diary.1': 'Votre progression calorique du jour, mise à jour à chaque aliment ajouté.',
+  'tour.diary.2': 'Ajoutez une note libre à cette journée — entraînement, voyage, repas sauté.',
+  'tour.add.1': 'Cherchez un aliment, scannez un code-barres, ou créez le vôtre.',
+  'tour.add.2': "Comparez les aliments pour atteindre une quantité cible d'un nutriment.",
+  'tour.weight.1':
+    "L'évolution de votre poids, avec un sélecteur de période pour zoomer sur les dernières semaines ou tout l'historique.",
+  'tour.weight.2':
+    "Votre IMC, positionné sur une jauge colorée pour voir en un coup d'œil où vous vous situez.",
+  'tour.profile.1':
+    "Retrouvez ici comment couper ou réactiver le déclenchement automatique des tutoriels.",
 
   'common.save': 'Enregistrer',
   'common.cancel': 'Annuler',
@@ -483,6 +504,9 @@ const pt: Dict = {
   'profile.importError': 'Arquivo inválido',
   'profile.imported': 'Dados importados',
   'profile.offline': 'Todos os dados ficam neste dispositivo.',
+  'profile.tutorials': 'Tutoriais automáticos',
+  'profile.tutorialsHint':
+    'Mostra um tour guiado na primeira vez que você acessa cada aba. O botão "?" do cabeçalho continua sempre disponível.',
 
   'act.sedentary': 'Sedentário (escritório)',
   'act.light': 'Leve (1-3× / semana)',
@@ -504,6 +528,25 @@ const pt: Dict = {
     'Bastam algumas informações para calcular as suas metas diárias. Tudo fica guardado no seu celular.',
   'onboarding.start': 'Começar',
   'onboarding.skip': 'Mais tarde',
+
+  'tour.help': 'Ajuda',
+  'tour.skip': 'Pular',
+  'tour.next': 'Próximo',
+  'tour.done': 'Concluído',
+  'tour.calendar.1':
+    'Toque em um dia para selecioná-lo; mantenha pressionado para abrir o diário diretamente.',
+  'tour.calendar.2':
+    'Cada barra mostra o desvio em relação à sua meta: verde se está perto, vermelha se está longe, nos dois sentidos.',
+  'tour.diary.1': 'Seu progresso calórico do dia, atualizado a cada alimento adicionado.',
+  'tour.diary.2': 'Adicione uma nota livre a este dia — treino, viagem, refeição pulada.',
+  'tour.add.1': 'Busque um alimento, escaneie um código de barras ou crie o seu.',
+  'tour.add.2': 'Compare alimentos para atingir uma quantidade alvo de um nutriente.',
+  'tour.weight.1':
+    'A evolução do seu peso, com um seletor de período para focar nas últimas semanas ou em todo o histórico.',
+  'tour.weight.2':
+    'Seu IMC, posicionado em uma régua colorida para ver rapidamente onde você está.',
+  'tour.profile.1':
+    'Aqui você encontra como desativar ou reativar o disparo automático dos tutoriais.',
 
   'common.save': 'Salvar',
   'common.cancel': 'Cancelar',
@@ -740,6 +783,9 @@ const es: Dict = {
   'profile.importError': 'Archivo no válido',
   'profile.imported': 'Datos importados',
   'profile.offline': 'Todos tus datos se quedan en este dispositivo.',
+  'profile.tutorials': 'Tutoriales automáticos',
+  'profile.tutorialsHint':
+    'Muestra un recorrido guiado la primera vez que entras en cada pestaña. El botón "?" de la cabecera sigue disponible siempre.',
 
   'act.sedentary': 'Sedentario (oficina)',
   'act.light': 'Ligero (1-3× / semana)',
@@ -761,6 +807,23 @@ const es: Dict = {
     'Con unos pocos datos calculamos tus objetivos diarios. Todo se guarda en tu móvil.',
   'onboarding.start': 'Empezar',
   'onboarding.skip': 'Más tarde',
+
+  'tour.help': 'Ayuda',
+  'tour.skip': 'Omitir',
+  'tour.next': 'Siguiente',
+  'tour.done': 'Listo',
+  'tour.calendar.1': 'Toca un día para seleccionarlo; mantén pulsado para abrir su diario directamente.',
+  'tour.calendar.2':
+    'Cada barra muestra la desviación respecto a tu objetivo: verde si está cerca, roja si está lejos, en ambos sentidos.',
+  'tour.diary.1': 'Tu progreso calórico del día, actualizado con cada alimento añadido.',
+  'tour.diary.2': 'Añade una nota libre a este día — entrenamiento, viaje, comida saltada.',
+  'tour.add.1': 'Busca un alimento, escanea un código de barras o crea el tuyo.',
+  'tour.add.2': 'Compara alimentos para alcanzar una cantidad objetivo de un nutriente.',
+  'tour.weight.1':
+    'La evolución de tu peso, con un selector de periodo para ver las últimas semanas o todo el historial.',
+  'tour.weight.2':
+    'Tu IMC, ubicado en una escala de colores para ver de un vistazo dónde te encuentras.',
+  'tour.profile.1': 'Aquí puedes desactivar o reactivar el inicio automático de los tutoriales.',
 
   'common.save': 'Guardar',
   'common.cancel': 'Cancelar',
@@ -997,6 +1060,9 @@ const en: Dict = {
   'profile.importError': 'Invalid file',
   'profile.imported': 'Data imported',
   'profile.offline': 'All your data stays on this device.',
+  'profile.tutorials': 'Automatic tutorials',
+  'profile.tutorialsHint':
+    'Shows a guided tour the first time you open each tab. The "?" button in the header always stays available.',
 
   'act.sedentary': 'Sedentary (desk job)',
   'act.light': 'Light (1-3× / week)',
@@ -1018,6 +1084,23 @@ const en: Dict = {
     'A few details are enough to compute your daily targets. Everything stays on your phone.',
   'onboarding.start': 'Get started',
   'onboarding.skip': 'Later',
+
+  'tour.help': 'Help',
+  'tour.skip': 'Skip',
+  'tour.next': 'Next',
+  'tour.done': 'Done',
+  'tour.calendar.1': 'Tap a day to select it; hold it down to jump straight into its diary.',
+  'tour.calendar.2':
+    'Each bar shows how far you are from your target: green if close, red if far, in either direction.',
+  'tour.diary.1': 'Your calorie progress for the day, updated with every food you add.',
+  'tour.diary.2': 'Add a free-form note to this day — a workout, a trip, a skipped meal.',
+  'tour.add.1': 'Search for a food, scan a barcode, or create your own.',
+  'tour.add.2': 'Compare foods to reach a target amount of a nutrient.',
+  'tour.weight.1':
+    'Your weight over time, with a period picker to zoom into recent weeks or the full history.',
+  'tour.weight.2':
+    'Your BMI, placed on a colour-coded gauge so you can see where you stand at a glance.',
+  'tour.profile.1': 'Here you can turn the automatic tutorials off or back on.',
 
   'common.save': 'Save',
   'common.cancel': 'Cancel',
@@ -1254,6 +1337,9 @@ const it: Dict = {
   'profile.importError': 'File non valido',
   'profile.imported': 'Dati importati',
   'profile.offline': 'Tutti i dati restano su questo dispositivo.',
+  'profile.tutorials': 'Tutorial automatici',
+  'profile.tutorialsHint':
+    "Mostra un tour guidato la prima volta che apri ogni scheda. Il pulsante « ? » nell'intestazione resta sempre disponibile.",
 
   'act.sedentary': 'Sedentario (ufficio)',
   'act.light': 'Leggero (1-3× / settimana)',
@@ -1275,6 +1361,23 @@ const it: Dict = {
     'Bastano poche informazioni per calcolare i tuoi obiettivi giornalieri. Tutto resta sul tuo telefono.',
   'onboarding.start': 'Inizia',
   'onboarding.skip': 'Più tardi',
+
+  'tour.help': 'Aiuto',
+  'tour.skip': 'Salta',
+  'tour.next': 'Avanti',
+  'tour.done': 'Fatto',
+  'tour.calendar.1': 'Tocca un giorno per selezionarlo; tienilo premuto per aprire subito il suo diario.',
+  'tour.calendar.2':
+    'Ogni barra mostra lo scostamento dal tuo obiettivo: verde se vicino, rossa se lontano, in entrambe le direzioni.',
+  'tour.diary.1': 'Il tuo progresso calorico del giorno, aggiornato a ogni alimento aggiunto.',
+  'tour.diary.2': 'Aggiungi una nota libera a questo giorno — allenamento, viaggio, pasto saltato.',
+  'tour.add.1': 'Cerca un alimento, scansiona un codice a barre o crea il tuo.',
+  'tour.add.2': 'Confronta gli alimenti per raggiungere una quantità obiettivo di un nutriente.',
+  'tour.weight.1':
+    "L'andamento del tuo peso, con un selettore di periodo per le ultime settimane o tutta la cronologia.",
+  'tour.weight.2':
+    "Il tuo IMC, posizionato su una scala colorata per vedere a colpo d'occhio dove ti trovi.",
+  'tour.profile.1': "Qui puoi disattivare o riattivare l'avvio automatico dei tutorial.",
 
   'common.save': 'Salva',
   'common.cancel': 'Annulla',

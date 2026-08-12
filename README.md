@@ -124,6 +124,14 @@ aucun serveur, aucun envoi de données.
 - **Multilingue** — français, portugais, espagnol, anglais, italien ; la langue de
   l'appareil est détectée à la première ouverture.
 - **Import / export JSON** — sauvegarde et restauration complètes des données.
+- **Tutoriels par onglet** — une visite guidée en deux étapes (une seule pour
+  Profil) encadre les éléments clés de chaque onglet à l'aide d'un projecteur
+  et d'une bulle d'explication. Elle se déclenche automatiquement la première
+  fois qu'on visite un onglet, et peut être rouverte à tout moment par le
+  bouton discret « ? » à côté du sélecteur de langue. Le déclenchement
+  automatique se coupe depuis le profil ; le bouton « ? » reste toujours
+  disponible pour le rouvrir à la demande. Une étape dont la cible n'est pas à
+  l'écran est sautée sans bloquer la visite.
 
 ## Développement
 

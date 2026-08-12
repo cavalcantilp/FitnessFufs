@@ -1968,3 +1968,107 @@ input[type='range']::-moz-range-thumb {
 .disclosure-body .macro-value {
   font-size: 1.05rem;
 }
+
+/* ---------- En-tête : bouton d'aide ---------- */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-btn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--text-sub);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.help-btn:active {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+/* ---------- Visite guidée (tutoriel par onglet) ---------- */
+
+.coach-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  animation: fade 0.15s ease;
+}
+
+.coach-highlight {
+  position: fixed;
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.78);
+  outline: 2px solid var(--accent);
+  transition:
+    top 0.2s ease,
+    left 0.2s ease,
+    width 0.2s ease,
+    height 0.2s ease;
+  pointer-events: none;
+}
+
+.coach-tooltip {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.5);
+}
+
+.coach-tooltip p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.coach-tooltip-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.coach-step-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+.coach-tooltip-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coach-skip {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+.coach-next {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #04202f;
+  font-size: 0.8rem;
+  font-weight: 800;
+}

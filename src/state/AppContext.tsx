@@ -73,6 +73,13 @@ interface AppState {
   onboarded: boolean
   completeOnboarding: () => void
 
+  /** Déclenchement automatique du tutoriel au premier passage sur un onglet. */
+  tutorialsEnabled: boolean
+  setTutorialsEnabled: (enabled: boolean) => void
+  /** Onglets déjà vus par le tutoriel, indexés par identifiant d'onglet. */
+  tutorialSeen: Record<string, boolean>
+  markTutorialSeen: (tab: string) => void
+
   entries: DiaryEntry[]
   entriesFor: (date: string) => DiaryEntry[]
   addEntry: (date: string, meal: MealId, food: Food, grams: number, state?: FoodState) => void
@@ -120,6 +127,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ...load(STORAGE_KEYS.profile, {} as Partial<Profile>),
   }))
   const [onboarded, setOnboarded] = useState<boolean>(() => load(STORAGE_KEYS.onboarded, false))
+  const [tutorialsEnabled, setTutorialsEnabled] = useState<boolean>(() =>
+    load(STORAGE_KEYS.tutorialsEnabled, true),
+  )
+  const [tutorialSeen, setTutorialSeen] = useState<Record<string, boolean>>(() =>
+    load(STORAGE_KEYS.tutorialSeen, {}),
+  )
   const [entries, setEntries] = useState<DiaryEntry[]>(() => load(STORAGE_KEYS.entries, []))
   const [weights, setWeights] = useState<WeightEntry[]>(() => load(STORAGE_KEYS.weights, []))
   const [measurements, setMeasurements] = useState<MeasurementEntry[]>(() =>
@@ -135,6 +148,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
   useEffect(() => save(STORAGE_KEYS.onboarded, onboarded), [onboarded])
+  useEffect(() => save(STORAGE_KEYS.tutorialsEnabled, tutorialsEnabled), [tutorialsEnabled])
+  useEffect(() => save(STORAGE_KEYS.tutorialSeen, tutorialSeen), [tutorialSeen])
   useEffect(() => save(STORAGE_KEYS.entries, entries), [entries])
   useEffect(() => save(STORAGE_KEYS.weights, weights), [weights])
   useEffect(() => save(STORAGE_KEYS.measurements, measurements), [measurements])
@@ -200,6 +215,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = useCallback((patch: Partial<Profile>) => {
     setProfile((current) => ({ ...current, ...patch }))
+  }, [])
+
+  const markTutorialSeen = useCallback((tab: string) => {
+    setTutorialSeen((current) => (current[tab] ? current : { ...current, [tab]: true }))
   }, [])
 
   const entriesFor = useCallback(
@@ -359,6 +378,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setDayMacros({})
     setNotes({})
     setOnboarded(false)
+    setTutorialsEnabled(true)
+    setTutorialSeen({})
   }, [])
 
   const value = useMemo<AppState>(
@@ -377,6 +398,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setNoteFor,
       onboarded,
       completeOnboarding: () => setOnboarded(true),
+      tutorialsEnabled,
+      setTutorialsEnabled,
+      tutorialSeen,
+      markTutorialSeen,
       entries,
       entriesFor,
       addEntry,
@@ -413,6 +438,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       notes,
       setNoteFor,
       onboarded,
+      tutorialsEnabled,
+      setTutorialsEnabled,
+      tutorialSeen,
+      markTutorialSeen,
       entries,
       entriesFor,
       addEntry,

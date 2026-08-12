@@ -63,6 +63,8 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
       subtitle={`${portion.per100.kcal} kcal · ${t('add.per100')}`}
       onBack={onClose}
     >
+      {food.recipe ? <p className="hint">{food.recipe}</p> : null}
+
       {states.length > 0 ? (
         <div className="field">
           <label>{t('state.title')}</label>

@@ -38,7 +38,11 @@ aucun serveur, aucun envoi de données.
   incohérente. Un bouton « Recette » ouvre un second écran pour composer
   l'aliment à partir de plusieurs aliments déjà connus, chacun à sa propre
   quantité : la somme proportionnelle des macros et des micronutriments,
-  ramenée à 100 g du mélange, remplit la fiche automatiquement.
+  ramenée à 100 g du mélange, remplit la fiche automatiquement. Le détail des
+  ingrédients (ex. « 200 g de riz blanc (cuit) + 150 g de blanc de poulet
+  (cru) ») est gardé en texte sur l'aliment créé et réapparaît à chaque fois
+  qu'on le choisit dans le journal — sans lui, cette information disparaissait
+  dès que la recette était réduite à ses valeurs pour 100 g.
 - **Favoris** — l'étoile épingle un aliment en tête de liste, filtre compris, et
   le confirme par un message nommant l'aliment. Ce retour n'est pas décoratif :
   la première utilisatrice a cru que l'étoile remplissait le journal et s'est

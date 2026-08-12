@@ -133,6 +133,13 @@ export interface Food {
    * préparations. Invisibles dans l'interface.
    */
   aliases?: string[]
+  /**
+   * Composition d'un aliment personnalisé créé via le composeur de recette
+   * (ex. « 200 g de riz blanc (cuit) + 150 g de blanc de poulet (cru) »).
+   * Sans elle, le détail des ingrédients disparaît une fois la recette
+   * réduite à ses valeurs pour 100 g.
+   */
+  recipe?: string
 }
 
 export type FoodCategory =

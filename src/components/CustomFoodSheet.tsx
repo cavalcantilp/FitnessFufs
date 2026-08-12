@@ -38,6 +38,7 @@ export function CustomFoodSheet({
   const [serving, setServing] = useState(String(editing?.serving ?? 100))
   const [category, setCategory] = useState<FoodCategory>(editing?.category ?? 'dish')
   const [micros, setMicros] = useState<Micros | null>(editing?.micros ?? null)
+  const [recipe, setRecipe] = useState<string | undefined>(editing?.recipe)
   const [showRecipe, setShowRecipe] = useState(false)
 
   const num = (value: string) => {
@@ -65,8 +66,15 @@ export function CustomFoodSheet({
     const portion = Math.max(1, Math.round(num(serving)) || 100)
 
     if (editing) {
-      updateCustomFood(editing.id, { name: name.trim(), per100, serving: portion, category, micros: micros ?? undefined })
-      onCreated({ ...editing, name: name.trim(), per100, serving: portion, category, micros: micros ?? undefined })
+      updateCustomFood(editing.id, {
+        name: name.trim(),
+        per100,
+        serving: portion,
+        category,
+        micros: micros ?? undefined,
+        recipe,
+      })
+      onCreated({ ...editing, name: name.trim(), per100, serving: portion, category, micros: micros ?? undefined, recipe })
       return
     }
 
@@ -76,6 +84,7 @@ export function CustomFoodSheet({
       serving: portion,
       category,
       micros: micros ?? undefined,
+      recipe,
     })
     onCreated(created)
   }
@@ -92,6 +101,7 @@ export function CustomFoodSheet({
           setFiber(String(result.per100.fiber))
           setServing('100')
           setMicros(result.micros)
+          setRecipe(result.composition)
           setShowRecipe(false)
         }}
       />
@@ -118,6 +128,8 @@ export function CustomFoodSheet({
       <button type="button" className="btn secondary" onClick={() => setShowRecipe(true)}>
         + {t('recipe.add')}
       </button>
+
+      {recipe ? <p className="hint">{recipe}</p> : null}
 
       <div className="grid-2">
         <div className="field">

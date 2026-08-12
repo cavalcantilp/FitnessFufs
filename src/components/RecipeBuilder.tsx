@@ -14,8 +14,12 @@ interface RecipeLine {
 
 interface RecipeBuilderProps {
   onBack: () => void
-  /** Valeurs pour 100 g du mélange, prêtes à remplir la fiche d'aliment. */
-  onApply: (result: { per100: Nutrients; micros: Micros | null }) => void
+  /**
+   * Valeurs pour 100 g du mélange, prêtes à remplir la fiche d'aliment, et
+   * `composition` — le détail des ingrédients en texte — pour ne pas perdre
+   * cette information une fois la recette réduite à ses valeurs pour 100 g.
+   */
+  onApply: (result: { per100: Nutrients; micros: Micros | null; composition: string }) => void
 }
 
 /**
@@ -51,6 +55,15 @@ export function RecipeBuilder({ onBack, onApply }: RecipeBuilderProps) {
     const parsed = Number(value.replace(',', '.'))
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 0
   }
+
+  const stateLabel = (state: FoodState | undefined) =>
+    state ? ` (${t(state === 'raw' ? 'state.raw' : 'state.cooked').toLowerCase()})` : ''
+
+  // Le détail des ingrédients, gardé en texte : sans lui, la composition
+  // exacte de la recette disparaît une fois réduite à ses valeurs pour 100 g.
+  const composition = lines
+    .map((line) => `${num(line.grams)} g ${t('recipe.of')} ${foodName(line.food, lang)}${stateLabel(line.state)}`)
+    .join(' + ')
 
   const totalGrams = round1(lines.reduce((sum, line) => sum + num(line.grams), 0))
   const totalNutrients = sumNutrients(lines.map((line) => nutrientsFor(line.food, num(line.grams), line.state)))
@@ -103,7 +116,7 @@ export function RecipeBuilder({ onBack, onApply }: RecipeBuilderProps) {
                 <div className="macros">
                   {t('macro.protein.short')} {food.per100.protein} · {t('macro.carbs.short')} {food.per100.carbs} ·{' '}
                   {t('macro.fat.short')} {food.per100.fat} — {t('add.per100')}
-                  {food.state ? ` ${t(food.state === 'raw' ? 'state.raw' : 'state.cooked').toLowerCase()}` : ''}
+                  {stateLabel(food.state)}
                 </div>
               </button>
               <span className="kcal">{food.per100.kcal}</span>
@@ -126,7 +139,7 @@ export function RecipeBuilder({ onBack, onApply }: RecipeBuilderProps) {
               <div className="recipe-line" key={`${line.food.id}-${index}`}>
                 <span className="name">
                   {foodName(line.food, lang)}
-                  {line.state ? ` (${t(line.state === 'raw' ? 'state.raw' : 'state.cooked').toLowerCase()})` : ''}
+                  {stateLabel(line.state)}
                 </span>
                 <input
                   type="text"
@@ -175,7 +188,12 @@ export function RecipeBuilder({ onBack, onApply }: RecipeBuilderProps) {
         </div>
       )}
 
-      <button type="button" className="btn" disabled={!canApply} onClick={() => onApply({ per100, micros })}>
+      <button
+        type="button"
+        className="btn"
+        disabled={!canApply}
+        onClick={() => onApply({ per100, micros, composition })}
+      >
         {t('recipe.apply')}
       </button>
     </FormPage>

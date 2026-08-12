@@ -513,6 +513,16 @@ input[type='range']::-moz-range-thumb {
   gap: 8px;
 }
 
+/* `min-width: 0` est ce qui permet à ce bloc de rétrécir sous sa taille de
+   contenu : sans lui, un flex item ne se laisse jamais comprimer par
+   `text-overflow: ellipsis`, et l'aperçu de note pousserait les flèches
+   hors de l'écran plutôt que de se tronquer. */
+.day-nav-center {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
 .day-nav .label {
   font-size: 0.95rem;
   font-weight: 700;
@@ -553,6 +563,23 @@ input[type='range']::-moz-range-thumb {
   letter-spacing: 0.06em;
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* Aperçu de la note du jour : une seule ligne, tronquée avec des points de
+   suspension plutôt que de repasser à la ligne, pour ne jamais pousser les
+   flèches de navigation hors de l'écran sur mobile. */
+.day-nav .day-note-preview {
+  display: block;
+  width: 100%;
+  margin-top: 2px;
+  padding: 0 4px;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
 .day-nav .arrow {
@@ -1511,7 +1538,7 @@ input[type='range']::-moz-range-thumb {
   text-align: left;
   overflow: hidden;
   /* Barre le double-tap-zoom et la surbrillance de sélection au doigt : la
-     pression sur ces cases dure jusqu'à 1,5 seconde et ne doit rien laisser
+     pression sur ces cases dure jusqu'à 750 ms et ne doit rien laisser
      surligner ni proposer de menu contextuel entre-temps. */
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
@@ -1635,7 +1662,7 @@ input[type='range']::-moz-range-thumb {
 
 /*
  * Anneau de progression de la pression : un remplissage de gauche à droite
- * sur 1,5 seconde exactement pendant qu'on maintient le doigt (durée à garder
+ * sur 750 ms exactement pendant qu'on maintient le doigt (durée à garder
  * alignée sur HOLD_MS dans CalendarDay.tsx), un retour instantané sinon —
  * sans lui, une pression prolongée sans aucun retour visuel se lit comme une
  * application qui ne répond plus.
@@ -1652,7 +1679,7 @@ input[type='range']::-moz-range-thumb {
 
 .calendar-day.pressing .hold-ring {
   transform: scaleX(1);
-  transition-duration: 1500ms;
+  transition-duration: 750ms;
   transition-timing-function: linear;
 }
 

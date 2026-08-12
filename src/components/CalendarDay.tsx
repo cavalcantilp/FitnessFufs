@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { IconComment } from './icons'
 
 /** Durée de la pression requise pour ouvrir le journal du jour. */
-const HOLD_MS = 1500
+const HOLD_MS = 750
 /** Au-delà de ce déplacement, on considère que le doigt balaie le mois plutôt qu'il ne presse ce jour. */
 const MOVE_CANCEL_PX = 16
 
@@ -29,7 +29,7 @@ interface CalendarDayProps {
   onTrack: boolean
   onTarget: boolean
   hasNote: boolean
-  /** Pression maintenue 1,5 seconde : ouvre le journal de ce jour. */
+  /** Pression maintenue 750 ms : ouvre le journal de ce jour. */
   onOpen: (date: string) => void
   /** Pression brève : déplace seulement le contour, sans autre effet. */
   onSelect: (date: string) => void
@@ -38,7 +38,7 @@ interface CalendarDayProps {
 /**
  * Une pression brève ne fait que déplacer le contour — aucune fenêtre, aucun
  * clavier, une simple pression ne doit surprendre personne. Rester appuyé
- * 1,5 seconde ouvre le journal du jour ; un anneau de progression comble
+ * 750 ms ouvre le journal du jour ; un anneau de progression comble
  * l'attente, sans quoi une pression prolongée sans aucun retour visuel
  * se lit comme une application qui ne répond plus. La note du jour, elle, se
  * consulte et se modifie depuis le journal, pas depuis le calendrier.

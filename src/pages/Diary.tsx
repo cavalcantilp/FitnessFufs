@@ -124,7 +124,7 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
         >
           <IconChevronLeft />
         </button>
-        <div style={{ textAlign: 'center' }}>
+        <div className="day-nav-center">
           <div className="label-with-note">
             <span className="label">{formatDay(date, lang)}</span>
             {/* La note se consulte et se modifie ici plutôt que depuis le calendrier :
@@ -148,6 +148,11 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
               {t('diary.backToToday')}
             </button>
           )}
+          {notes[date] ? (
+            <button type="button" className="day-note-preview" onClick={() => setNoteOpen(true)}>
+              {notes[date]}
+            </button>
+          ) : null}
         </div>
         <button
           type="button"

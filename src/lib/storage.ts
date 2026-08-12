@@ -44,6 +44,7 @@ export const STORAGE_KEYS = {
   profile: 'profile',
   entries: 'entries',
   weights: 'weights',
+  measurements: 'measurements',
   customFoods: 'customFoods',
   favorites: 'favorites',
   dayMacros: 'dayMacros',

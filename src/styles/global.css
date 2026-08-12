@@ -21,6 +21,11 @@
   /* Neutre pour ne pas se confondre avec les protéines, qui partagent déjà le bleu d'accent. */
   --calendar-kcal: #e2e8f0;
 
+  /* Mesures corporelles : trois teintes distinctes des macros et du calendrier. */
+  --measure-waist: #f472b6;
+  --measure-hips: #2dd4bf;
+  --measure-chest: #fb923c;
+
   --radius: 16px;
   --radius-lg: 24px;
   --tabbar-height: 64px;
@@ -986,6 +991,61 @@ input[type='range']::-moz-range-thumb {
   font-size: 0.78rem;
   font-variant-numeric: tabular-nums;
   color: var(--text-sub);
+}
+
+/* ---------- Mesures corporelles ---------- */
+
+/* Relie le nom d'une mesure à ses puces dans l'historique, sans dépendre d'une abréviation à traduire. */
+.measure-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex: none;
+}
+
+.measure-delta {
+  font-size: 0.78rem;
+  color: var(--text-sub);
+}
+
+.measure-delta.down {
+  color: var(--positive);
+}
+
+.measure-delta.up {
+  color: var(--negative);
+}
+
+.measure-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  font-size: 0.88rem;
+}
+
+.measure-row + .measure-row {
+  border-top: 1px solid rgba(71, 85, 105, 0.25);
+}
+
+.measure-row .date {
+  flex: 1;
+  color: var(--text-sub);
+  font-size: 0.82rem;
+}
+
+.measure-chips {
+  display: flex;
+  gap: 10px;
+}
+
+.measure-chips .mval {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Divers ---------- */

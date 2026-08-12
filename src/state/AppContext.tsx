@@ -18,6 +18,8 @@ import type {
   FoodState,
   Lang,
   MealId,
+  MeasurementEntry,
+  MeasurementKey,
   Profile,
   WeightEntry,
 } from '../lib/types'
@@ -44,6 +46,7 @@ export interface ExportPayload {
   favorites: string[]
   dayMacros?: Record<string, DayMacros>
   notes?: Record<string, string>
+  measurements?: MeasurementEntry[]
 }
 
 interface AppState {
@@ -80,6 +83,13 @@ interface AppState {
   logWeight: (date: string, weight: number) => void
   removeWeight: (date: string) => void
 
+  /** Mesures corporelles (tour de taille, hanches, poitrine), une entrée par jour. */
+  measurements: MeasurementEntry[]
+  /** Fusionne avec l'entrée du jour existante : mesurer la taille puis les hanches n'écrase pas l'une avec l'autre. */
+  logMeasurements: (date: string, values: Partial<Record<MeasurementKey, number>>) => void
+  /** Retire une seule mesure d'un jour ; l'entrée disparaît si elle devient vide. */
+  removeMeasurement: (date: string, key: MeasurementKey) => void
+
   foods: Food[]
   customFoods: Food[]
   addCustomFood: (food: Omit<Food, 'id' | 'custom'>) => Food
@@ -112,6 +122,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [onboarded, setOnboarded] = useState<boolean>(() => load(STORAGE_KEYS.onboarded, false))
   const [entries, setEntries] = useState<DiaryEntry[]>(() => load(STORAGE_KEYS.entries, []))
   const [weights, setWeights] = useState<WeightEntry[]>(() => load(STORAGE_KEYS.weights, []))
+  const [measurements, setMeasurements] = useState<MeasurementEntry[]>(() =>
+    load(STORAGE_KEYS.measurements, []),
+  )
   const [customFoods, setCustomFoods] = useState<Food[]>(() => load(STORAGE_KEYS.customFoods, []))
   const [favorites, setFavorites] = useState<string[]>(() => load(STORAGE_KEYS.favorites, []))
   const [dayMacros, setDayMacros] = useState<Record<string, DayMacros>>(() =>
@@ -124,6 +137,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.onboarded, onboarded), [onboarded])
   useEffect(() => save(STORAGE_KEYS.entries, entries), [entries])
   useEffect(() => save(STORAGE_KEYS.weights, weights), [weights])
+  useEffect(() => save(STORAGE_KEYS.measurements, measurements), [measurements])
   useEffect(() => save(STORAGE_KEYS.customFoods, customFoods), [customFoods])
   useEffect(() => save(STORAGE_KEYS.favorites, favorites), [favorites])
   useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
@@ -243,6 +257,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setWeights((current) => current.filter((entry) => entry.date !== date))
   }, [])
 
+  const logMeasurements = useCallback(
+    (date: string, values: Partial<Record<MeasurementKey, number>>) => {
+      setMeasurements((current) => {
+        const existing = current.find((entry) => entry.date === date)
+        const merged = { ...existing?.values, ...values }
+        const next = current.filter((entry) => entry.date !== date)
+        next.push({ date, values: merged })
+        next.sort((a, b) => a.date.localeCompare(b.date))
+        return next
+      })
+    },
+    [],
+  )
+
+  const removeMeasurement = useCallback((date: string, key: MeasurementKey) => {
+    setMeasurements((current) =>
+      current
+        .map((entry) => {
+          if (entry.date !== date) return entry
+          const values = { ...entry.values }
+          delete values[key]
+          return { ...entry, values }
+        })
+        .filter((entry) => Object.keys(entry.values).length > 0),
+    )
+  }, [])
+
   const addCustomFood = useCallback((food: Omit<Food, 'id' | 'custom'>) => {
     const created: Food = { ...food, id: `custom-${newId()}`, custom: true }
     setCustomFoods((current) => [created, ...current])
@@ -284,8 +325,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       favorites,
       dayMacros,
       notes,
+      measurements,
     }),
-    [profile, entries, weights, customFoods, favorites, dayMacros, notes],
+    [profile, entries, weights, customFoods, favorites, dayMacros, notes, measurements],
   )
 
   const importData = useCallback((payload: unknown) => {
@@ -298,9 +340,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setWeights(Array.isArray(data.weights) ? data.weights : [])
     setCustomFoods(Array.isArray(data.customFoods) ? data.customFoods : [])
     setFavorites(Array.isArray(data.favorites) ? data.favorites : [])
-    // Sauvegardes d'avant la fonctionnalité : aucune journée personnalisée, aucune note.
+    // Sauvegardes d'avant la fonctionnalité : aucune journée personnalisée, aucune note, aucune mesure.
     setDayMacros(data.dayMacros ?? {})
     setNotes(data.notes ?? {})
+    setMeasurements(Array.isArray(data.measurements) ? data.measurements : [])
     setOnboarded(true)
     return true
   }, [])
@@ -310,6 +353,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setProfile(DEFAULT_PROFILE)
     setEntries([])
     setWeights([])
+    setMeasurements([])
     setCustomFoods([])
     setFavorites([])
     setDayMacros({})
@@ -341,6 +385,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       weights,
       logWeight,
       removeWeight,
+      measurements,
+      logMeasurements,
+      removeMeasurement,
       foods,
       customFoods,
       addCustomFood,
@@ -374,6 +421,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       weights,
       logWeight,
       removeWeight,
+      measurements,
+      logMeasurements,
+      removeMeasurement,
       foods,
       customFoods,
       addCustomFood,

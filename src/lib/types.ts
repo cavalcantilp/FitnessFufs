@@ -167,4 +167,17 @@ export interface WeightEntry {
   weight: number
 }
 
+/** Tour de taille, de hanches, de poitrine — en centimètres. */
+export type MeasurementKey = 'waist' | 'hips' | 'chest'
+
+export interface MeasurementEntry {
+  /** Date au format YYYY-MM-DD, unique : une entrée par jour. */
+  date: string
+  /**
+   * Facultatives chacune : on ne prend pas forcément toutes les mesures le
+   * même jour, une entrée peut n'en renseigner qu'une seule.
+   */
+  values: Partial<Record<MeasurementKey, number>>
+}
+
 export type Lang = 'fr' | 'pt' | 'es' | 'en' | 'it'

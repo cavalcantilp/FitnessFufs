@@ -85,8 +85,11 @@ aucun serveur, aucun envoi de données.
   pour ne pas confisquer le défilement de la page. La grille compte cinq ou
   six semaines selon le mois. L'onglet et le jour consultés sont conservés au
   rechargement.
-- **Poids** — pesée quotidienne, courbe d'évolution, variations totale et sur
-  7 jours, IMC.
+- **Corps** — pesée quotidienne, courbe d'évolution, variations totale et sur
+  7 jours, IMC. Mesures corporelles (tour de taille, de hanches, de poitrine),
+  facultatives et indépendantes les unes des autres : une entrée peut n'en
+  renseigner qu'une seule. Valeur actuelle et écart depuis la première mesure
+  par tour, historique commun aux trois avec puces de couleur.
 - **Multilingue** — français, portugais, espagnol, anglais, italien ; la langue de
   l'appareil est détectée à la première ouverture.
 - **Import / export JSON** — sauvegarde et restauration complètes des données.

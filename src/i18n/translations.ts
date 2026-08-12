@@ -7,7 +7,7 @@ const fr = {
 
   'nav.diary': 'Journal',
   'nav.add': 'Ajouter',
-  'nav.weight': 'Poids',
+  'nav.weight': 'Corps',
   'nav.profile': 'Profil',
   'nav.calendar': 'Calendrier',
 
@@ -131,6 +131,14 @@ const fr = {
   'weight.bmi': 'IMC',
   'weight.history': 'Historique',
   'weight.syncProfile': 'Le profil utilise toujours la dernière pesée.',
+  'measure.title': 'Mesures corporelles',
+  'measure.waist': 'Tour de taille',
+  'measure.hips': 'Tour de hanches',
+  'measure.chest': 'Tour de poitrine',
+  'measure.log': 'Enregistrer',
+  'measure.logged': 'Mesures enregistrées',
+  'measure.empty': 'Aucune mesure enregistrée.',
+  'measure.history': 'Historique des mesures',
 
   'bmi.under': 'Insuffisance pondérale',
   'bmi.normal': 'Corpulence normale',
@@ -230,7 +238,7 @@ const pt: Dict = {
 
   'nav.diary': 'Diário',
   'nav.add': 'Adicionar',
-  'nav.weight': 'Peso',
+  'nav.weight': 'Corpo',
   'nav.profile': 'Perfil',
   'nav.calendar': 'Calendário',
 
@@ -354,6 +362,14 @@ const pt: Dict = {
   'weight.bmi': 'IMC',
   'weight.history': 'Histórico',
   'weight.syncProfile': 'O perfil usa sempre a última pesagem.',
+  'measure.title': 'Medidas corporais',
+  'measure.waist': 'Cintura',
+  'measure.hips': 'Anca',
+  'measure.chest': 'Peito',
+  'measure.log': 'Guardar',
+  'measure.logged': 'Medidas guardadas',
+  'measure.empty': 'Nenhuma medida registada.',
+  'measure.history': 'Histórico de medidas',
 
   'bmi.under': 'Peso abaixo do normal',
   'bmi.normal': 'Peso normal',
@@ -450,7 +466,7 @@ const es: Dict = {
 
   'nav.diary': 'Diario',
   'nav.add': 'Añadir',
-  'nav.weight': 'Peso',
+  'nav.weight': 'Cuerpo',
   'nav.profile': 'Perfil',
   'nav.calendar': 'Calendario',
 
@@ -574,6 +590,14 @@ const es: Dict = {
   'weight.bmi': 'IMC',
   'weight.history': 'Historial',
   'weight.syncProfile': 'El perfil usa siempre el último pesaje.',
+  'measure.title': 'Medidas corporales',
+  'measure.waist': 'Cintura',
+  'measure.hips': 'Cadera',
+  'measure.chest': 'Pecho',
+  'measure.log': 'Guardar',
+  'measure.logged': 'Medidas guardadas',
+  'measure.empty': 'No hay medidas registradas.',
+  'measure.history': 'Historial de medidas',
 
   'bmi.under': 'Peso insuficiente',
   'bmi.normal': 'Peso normal',
@@ -670,7 +694,7 @@ const en: Dict = {
 
   'nav.diary': 'Diary',
   'nav.add': 'Add',
-  'nav.weight': 'Weight',
+  'nav.weight': 'Body',
   'nav.profile': 'Profile',
   'nav.calendar': 'Calendar',
 
@@ -794,6 +818,14 @@ const en: Dict = {
   'weight.bmi': 'BMI',
   'weight.history': 'History',
   'weight.syncProfile': 'The profile always uses your latest weigh-in.',
+  'measure.title': 'Body measurements',
+  'measure.waist': 'Waist',
+  'measure.hips': 'Hips',
+  'measure.chest': 'Chest',
+  'measure.log': 'Save',
+  'measure.logged': 'Measurements saved',
+  'measure.empty': 'No measurements logged yet.',
+  'measure.history': 'Measurement history',
 
   'bmi.under': 'Underweight',
   'bmi.normal': 'Healthy weight',
@@ -890,7 +922,7 @@ const it: Dict = {
 
   'nav.diary': 'Diario',
   'nav.add': 'Aggiungi',
-  'nav.weight': 'Peso',
+  'nav.weight': 'Corpo',
   'nav.profile': 'Profilo',
   'nav.calendar': 'Calendario',
 
@@ -1014,6 +1046,14 @@ const it: Dict = {
   'weight.bmi': 'IMC',
   'weight.history': 'Cronologia',
   'weight.syncProfile': "Il profilo usa sempre l'ultima pesata.",
+  'measure.title': 'Misure corporee',
+  'measure.waist': 'Vita',
+  'measure.hips': 'Fianchi',
+  'measure.chest': 'Torace',
+  'measure.log': 'Salva',
+  'measure.logged': 'Misure salvate',
+  'measure.empty': 'Nessuna misura registrata.',
+  'measure.history': 'Cronologia misure',
 
   'bmi.under': 'Sottopeso',
   'bmi.normal': 'Normopeso',

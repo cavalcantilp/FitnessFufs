@@ -191,6 +191,12 @@ export const BUILTIN_FOODS: Food[] = [
   // ---------- Féculents ----------
   food2('rice_white', ['Riz blanc', 'Arroz branco', 'Arroz blanco', 'White rice', 'Riso bianco'], 'carbs', 'cooked', [365, 7.1, 80, 0.7, 1.3, 60], [130, 2.7, 28, 0.3, 0.4, 150], [1, 35, 10, 0.2, 12, 0.5, 0, 0, 0]),
   food2('rice_brown', ['Riz complet', 'Arroz integral', 'Arroz integral', 'Brown rice', 'Riso integrale'], 'carbs', 'cooked', [370, 7.9, 77, 2.9, 3.5, 60], [123, 2.7, 26, 1, 1.6, 150], [4, 86, 10, 0.4, 44, 0.6, 0, 0, 0]),
+  food2('rice_basmati', ['Riz basmati', 'Arroz basmati', 'Arroz basmati', 'Basmati rice', 'Riso basmati'], 'carbs', 'cooked', [356, 7.9, 77, 0.9, 1.2, 60], [121, 3.5, 25, 0.4, 0.6, 150], [2, 40, 10, 0.3, 14, 0.6, 0, 0, 0]),
+  food2('rice_jasmine', ['Riz jasmin', 'Arroz jasmim', 'Arroz jazmín', 'Jasmine rice', 'Riso jasmine'], 'carbs', 'cooked', [355, 6.6, 79, 0.6, 0.6, 60], [129, 2.4, 28, 0.2, 0.3, 150], [1, 33, 9, 0.2, 11, 0.5, 0, 0, 0]),
+  food2('rice_arborio', ['Riz arborio', 'Arroz arbóreo', 'Arroz arborio', 'Arborio rice', 'Riso Arborio'], 'carbs', 'cooked', [349, 6.5, 77, 0.6, 1.4, 60], [130, 2.4, 29, 0.2, 0.5, 150], [1, 35, 10, 0.2, 12, 0.5, 0, 0, 0]),
+  food2('rice_carnaroli', ['Riz carnaroli', 'Arroz carnaroli', 'Arroz carnaroli', 'Carnaroli rice', 'Riso Carnaroli'], 'carbs', 'cooked', [350, 6.7, 77, 0.6, 1.3, 60], [128, 2.5, 28, 0.2, 0.5, 150], [1, 35, 10, 0.2, 12, 0.5, 0, 0, 0]),
+  food2('rice_black', ['Riz noir', 'Arroz negro', 'Arroz negro', 'Black rice', 'Riso nero'], 'carbs', 'cooked', [356, 8.5, 76, 3.2, 4.9, 60], [160, 3.8, 34, 1.4, 2.2, 150], [5, 95, 12, 0.5, 48, 0.7, 0, 0, 0]),
+  food2('rice_sushi', ['Riz à sushi', 'Arroz para sushi', 'Arroz para sushi', 'Sushi rice', 'Riso per sushi'], 'carbs', 'cooked', [358, 6.1, 79, 0.5, 0.5, 60], [130, 2.4, 29, 0.2, 0.2, 150], [1, 32, 9, 0.2, 10, 0.5, 0, 0, 0]),
   food2('pasta', ['Pâtes', 'Massa', 'Pasta', 'Pasta', 'Pasta'], 'carbs', 'cooked', [371, 13, 75, 1.5, 3.2, 80], [158, 5.8, 31, 0.9, 1.8, 180], [5, 44, 7, 0.5, 18, 0.5, 0, 0, 0]),
   food2('quinoa', ['Quinoa', 'Quinoa', 'Quinoa', 'Quinoa', 'Quinoa'], 'carbs', 'cooked', [368, 14, 64, 6, 7, 60], [120, 4.4, 21, 1.9, 2.8, 150], [7, 172, 17, 1.5, 64, 1.1, 0, 0, 0]),
   food2('couscous', ['Semoule / couscous', 'Cuscuz', 'Cuscús', 'Couscous', 'Cuscus'], 'carbs', 'cooked', [376, 13, 77, 0.6, 5, 60], [112, 3.8, 23, 0.2, 1.4, 180], [5, 58, 8, 0.4, 8, 0.3, 0, 0, 0]),

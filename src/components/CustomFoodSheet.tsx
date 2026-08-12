@@ -92,7 +92,6 @@ export function CustomFoodSheet({
           autoComplete="off"
           value={name}
           onChange={(event) => setName(event.target.value)}
-          autoFocus
         />
       </div>
 

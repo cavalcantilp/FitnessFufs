@@ -168,7 +168,7 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
 
       <button
         type="button"
-        className="btn sticky-cta"
+        className="btn"
         disabled={!valid}
         onClick={() => onConfirm(amount, selectedMeal, states.length > 0 ? state : undefined)}
       >

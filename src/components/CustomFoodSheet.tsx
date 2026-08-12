@@ -195,7 +195,7 @@ export function CustomFoodSheet({
         <p className="hint">{t('add.kcalMismatch', { n: derivedKcal })}</p>
       ) : null}
 
-      <button type="button" className="btn sticky-cta" disabled={!valid} onClick={submit}>
+      <button type="button" className="btn" disabled={!valid} onClick={submit}>
         {t('common.save')}
       </button>
     </FormPage>

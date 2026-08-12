@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FormPage } from './FormPage'
 import { RecipeBuilder } from './RecipeBuilder'
+import { MicroPanel } from './MicroPanel'
 import { useApp } from '../state/AppContext'
 import { kcalFromMacros, withinTolerance } from '../lib/nutrition'
 import { FOOD_CATEGORIES } from '../lib/foods'
@@ -219,6 +220,8 @@ export function CustomFoodSheet({
       ) : !kcal.trim() && derivedKcal > 0 ? (
         <p className="hint">{t('add.kcalMismatch', { n: derivedKcal })}</p>
       ) : null}
+
+      <MicroPanel micros={micros} />
 
       <button type="button" className="btn" disabled={!valid} onClick={submit}>
         {t('common.save')}

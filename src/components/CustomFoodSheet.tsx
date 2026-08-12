@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sheet } from './Sheet'
+import { FormPage } from './FormPage'
 import { useApp } from '../state/AppContext'
 import { kcalFromMacros } from '../lib/nutrition'
 import { FOOD_CATEGORIES } from '../lib/foods'
@@ -79,10 +79,10 @@ export function CustomFoodSheet({
   }
 
   return (
-    <Sheet
+    <FormPage
       title={editing ? t('add.editFood') : t('add.custom')}
       subtitle={t('add.customHint')}
-      onClose={onClose}
+      onBack={onClose}
     >
       <div className="field">
         <label htmlFor="cf-name">{t('add.customName')}</label>
@@ -199,6 +199,6 @@ export function CustomFoodSheet({
       <button type="button" className="btn" disabled={!valid} onClick={submit}>
         {t('common.save')}
       </button>
-    </Sheet>
+    </FormPage>
   )
 }

@@ -847,6 +847,26 @@ input[type='range']::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Page de formulaire ---------- */
+
+.form-page-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.form-page-head h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.form-page-head .sub {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
+
 @keyframes rise {
   from {
     transform: translateY(24px);

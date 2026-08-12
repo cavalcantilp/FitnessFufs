@@ -12,9 +12,11 @@ interface AddScreenProps {
   date: string
   meal: MealId
   onAdded: (message: string) => void
+  /** Un aliment vient d'être journalisé : on revient au journal, comme après une saisie MyFitnessPal. */
+  onLogged: () => void
 }
 
-export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
+export function AddScreen({ date, meal, onAdded, onLogged }: AddScreenProps) {
   const { t, lang, addEntry, removeCustomFood, saveFood } = useApp()
   const [selected, setSelected] = useState<Food | null>(null)
   const [creating, setCreating] = useState<string | null>(null)
@@ -39,6 +41,68 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
     }
   }
 
+  // Chaque étape occupe l'écran en entier, comme une page à part plutôt
+  // qu'une feuille superposée à la liste : sur mobile, une feuille plafonnée
+  // à 90vh finissait masquée par le clavier, et ce n'est pas ainsi que
+  // MyFitnessPal enchaîne recherche → quantité → confirmation.
+  if (scanning) {
+    return (
+      <BarcodeScanner onDetect={(code) => void resolveBarcode(code)} onClose={() => setScanning(false)} />
+    )
+  }
+
+  if (selected) {
+    return (
+      <QuantitySheet
+        food={selected}
+        meal={meal}
+        onClose={() => setSelected(null)}
+        onConfirm={(grams, chosenMeal, state) => {
+          addEntry(date, chosenMeal, selected, grams, state)
+          setSelected(null)
+          onAdded(t('add.added'))
+          onLogged()
+        }}
+        onEdit={selected.custom ? () => setEditing(selected) : undefined}
+        onDelete={
+          selected.custom
+            ? () => {
+                removeCustomFood(selected.id)
+                setSelected(null)
+              }
+            : undefined
+        }
+      />
+    )
+  }
+
+  if (creating !== null) {
+    return (
+      <CustomFoodSheet
+        initialName={creating}
+        onClose={() => setCreating(null)}
+        onCreated={(food) => {
+          setCreating(null)
+          setSelected(food)
+        }}
+      />
+    )
+  }
+
+  if (editing) {
+    return (
+      <CustomFoodSheet
+        editing={editing}
+        onClose={() => setEditing(null)}
+        onCreated={(food) => {
+          setEditing(null)
+          setSelected(food)
+          onAdded(t('add.updated'))
+        }}
+      />
+    )
+  }
+
   return (
     <div className="screen">
       <p className="hint">
@@ -51,55 +115,6 @@ export function AddScreen({ date, meal, onAdded }: AddScreenProps) {
         onScan={() => setScanning(true)}
         onToast={onAdded}
       />
-
-      {scanning ? (
-        <BarcodeScanner onDetect={(code) => void resolveBarcode(code)} onClose={() => setScanning(false)} />
-      ) : null}
-
-      {selected ? (
-        <QuantitySheet
-          food={selected}
-          meal={meal}
-          onClose={() => setSelected(null)}
-          onConfirm={(grams, chosenMeal, state) => {
-            addEntry(date, chosenMeal, selected, grams, state)
-            setSelected(null)
-            onAdded(t('add.added'))
-          }}
-          onEdit={selected.custom ? () => setEditing(selected) : undefined}
-          onDelete={
-            selected.custom
-              ? () => {
-                  removeCustomFood(selected.id)
-                  setSelected(null)
-                }
-              : undefined
-          }
-        />
-      ) : null}
-
-      {creating !== null ? (
-        <CustomFoodSheet
-          initialName={creating}
-          onClose={() => setCreating(null)}
-          onCreated={(food) => {
-            setCreating(null)
-            setSelected(food)
-          }}
-        />
-      ) : null}
-
-      {editing ? (
-        <CustomFoodSheet
-          editing={editing}
-          onClose={() => setEditing(null)}
-          onCreated={(food) => {
-            setEditing(null)
-            setSelected(food)
-            onAdded(t('add.updated'))
-          }}
-        />
-      ) : null}
     </div>
   )
 }

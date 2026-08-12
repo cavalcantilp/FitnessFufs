@@ -109,7 +109,9 @@ export function App() {
       {tab === 'diary' ? (
         <Diary date={date} onDateChange={setDate} onAddTo={openAdd} onToast={setToast} />
       ) : null}
-      {tab === 'add' ? <AddScreen date={date} meal={meal} onAdded={setToast} /> : null}
+      {tab === 'add' ? (
+        <AddScreen date={date} meal={meal} onAdded={setToast} onLogged={() => setTab('diary')} />
+      ) : null}
       {tab === 'weight' ? <WeightScreen onToast={setToast} /> : null}
       {tab === 'profile' ? <ProfileScreen onToast={setToast} /> : null}
 

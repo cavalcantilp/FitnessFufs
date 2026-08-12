@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sheet } from './Sheet'
+import { FormPage } from './FormPage'
 import { MicroPanel } from './MicroPanel'
 import { useApp } from '../state/AppContext'
 import { foodName, statesOf } from '../lib/foods'
@@ -58,10 +58,10 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
   }
 
   return (
-    <Sheet
+    <FormPage
       title={foodName(food, lang)}
       subtitle={`${portion.per100.kcal} kcal · ${t('add.per100')}`}
-      onClose={onClose}
+      onBack={onClose}
     >
       {states.length > 0 ? (
         <div className="field">
@@ -180,6 +180,6 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
           {t('add.deleteFood')}
         </button>
       ) : null}
-    </Sheet>
+    </FormPage>
   )
 }

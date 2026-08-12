@@ -114,8 +114,8 @@ export const BUILTIN_FOODS: Food[] = [
   food2('sausage', ['Saucisse / chipolata', 'Salsicha fresca', 'Salchicha fresca', 'Pork sausage', 'Salsiccia'], 'protein', 'raw', [280, 13, 2, 24, 0, 120], [320, 16, 2, 28, 0, 100], [800, 220, 20, 1, 15, 1.6, 0, 0.3, 0.8]),
   food('merguez', ['Merguez', 'Merguez', 'Merguez', 'Merguez sausage', 'Merguez'], 300, 14, 1.5, 27, 0, 100, 'protein', [900, 230, 25, 1.5, 18, 2.5, 0, 0.2, 1.5]),
   food2('bacon', ['Bacon / lardons', 'Bacon', 'Bacon', 'Bacon', 'Pancetta'], 'protein', 'raw', [250, 15, 1, 21, 0, 50], [330, 24, 1, 26, 0, 30], [1200, 250, 6, 0.6, 15, 1.4, 0, 0.4, 0.6]),
-  food('ham', ['Jambon blanc', 'Fiambre', 'Jamón cocido', 'Cooked ham', 'Prosciutto cotto'], 107, 18, 1, 3.5, 0, 40, 'protein', [1100, 300, 8, 0.8, 18, 1.5, 0, 0.5, 0.6]),
-  food('cured_ham', ['Jambon cru / Parme', 'Presunto', 'Jamón serrano', 'Cured ham', 'Prosciutto crudo'], 268, 30, 0.3, 16, 0, 30, 'protein', [2300, 500, 12, 1.5, 28, 2.5, 0, 0.6, 1]),
+  food('ham', ['Jambon blanc', 'Presunto', 'Jamón cocido', 'Cooked ham', 'Prosciutto cotto'], 107, 18, 1, 3.5, 0, 40, 'protein', [1100, 300, 8, 0.8, 18, 1.5, 0, 0.5, 0.6]),
+  food('cured_ham', ['Jambon cru / Parme', 'Presunto cru', 'Jamón serrano', 'Cured ham', 'Prosciutto crudo'], 268, 30, 0.3, 16, 0, 30, 'protein', [2300, 500, 12, 1.5, 28, 2.5, 0, 0.6, 1]),
   food('chorizo', ['Chorizo', 'Chouriço', 'Chorizo', 'Chorizo', 'Chorizo'], 455, 24, 2, 38, 0, 30, 'protein', [1600, 400, 15, 1.5, 20, 3, 0, 0.5, 2]),
   food('rillettes', ['Rillettes', 'Rillettes', 'Rillettes', 'Rillettes', 'Rillettes'], 400, 15, 0, 38, 0, 30, 'protein', [800, 180, 10, 1.2, 12, 1.6, 0, 0.4, 0.8]),
 
@@ -232,7 +232,7 @@ export const BUILTIN_FOODS: Food[] = [
   food('guava', ['Goyave', 'Goiaba', 'Guayaba', 'Guava', 'Guava'], 68, 2.6, 14, 1, 5.4, 150, 'fruit', [2, 417, 18, 0.26, 22, 0.23, 228, 0, 0]),
 
   // ---------- Légumes ----------
-  food('broccoli', ['Brocoli', 'Brócolos', 'Brócoli', 'Broccoli', 'Broccoli'], 34, 2.8, 7, 0.4, 2.6, 150, 'veg', [33, 316, 47, 0.7, 21, 0.4, 89, 0, 0]),
+  food('broccoli', ['Brocoli', 'Brócolis', 'Brócoli', 'Broccoli', 'Broccoli'], 34, 2.8, 7, 0.4, 2.6, 150, 'veg', [33, 316, 47, 0.7, 21, 0.4, 89, 0, 0]),
   food('carrot', ['Carotte', 'Cenoura', 'Zanahoria', 'Carrot', 'Carota'], 41, 0.9, 10, 0.2, 2.8, 100, 'veg', [69, 320, 33, 0.3, 12, 0.24, 5.9, 0, 0]),
   food('tomato', ['Tomate', 'Tomate', 'Tomate', 'Tomato', 'Pomodoro'], 18, 0.9, 3.9, 0.2, 1.2, 120, 'veg', [5, 237, 10, 0.3, 11, 0.17, 14, 0, 0]),
   food('zucchini', ['Courgette', 'Courgette', 'Calabacín', 'Courgette', 'Zucchina'], 17, 1.2, 3.1, 0.3, 1, 150, 'veg', [8, 261, 16, 0.4, 18, 0.32, 18, 0, 0]),
@@ -264,9 +264,9 @@ export const BUILTIN_FOODS: Food[] = [
   food('cappuccino', ['Cappuccino', 'Cappuccino', 'Capuchino', 'Cappuccino', 'Cappuccino'], 55, 3, 5.5, 2.2, 0, 150, 'drink'),
   food('hot_chocolate', ['Chocolat chaud', 'Chocolate quente', 'Chocolate caliente', 'Hot chocolate', 'Cioccolata calda'], 80, 3.4, 11, 2.5, 0.8, 200, 'drink'),
   food('tea', ['Thé', 'Chá', 'Té', 'Tea', 'Tè'], 1, 0, 0.2, 0, 0, 200, 'drink', [3, 37, 0, 0.02, 3, 0.02, 0, 0, 0]),
-  food('orange_juice', ["Jus d'orange", 'Sumo de laranja', 'Zumo de naranja', 'Orange juice', "Succo d'arancia"], 45, 0.7, 10, 0.2, 0.2, 200, 'drink', [1, 200, 11, 0.2, 11, 0.05, 50, 0, 0]),
-  food('apple_juice', ['Jus de pomme', 'Sumo de maçã', 'Zumo de manzana', 'Apple juice', 'Succo di mela'], 46, 0.1, 11, 0.1, 0.1, 200, 'drink', [4, 101, 8, 0.1, 5, 0.02, 1, 0, 0]),
-  food('smoothie', ['Smoothie aux fruits', 'Batido de fruta', 'Smoothie de frutas', 'Fruit smoothie', 'Frullato di frutta'], 60, 0.7, 14, 0.2, 1.5, 250, 'drink'),
+  food('orange_juice', ["Jus d'orange", 'Suco de laranja', 'Zumo de naranja', 'Orange juice', "Succo d'arancia"], 45, 0.7, 10, 0.2, 0.2, 200, 'drink', [1, 200, 11, 0.2, 11, 0.05, 50, 0, 0]),
+  food('apple_juice', ['Jus de pomme', 'Suco de maçã', 'Zumo de manzana', 'Apple juice', 'Succo di mela'], 46, 0.1, 11, 0.1, 0.1, 200, 'drink', [4, 101, 8, 0.1, 5, 0.02, 1, 0, 0]),
+  food('smoothie', ['Smoothie aux fruits', 'Smoothie de frutas', 'Smoothie de frutas', 'Fruit smoothie', 'Frullato di frutta'], 60, 0.7, 14, 0.2, 1.5, 250, 'drink'),
   food('cola', ['Soda au cola', 'Refrigerante de cola', 'Refresco de cola', 'Cola soft drink', 'Bibita alla cola'], 42, 0, 10.6, 0, 0, 330, 'drink'),
   food('cola_zero', ['Cola zéro', 'Cola zero', 'Cola zero', 'Diet cola', 'Cola zero'], 0.3, 0, 0, 0, 0, 330, 'drink'),
   food('guarana', ['Guaraná (soda)', 'Guaraná', 'Guaraná', 'Guaraná soft drink', 'Guaraná'], 40, 0, 10, 0, 0, 350, 'drink'),
@@ -453,7 +453,7 @@ export const BUILTIN_FOODS: Food[] = [
   food('iced_tea', ['Thé glacé', 'Chá gelado', 'Té helado', 'Iced tea', 'Tè freddo'], 30, 0, 7.5, 0, 0, 330, 'drink'),
   food('lemonade', ['Limonade', 'Limonada', 'Limonada', 'Lemonade', 'Limonata'], 40, 0, 10, 0, 0, 330, 'drink'),
   food('espresso', ['Expresso', 'Café expresso', 'Café expreso', 'Espresso', 'Espresso'], 2, 0.1, 0, 0, 0, 30, 'drink'),
-  food('latte', ['Café latte', 'Galão', 'Café con leche', 'Latte', 'Caffellatte'], 55, 3, 5, 2.2, 0, 250, 'drink'),
+  food('latte', ['Café latte', 'Café com leite', 'Café con leche', 'Latte', 'Caffellatte'], 55, 3, 5, 2.2, 0, 250, 'drink'),
   food('sparkling_water', ['Eau gazeuse', 'Água com gás', 'Agua con gas', 'Sparkling water', 'Acqua frizzante'], 0, 0, 0, 0, 0, 500, 'drink'),
 ]
 
@@ -634,11 +634,11 @@ const PORTIONS: Record<string, PortionUnit[]> = {
  */
 const ALIASES: Record<string, string[]> = {
   cookies: ['biscoito', 'biscoitos', 'bolacha', 'bolachas', 'cream cracker', 'petit-beurre'],
-  orange_juice: ['suco de laranja', 'jugo de naranja'],
-  apple_juice: ['suco de maca', 'jugo de manzana'],
+  orange_juice: ['jugo de naranja'],
+  apple_juice: ['jugo de manzana'],
   tea: ['infusion', 'infusao', 'tisane', 'cha de ervas', 'cha de frutas', 'cha verde', 'cha preto'],
-  ham: ['presunto cozido', 'presunto', 'jambon cuit'],
-  cured_ham: ['presunto cru', 'jamon serrano', 'parma'],
+  ham: ['fiambre', 'presunto cozido', 'jambon cuit'],
+  cured_ham: ['jamon serrano', 'parma'],
   bacon: ['toucinho', 'lardon', 'panceta'],
   pao_frances: ['paozinho', 'pao de sal', 'cacetinho'],
   sandwich_bread: ['pao de forma', 'pao de sanduiche', 'pain de mie'],
@@ -687,7 +687,7 @@ const ALIASES: Record<string, string[]> = {
   popcorn: ['pipoca'],
   flan: ['pudim', 'pudding'],
   rice_pudding: ['arroz doce'],
-  latte: ['galao', 'cafe com leite'],
+  latte: ['galao'],
   omelette: ['omelete', 'oeufs brouilles'],
   soy_milk: ['leite de soja'],
   olives: ['azeitona'],

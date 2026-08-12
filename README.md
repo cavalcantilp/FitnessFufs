@@ -74,11 +74,13 @@ aucun serveur, aucun envoi de données.
   verdit quand les calories sont respectées à 10 % près ; la case entière
   verdit quand calories et les trois macros le sont toutes. Deux séries en
   bas d'écran comptent les jours consécutifs dans chaque cas, en s'arrêtant
-  net au premier jour sans aucune saisie. Une pression brève ouvre une note
-  libre pour le jour ; il faut rester appuyé trois secondes — un anneau de
-  progression comble l'attente — pour ouvrir son journal, geste devenu moins
-  fréquent que la simple consultation ou l'annotation. Un jour noté porte une
-  petite icône. On change de mois par les flèches ou, au doigt, par un
+  net au premier jour sans aucune saisie. Une pression brève ne fait que
+  déplacer le contour du jour ; il faut rester appuyé trois secondes — un
+  anneau de progression comble l'attente — pour ouvrir son journal. La note
+  libre d'un jour, elle, se consulte et se modifie depuis le journal, par une
+  icône à côté de la date : un simple toucher du calendrier ne doit jamais
+  faire apparaître de clavier par surprise. Un jour noté porte une petite
+  icône dans le calendrier. On change de mois par les flèches ou, au doigt, par un
   balayage horizontal — retenu seulement s'il est franchement horizontal,
   pour ne pas confisquer le défilement de la page. La grille compte cinq ou
   six semaines selon le mois. L'onglet et le jour consultés sont conservés au

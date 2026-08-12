@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { CalendarDay, type CalendarDayBar } from '../components/CalendarDay'
-import { DayNoteSheet } from '../components/DayNoteSheet'
 import { IconChevronLeft, IconChevronRight, IconFlame } from '../components/icons'
 import { fromKey, localeOf, shiftDay, toKey, todayKey } from '../lib/date'
 import { sumNutrients, withinTolerance } from '../lib/nutrition'
@@ -28,19 +27,13 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
     const current = fromKey(date)
     return { year: current.getFullYear(), month: current.getMonth() }
   })
-  const [noteDate, setNoteDate] = useState<string | null>(null)
   /**
-   * Jour entouré. Une pression brève n'ouvre plus le journal — elle ouvre la
-   * note — donc `date` (le jour du journal, propriété du parent) ne bouge
-   * plus au toucher : sans cet état local, le contour restait figé sur le
-   * dernier jour ouvert par une pression longue, sans jamais suivre le doigt.
+   * Jour entouré. Une pression brève n'ouvre plus le journal — donc `date`
+   * (le jour du journal, propriété du parent) ne bouge plus au toucher : sans
+   * cet état local, le contour resterait figé sur le dernier jour ouvert par
+   * une pression longue, sans jamais suivre le doigt.
    */
   const [viewed, setViewed] = useState(date)
-
-  const openNote = (key: string) => {
-    setViewed(key)
-    setNoteDate(key)
-  }
 
   const entriesByDate = useMemo(() => {
     const map = new Map<string, DiaryEntry[]>()
@@ -218,7 +211,7 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
                 onTarget={macroOk}
                 hasNote={Boolean(notes[key])}
                 onOpen={onPick}
-                onNote={openNote}
+                onSelect={setViewed}
               />
             )
           })}
@@ -242,8 +235,6 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
           {t('diary.today')}
         </button>
       </div>
-
-      {noteDate ? <DayNoteSheet date={noteDate} onClose={() => setNoteDate(null)} /> : null}
     </div>
   )
 }

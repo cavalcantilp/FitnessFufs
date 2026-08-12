@@ -1,10 +1,18 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { Ring } from '../components/Ring'
 import { MacroBars } from '../components/MacroBars'
 import { MicroPanel } from '../components/MicroPanel'
 import { DayMacroPanel } from '../components/DayMacroPanel'
-import { IconChevronLeft, IconChevronRight, IconCopy, IconPlus, IconTrash } from '../components/icons'
+import { DayNoteSheet } from '../components/DayNoteSheet'
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconComment,
+  IconCopy,
+  IconPlus,
+  IconTrash,
+} from '../components/icons'
 import { formatDay, shiftDay, todayKey } from '../lib/date'
 import { microsFor, sumMicros, sumNutrients } from '../lib/nutrition'
 import { MEALS } from '../lib/meals'
@@ -19,7 +27,8 @@ interface DiaryProps {
 }
 
 export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
-  const { t, lang, entriesFor, removeEntry, targetsFor, copyDay, foods } = useApp()
+  const { t, lang, entriesFor, removeEntry, targetsFor, copyDay, foods, notes } = useApp()
+  const [noteOpen, setNoteOpen] = useState(false)
 
   // Les objectifs du jour consulté, pas ceux du profil : la journée peut avoir
   // sa propre répartition.
@@ -116,7 +125,20 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
           <IconChevronLeft />
         </button>
         <div style={{ textAlign: 'center' }}>
-          <div className="label">{formatDay(date, lang)}</div>
+          <div className="label-with-note">
+            <span className="label">{formatDay(date, lang)}</span>
+            {/* La note se consulte et se modifie ici plutôt que depuis le calendrier :
+                un simple toucher de jour n'y déplace que le contour, sans jamais
+                ouvrir de clavier par surprise. */}
+            <button
+              type="button"
+              className={`icon-btn note${notes[date] ? ' on' : ''}`}
+              onClick={() => setNoteOpen(true)}
+              aria-label={t('day.noteTitle')}
+            >
+              <IconComment size={15} />
+            </button>
+          </div>
           {date === today ? (
             <span className="today-hint">{t('diary.today')}</span>
           ) : (
@@ -219,6 +241,8 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
         <IconCopy />
         {t('diary.copyPrev')}
       </button>
+
+      {noteOpen ? <DayNoteSheet date={date} onClose={() => setNoteOpen(false)} /> : null}
     </div>
   )
 }

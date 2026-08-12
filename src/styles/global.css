@@ -486,6 +486,19 @@ input[type='range']::-moz-range-thumb {
   text-transform: capitalize;
 }
 
+/* Boîte en ligne, pour que la date et l'icône de note se centrent comme un
+   seul bloc dans .day-nav plutôt que l'icône ne s'aligne à part. */
+.day-nav .label-with-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.day-nav .label-with-note .icon-btn {
+  width: 24px;
+  height: 24px;
+}
+
 .day-nav .today-hint {
   display: block;
   font-size: 0.7rem;
@@ -684,6 +697,10 @@ input[type='range']::-moz-range-thumb {
 }
 
 .icon-btn.star.on {
+  color: var(--warning);
+}
+
+.icon-btn.note.on {
   color: var(--warning);
 }
 

@@ -26,16 +26,17 @@ interface CalendarDayProps {
   hasNote: boolean
   /** Pression maintenue 3 secondes : ouvre le journal de ce jour. */
   onOpen: (date: string) => void
-  /** Pression brève : ouvre la note du jour. */
-  onNote: (date: string) => void
+  /** Pression brève : déplace seulement le contour, sans autre effet. */
+  onSelect: (date: string) => void
 }
 
 /**
- * Une pression brève ouvrait autrefois directement le journal ; elle ouvre
- * désormais la note du jour, geste devenu au moins aussi fréquent que la
- * simple consultation. Rester appuyé 3 secondes ouvre le journal — un anneau
- * de progression comble l'attente, sans quoi une pression de 3 secondes sans
- * aucun retour visuel se lit comme une application qui ne répond plus.
+ * Une pression brève ne fait que déplacer le contour — aucune fenêtre, aucun
+ * clavier, une simple pression ne doit surprendre personne. Rester appuyé
+ * 3 secondes ouvre le journal du jour ; un anneau de progression comble
+ * l'attente, sans quoi une pression de 3 secondes sans aucun retour visuel
+ * se lit comme une application qui ne répond plus. La note du jour, elle, se
+ * consulte et se modifie depuis le journal, pas depuis le calendrier.
  */
 export function CalendarDay({
   date,
@@ -48,7 +49,7 @@ export function CalendarDay({
   onTarget,
   hasNote,
   onOpen,
-  onNote,
+  onSelect,
 }: CalendarDayProps) {
   const [pressing, setPressing] = useState(false)
   const timer = useRef<number | null>(null)
@@ -81,10 +82,8 @@ export function CalendarDay({
   }
 
   const onPointerDown = (event: React.PointerEvent) => {
-    // Sans ceci, le clic de compatibilité que le navigateur synthétise après
-    // le relâchement rendait ensuite le focus au bouton — juste après que la
-    // note ouverte l'ait donné à son champ de texte, ce qui refermait le
-    // clavier aussitôt ouvert.
+    // Évite le focus/surlignage que certains navigateurs appliquent par
+    // défaut à un bouton pressé, hors de propos pour une simple sélection.
     event.preventDefault()
     arm(event.clientX, event.clientY)
   }
@@ -102,7 +101,7 @@ export function CalendarDay({
     const wasArmed = origin.current !== null
     const alreadyFired = fired.current
     disarm()
-    if (wasArmed && !alreadyFired) onNote(date)
+    if (wasArmed && !alreadyFired) onSelect(date)
   }
 
   const classes = [

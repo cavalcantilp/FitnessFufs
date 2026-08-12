@@ -67,6 +67,7 @@ const fr = {
   'add.custom': 'Aliment personnalisé',
   'add.customName': "Nom de l'aliment",
   'add.customHint': 'Valeurs pour 100 g',
+  'add.customServing': 'Portion usuelle (g)',
   'add.servingHint': 'Portion usuelle : {n} g',
   'add.kcalMismatch': 'Calories recalculées depuis les macros : {n} kcal',
   'add.kcalWarn':
@@ -325,6 +326,7 @@ const pt: Dict = {
   'add.custom': 'Alimento personalizado',
   'add.customName': 'Nome do alimento',
   'add.customHint': 'Valores por 100 g',
+  'add.customServing': 'Porção habitual (g)',
   'add.servingHint': 'Porção habitual: {n} g',
   'add.kcalMismatch': 'Calorias recalculadas a partir dos macros: {n} kcal',
   'add.kcalWarn':
@@ -580,6 +582,7 @@ const es: Dict = {
   'add.custom': 'Alimento personalizado',
   'add.customName': 'Nombre del alimento',
   'add.customHint': 'Valores por 100 g',
+  'add.customServing': 'Ración habitual (g)',
   'add.servingHint': 'Ración habitual: {n} g',
   'add.kcalMismatch': 'Calorías recalculadas desde los macros: {n} kcal',
   'add.kcalWarn':
@@ -835,6 +838,7 @@ const en: Dict = {
   'add.custom': 'Custom food',
   'add.customName': 'Food name',
   'add.customHint': 'Values per 100 g',
+  'add.customServing': 'Usual serving (g)',
   'add.servingHint': 'Usual serving: {n} g',
   'add.kcalMismatch': 'Calories recomputed from macros: {n} kcal',
   'add.kcalWarn':
@@ -1090,6 +1094,7 @@ const it: Dict = {
   'add.custom': 'Alimento personalizzato',
   'add.customName': "Nome dell'alimento",
   'add.customHint': 'Valori per 100 g',
+  'add.customServing': 'Porzione abituale (g)',
   'add.servingHint': 'Porzione abituale: {n} g',
   'add.kcalMismatch': 'Calorie ricalcolate dai macro: {n} kcal',
   'add.kcalWarn':

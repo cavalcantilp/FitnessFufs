@@ -134,7 +134,7 @@ export function CustomFoodSheet({
           />
         </div>
         <div className="field">
-          <label htmlFor="cf-serving">{t('add.quantity')}</label>
+          <label htmlFor="cf-serving">{t('add.customServing')}</label>
           <input
             id="cf-serving"
             name="cf-serving"

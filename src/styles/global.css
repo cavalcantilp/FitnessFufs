@@ -1468,6 +1468,13 @@ input[type='range']::-moz-range-thumb {
   padding: 4px 0;
 }
 
+.list-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+}
+
 /* ---------- Recherche et scan ---------- */
 
 .search-row {

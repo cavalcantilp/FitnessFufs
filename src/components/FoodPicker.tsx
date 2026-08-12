@@ -13,11 +13,12 @@ interface FoodPickerProps {
   onSelect: (food: Food) => void
   onCreate: (query: string) => void
   onScan: () => void
+  onTarget: () => void
   onToast: (message: string) => void
 }
 
 /** Recherche, filtres et liste d'aliments — partagés par l'onglet « Ajouter » et le journal. */
-export function FoodPicker({ onSelect, onCreate, onScan, onToast }: FoodPickerProps) {
+export function FoodPicker({ onSelect, onCreate, onScan, onTarget, onToast }: FoodPickerProps) {
   const { t, lang, foods, favorites, toggleFavorite } = useApp()
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
@@ -176,9 +177,14 @@ export function FoodPicker({ onSelect, onCreate, onScan, onToast }: FoodPickerPr
           {/* Créer un aliment doit rester atteignable sans dérouler la liste. */}
           <div className="list-head">
             <span>{t('add.results', { n: results.length })}</span>
-            <button type="button" onClick={() => onCreate(query)}>
-              + {t('add.custom')}
-            </button>
+            <span className="list-head-actions">
+              <button type="button" onClick={onTarget}>
+                {t('target.title')}
+              </button>
+              <button type="button" onClick={() => onCreate(query)}>
+                + {t('add.custom')}
+              </button>
+            </span>
           </div>
 
           <div className="food-list">{results.map(row)}</div>

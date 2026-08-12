@@ -886,6 +886,38 @@ input[type='range']::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Recette ---------- */
+
+.recipe-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+}
+
+.recipe-line + .recipe-line {
+  border-top: 1px solid rgba(71, 85, 105, 0.25);
+}
+
+.recipe-line .name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.recipe-line input {
+  width: 64px;
+  padding: 8px 10px;
+  text-align: right;
+}
+
+.recipe-line .unit {
+  font-size: 0.78rem;
+  color: var(--text-sub);
+  flex: none;
+}
+
 /* ---------- Feuille modale ---------- */
 
 .sheet-backdrop {

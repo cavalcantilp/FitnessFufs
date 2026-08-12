@@ -32,7 +32,13 @@ aucun serveur, aucun envoi de données.
 - **Aliments personnalisés** — création à la volée, calories déduites des macros
   si elles ne sont pas saisies, mise en favori. Tout aliment personnel ou importé
   se corrige : les données Open Food Facts viennent de saisies communautaires et
-  peuvent différer de l'étiquette qu'on a sous les yeux.
+  peuvent différer de l'étiquette qu'on a sous les yeux. Si des calories sont
+  saisies à la main et s'écartent de plus de 10 % de celles recalculées depuis
+  les macros, un message prévient plutôt que de laisser passer une saisie
+  incohérente. Un bouton « Recette » ouvre un second écran pour composer
+  l'aliment à partir de plusieurs aliments déjà connus, chacun à sa propre
+  quantité : la somme proportionnelle des macros et des micronutriments,
+  ramenée à 100 g du mélange, remplit la fiche automatiquement.
 - **Favoris** — l'étoile épingle un aliment en tête de liste, filtre compris, et
   le confirme par un message nommant l'aliment. Ce retour n'est pas décoratif :
   la première utilisatrice a cru que l'étoile remplissait le journal et s'est

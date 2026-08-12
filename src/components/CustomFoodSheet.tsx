@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { FormPage } from './FormPage'
+import { RecipeBuilder } from './RecipeBuilder'
 import { useApp } from '../state/AppContext'
-import { kcalFromMacros } from '../lib/nutrition'
+import { kcalFromMacros, withinTolerance } from '../lib/nutrition'
 import { FOOD_CATEGORIES } from '../lib/foods'
-import type { Food, FoodCategory } from '../lib/types'
+import type { Food, FoodCategory, Micros } from '../lib/types'
 import type { TranslationKey } from '../i18n/translations'
 
 interface CustomFoodSheetProps {
@@ -35,6 +36,8 @@ export function CustomFoodSheet({
   const [fiber, setFiber] = useState(text(editing?.per100.fiber))
   const [serving, setServing] = useState(String(editing?.serving ?? 100))
   const [category, setCategory] = useState<FoodCategory>(editing?.category ?? 'dish')
+  const [micros, setMicros] = useState<Micros | null>(editing?.micros ?? null)
+  const [showRecipe, setShowRecipe] = useState(false)
 
   const num = (value: string) => {
     const parsed = Number(value.replace(',', '.'))
@@ -45,6 +48,9 @@ export function CustomFoodSheet({
   // Les calories saisies priment ; à défaut on les reconstitue depuis les macros.
   const finalKcal = kcal.trim() ? Math.round(num(kcal)) : derivedKcal
   const valid = name.trim().length > 0 && finalKcal > 0
+  // Un écart franc (>10 %) entre calories saisies et calories reconstituées
+  // des macros signale probablement une erreur de saisie plutôt qu'un choix.
+  const kcalMismatch = kcal.trim() !== '' && derivedKcal > 0 && !withinTolerance(num(kcal), derivedKcal)
 
   const submit = () => {
     if (!valid) return
@@ -58,24 +64,37 @@ export function CustomFoodSheet({
     const portion = Math.max(1, Math.round(num(serving)) || 100)
 
     if (editing) {
-      updateCustomFood(editing.id, { name: name.trim(), per100, serving: portion, category })
-      onCreated({ ...editing, name: name.trim(), per100, serving: portion, category })
+      updateCustomFood(editing.id, { name: name.trim(), per100, serving: portion, category, micros: micros ?? undefined })
+      onCreated({ ...editing, name: name.trim(), per100, serving: portion, category, micros: micros ?? undefined })
       return
     }
 
     const created = addCustomFood({
       name: name.trim(),
-      per100: {
-        kcal: finalKcal,
-        protein: num(protein),
-        carbs: num(carbs),
-        fat: num(fat),
-        fiber: num(fiber),
-      },
-      serving: Math.max(1, Math.round(num(serving)) || 100),
+      per100,
+      serving: portion,
       category,
+      micros: micros ?? undefined,
     })
     onCreated(created)
+  }
+
+  if (showRecipe) {
+    return (
+      <RecipeBuilder
+        onBack={() => setShowRecipe(false)}
+        onApply={(result) => {
+          setKcal(String(result.per100.kcal))
+          setProtein(String(result.per100.protein))
+          setCarbs(String(result.per100.carbs))
+          setFat(String(result.per100.fat))
+          setFiber(String(result.per100.fiber))
+          setServing('100')
+          setMicros(result.micros)
+          setShowRecipe(false)
+        }}
+      />
+    )
   }
 
   return (
@@ -94,6 +113,10 @@ export function CustomFoodSheet({
           onChange={(event) => setName(event.target.value)}
         />
       </div>
+
+      <button type="button" className="btn secondary" onClick={() => setShowRecipe(true)}>
+        {t('recipe.title')}
+      </button>
 
       <div className="grid-2">
         <div className="field">
@@ -191,7 +214,9 @@ export function CustomFoodSheet({
         </div>
       </div>
 
-      {!kcal.trim() && derivedKcal > 0 ? (
+      {kcalMismatch ? (
+        <p className="notice">{t('add.kcalWarn', { entered: Math.round(num(kcal)), computed: derivedKcal })}</p>
+      ) : !kcal.trim() && derivedKcal > 0 ? (
         <p className="hint">{t('add.kcalMismatch', { n: derivedKcal })}</p>
       ) : null}
 

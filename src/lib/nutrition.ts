@@ -300,11 +300,28 @@ export function bmi(weight: number, height: number): number {
   return round1(weight / (height / 100) ** 2)
 }
 
-export type BmiBand = 'under' | 'normal' | 'over' | 'obese'
+export type BmiBand = 'under' | 'normal' | 'over' | 'obese' | 'morbid'
 
 export function bmiBand(value: number): BmiBand {
   if (value < 18.5) return 'under'
   if (value < 25) return 'normal'
   if (value < 30) return 'over'
-  return 'obese'
+  if (value < 40) return 'obese'
+  return 'morbid'
 }
+
+/**
+ * Échelle et bornes de la jauge d'IMC. Dérivées ici plutôt que redéfinies
+ * dans le composant : la jauge et `bmiBand` ne peuvent alors pas diverger si
+ * les seuils changent un jour.
+ */
+export const BMI_GAUGE_MIN = 15
+export const BMI_GAUGE_MAX = 45
+
+export const BMI_BANDS: { band: BmiBand; from: number; to: number }[] = [
+  { band: 'under', from: BMI_GAUGE_MIN, to: 18.5 },
+  { band: 'normal', from: 18.5, to: 25 },
+  { band: 'over', from: 25, to: 30 },
+  { band: 'obese', from: 30, to: 40 },
+  { band: 'morbid', from: 40, to: BMI_GAUGE_MAX },
+]

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { LineChart } from '../components/LineChart'
+import { BmiGauge } from '../components/BmiGauge'
+import { AddWeightSheet } from '../components/AddWeightSheet'
 import { HistoryScreen } from './HistoryScreen'
 import { IconChevronDown, IconPlus } from '../components/icons'
-import { bmi, bmiBand, round1 } from '../lib/nutrition'
+import { bmi, round1 } from '../lib/nutrition'
 import { MEASUREMENT_KEYS, MEASUREMENT_UNIT, seriesFor } from '../lib/measurements'
 import { todayKey } from '../lib/date'
 import type { TranslationKey } from '../i18n/translations'
@@ -21,11 +23,10 @@ const MEASURE_COLOR: Record<MeasurementKey, string> = {
 }
 
 export function WeightScreen({ onToast }: WeightScreenProps) {
-  const { t, weights, logWeight, profile, measurements, logMeasurements } = useApp()
+  const { t, weights, profile, measurements, logMeasurements } = useApp()
 
   const [showHistory, setShowHistory] = useState(false)
-  const [quickAdd, setQuickAdd] = useState(false)
-  const [draft, setDraft] = useState('')
+  const [addWeightOpen, setAddWeightOpen] = useState(false)
   const [measureOpen, setMeasureOpen] = useState(false)
   const [measureDrafts, setMeasureDrafts] = useState<Record<MeasurementKey, string>>({
     waist: '',
@@ -40,16 +41,6 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
   const current = latest?.weight ?? profile.weight
 
   const bmiValue = bmi(current, profile.height)
-  const band = bmiBand(bmiValue)
-
-  const submit = () => {
-    const value = Number(draft.replace(',', '.'))
-    if (!Number.isFinite(value) || value <= 0) return
-    logWeight(today, round1(value))
-    setDraft('')
-    setQuickAdd(false)
-    onToast(t('weight.log'))
-  }
 
   const hasMeasureDraft = MEASUREMENT_KEYS.some((key) => measureDrafts[key].trim() !== '')
 
@@ -73,82 +64,59 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
       <div className="track-hero">
         <div className="card track-chart">
           <div className="card-title">{t('weight.trend')}</div>
-          {weights.length >= 2 ? (
+          {weights.length ? (
             <LineChart
               points={weights.map((entry) => ({ date: entry.date, value: entry.weight }))}
               unit="kg"
               color="var(--accent)"
             />
           ) : (
-            <p className="hint">{t('weight.chartHint')}</p>
+            <p className="hint">{t('weight.empty')}</p>
           )}
         </div>
 
-        <div className="track-side">
-          <div className="card track-current">
-            <button
-              type="button"
-              className="icon-btn track-add"
-              onClick={() => setQuickAdd((value) => !value)}
-              aria-label={t('weight.log')}
-              aria-expanded={quickAdd}
-            >
-              <IconPlus size={18} />
-            </button>
-            <div className="label">{t('weight.current')}</div>
-            <div className="value">{current} kg</div>
+        <div className="card track-results stack">
+          <BmiGauge value={bmiValue} />
 
-            {quickAdd ? (
-              <div className="track-quick-add">
-                <input
-                  id="weight-input"
-                  name="weight-input"
-                  type="text"
-                  inputMode="decimal"
-                  autoComplete="off"
-                  value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
-                  placeholder={String(current)}
-                  autoFocus
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') submit()
-                  }}
-                />
-                <button type="button" className="btn" onClick={submit} disabled={!draft.trim()}>
-                  {t('weight.log')}
-                </button>
-              </div>
-            ) : null}
-          </div>
+          {measurements.length
+            ? MEASUREMENT_KEYS.map((key) => {
+                const series = seriesFor(measurements, key)
+                if (!series.length) return null
+                const latestValue = series[series.length - 1].value
+                return (
+                  <div className="figure-row" key={key}>
+                    <span className="name">
+                      <span className="measure-dot" style={{ background: MEASURE_COLOR[key] }} />
+                      {t(`measure.${key}` as TranslationKey)}
+                    </span>
+                    <span className="value">
+                      {latestValue} {MEASUREMENT_UNIT}
+                    </span>
+                  </div>
+                )
+              })
+            : null}
 
-          <div className="card track-results stack">
-            <div className="track-bmi">
-              <div className="label">{t('weight.bmi')}</div>
-              <div className="value">{bmiValue}</div>
-              <div className="sub">{t(`bmi.${band}` as TranslationKey)}</div>
-            </div>
-
-            {measurements.length
-              ? MEASUREMENT_KEYS.map((key) => {
-                  const series = seriesFor(measurements, key)
-                  if (!series.length) return null
-                  const latestValue = series[series.length - 1].value
-                  return (
-                    <div className="figure-row" key={key}>
-                      <span className="name">
-                        <span className="measure-dot" style={{ background: MEASURE_COLOR[key] }} />
-                        {t(`measure.${key}` as TranslationKey)}
-                      </span>
-                      <span className="value">
-                        {latestValue} {MEASUREMENT_UNIT}
-                      </span>
-                    </div>
-                  )
-                })
-              : null}
-          </div>
+          <button
+            type="button"
+            className="icon-btn track-add"
+            onClick={() => setAddWeightOpen(true)}
+            aria-label={t('weight.log')}
+          >
+            <IconPlus size={14} />
+          </button>
         </div>
       </div>
+
+      {addWeightOpen ? (
+        <AddWeightSheet
+          onClose={() => setAddWeightOpen(false)}
+          onLogged={() => {
+            setAddWeightOpen(false)
+            onToast(t('weight.log'))
+          }}
+        />
+      ) : null}
 
       <div className="disclosure">
         <button

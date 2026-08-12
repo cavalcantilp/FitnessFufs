@@ -1,6 +1,8 @@
 import { useId, useMemo, useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { daysBetween, formatShort } from '../lib/date'
+import { daysBetween, formatDay, formatShort, shiftDay, todayKey } from '../lib/date'
+import { round1 } from '../lib/nutrition'
+import type { TranslationKey } from '../i18n/translations'
 
 interface LineChartPoint {
   date: string
@@ -8,187 +10,231 @@ interface LineChartPoint {
 }
 
 interface LineChartProps {
-  /** Points triés par date croissante. */
+  /** Tous les points connus, triés par date croissante — le filtrage par période se fait ici. */
   points: LineChartPoint[]
   unit: string
   color: string
 }
 
+type RangeKey = '1m' | '3m' | '6m' | '1a' | 'all'
+
+const RANGE_DAYS: Record<Exclude<RangeKey, 'all'>, number> = { '1m': 30, '3m': 90, '6m': 182, '1a': 365 }
+const RANGE_ORDER: RangeKey[] = ['1m', '3m', '6m', '1a', 'all']
+const RANGE_LABEL: Record<RangeKey, TranslationKey> = {
+  '1m': 'chart.range1m',
+  '3m': 'chart.range3m',
+  '6m': 'chart.range6m',
+  '1a': 'chart.range1y',
+  all: 'chart.rangeAll',
+}
+
 const WIDTH = 320
-const HEIGHT = 150
+const HEIGHT = 180
 // Une bande libre en haut accueille la valeur mise en avant, hors de la courbe.
-const PAD = { top: 26, right: 34, bottom: 20, left: 8 }
+const PAD = { top: 14, right: 34, bottom: 20, left: 8 }
 
 /**
- * Série unique valeur/temps — poids ou une mesure corporelle — sans légende
- * (le titre de la carte nomme la série). L'axe des abscisses respecte les
- * dates réelles, donc un trou de deux semaines se voit comme un trou.
- *
- * Généralisé à partir du graphique de poids : plusieurs courbes cohabitent
- * désormais sur le même écran (poids, puis une par mesure corporelle), d'où
- * un identifiant de dégradé propre à chaque instance via useId — un id SVG
- * fixe aurait fait gagner le dernier graphique monté pour tous les autres.
+ * Courbe valeur/temps — poids ou une mesure corporelle — avec un en-tête et
+ * un sélecteur de période façon suivi boursier : la seule ligne, sans repère
+ * temporel, ne disait pas si on regardait une semaine ou six mois de
+ * variation. L'en-tête reste toujours celui de la toute dernière saisie,
+ * indépendant de la période choisie pour la courbe elle-même.
  */
-export function LineChart({ points: entries, unit, color }: LineChartProps) {
-  const { lang } = useApp()
+export function LineChart({ points: allPoints, unit, color }: LineChartProps) {
+  const { t, lang } = useApp()
+  const [range, setRange] = useState<RangeKey>('all')
   const [active, setActive] = useState<number | null>(null)
   const gradientId = useId()
+
+  const entries = useMemo(() => {
+    if (range === 'all') return allPoints
+    const cutoff = shiftDay(todayKey(), -RANGE_DAYS[range])
+    return allPoints.filter((point) => point.date >= cutoff)
+  }, [allPoints, range])
+
+  const last = allPoints.length ? allPoints[allPoints.length - 1] : null
+  const first = entries.length ? entries[0] : null
+  // Écart depuis le début de la période affichée, pas depuis la saisie précédente :
+  // il doit changer avec le sélecteur, comme sur un graphique boursier.
+  const delta = last && first && entries.length > 1 ? round1(last.value - first.value) : null
+  const deltaPercent = delta !== null && first && first.value !== 0 ? round1((delta / first.value) * 100) : null
+  const trendClass = delta === null || delta === 0 ? '' : delta < 0 ? ' down' : ' up'
+  const trendArrow = delta === null || delta === 0 ? '' : delta < 0 ? '▼' : '▲'
 
   const model = useMemo(() => {
     if (entries.length < 2) return null
 
-    const first = entries[0].date
-    const span = Math.max(daysBetween(first, entries[entries.length - 1].date), 1)
+    const startDate = entries[0].date
+    const span = Math.max(daysBetween(startDate, entries[entries.length - 1].date), 1)
     const values = entries.map((entry) => entry.value)
     const min = Math.min(...values)
     const max = Math.max(...values)
-    // Marge pour éviter une courbe collée aux bords : un demi-kilo pour le
-    // poids, quelques centimètres pour une mesure, à l'échelle de la plage.
+    // Marge pour éviter une courbe collée aux bords : proportionnelle à la
+    // plage, avec un plancher pour les séries quasi plates.
     const margin = Math.max((max - min) * 0.15, 0.5)
     const low = Math.floor((min - margin) * 2) / 2
     const high = Math.ceil((max + margin) * 2) / 2
-    const range = high - low || 1
+    const range2 = high - low || 1
 
     const innerW = WIDTH - PAD.left - PAD.right
     const innerH = HEIGHT - PAD.top - PAD.bottom
 
     const points = entries.map((entry) => ({
       entry,
-      x: PAD.left + (daysBetween(first, entry.date) / span) * innerW,
-      y: PAD.top + (1 - (entry.value - low) / range) * innerH,
+      x: PAD.left + (daysBetween(startDate, entry.date) / span) * innerW,
+      y: PAD.top + (1 - (entry.value - low) / range2) * innerH,
     }))
 
-    return { points, low, high, innerW, innerH }
+    return { points, low, high }
   }, [entries])
 
-  if (!model) return null
+  if (!last) return null
 
-  const { points, low, high } = model
-  const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x} ${point.y}`).join(' ')
-  const areaPath = `${path} L${points[points.length - 1].x} ${HEIGHT - PAD.bottom} L${points[0].x} ${HEIGHT - PAD.bottom} Z`
-  const last = points[points.length - 1]
-  const focused = active !== null ? points[active] : null
+  const path = model ? model.points.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x} ${point.y}`).join(' ') : ''
+  const areaPath = model
+    ? `${path} L${model.points[model.points.length - 1].x} ${HEIGHT - PAD.bottom} L${model.points[0].x} ${HEIGHT - PAD.bottom} Z`
+    : ''
+  const lastPoint = model ? model.points[model.points.length - 1] : null
+  const focused = model && active !== null ? model.points[active] : null
   // Au-delà de deux semaines de points, les marqueurs se chevauchent : on ne
   // garde que le dernier, plus celui survolé.
-  const showMarkers = points.length <= 14
+  const showMarkers = model ? model.points.length <= 14 : false
 
   const nearest = (clientX: number, target: SVGSVGElement) => {
+    if (!model) return 0
     const box = target.getBoundingClientRect()
     const x = ((clientX - box.left) / box.width) * WIDTH
     let best = 0
-    points.forEach((point, index) => {
-      if (Math.abs(point.x - x) < Math.abs(points[best].x - x)) best = index
+    model.points.forEach((point, index) => {
+      if (Math.abs(point.x - x) < Math.abs(model.points[best].x - x)) best = index
     })
     return best
   }
 
   return (
-    <svg
-      className="chart"
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      role="img"
-      aria-label={`${entries[0].value} ${unit} → ${entries[entries.length - 1].value} ${unit}`}
-      onPointerMove={(event) => setActive(nearest(event.clientX, event.currentTarget))}
-      onPointerLeave={() => setActive(null)}
-    >
-      <defs>
-        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.28" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
+    <div className="line-chart">
+      <div className="chart-head">
+        <div className="chart-value">
+          {last.value} {unit}
+        </div>
+        {delta !== null ? (
+          <div className={`chart-delta${trendClass}`}>
+            {delta > 0 ? '+' : ''}
+            {delta} {unit}
+            {deltaPercent !== null ? ` (${deltaPercent > 0 ? '+' : ''}${deltaPercent} %)` : ''} {trendArrow}
+          </div>
+        ) : null}
+        <div className="chart-date">{formatDay(last.date, lang)}</div>
+      </div>
 
-      {/* Repères haut / bas seulement : la grille reste en retrait de la donnée. */}
-      {[high, low].map((value, index) => {
-        const y = PAD.top + index * (HEIGHT - PAD.top - PAD.bottom)
-        return (
-          <g key={value}>
-            <line
-              x1={PAD.left}
-              x2={WIDTH - PAD.right}
-              y1={y}
-              y2={y}
-              stroke="rgba(148, 163, 184, 0.18)"
-              strokeWidth="1"
-            />
-            <text
-              x={WIDTH - PAD.right + 5}
-              y={y + 3}
-              fill="var(--text-sub)"
-              fontSize="9"
-              fontWeight="600"
+      {allPoints.length >= 2 ? (
+        <div className="chart-ranges">
+          {RANGE_ORDER.map((key) => (
+            <button
+              key={key}
+              type="button"
+              className={`chart-range${range === key ? ' active' : ''}`}
+              onClick={() => setRange(key)}
             >
-              {value}
-            </text>
-          </g>
-        )
-      })}
+              {t(RANGE_LABEL[key])}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
-      <path d={areaPath} fill={`url(#${gradientId})`} />
-      <path
-        d={path}
-        fill="none"
-        stroke={color}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {model && lastPoint ? (
+        <svg
+          className="chart"
+          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          role="img"
+          aria-label={`${entries[0].value} ${unit} → ${entries[entries.length - 1].value} ${unit}`}
+          onPointerMove={(event) => setActive(nearest(event.clientX, event.currentTarget))}
+          onPointerLeave={() => setActive(null)}
+        >
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity="0.28" />
+              <stop offset="100%" stopColor={color} stopOpacity="0" />
+            </linearGradient>
+          </defs>
 
-      {showMarkers
-        ? points.map((point) => (
-            <circle
-              key={point.entry.date}
-              cx={point.x}
-              cy={point.y}
-              r="3.5"
-              fill={color}
-              stroke="var(--card-bg)"
-              strokeWidth="2"
-            />
-          ))
-        : null}
+          {/* Repères haut / bas seulement : la grille reste en retrait de la donnée. */}
+          {[model.high, model.low].map((value, index) => {
+            const y = PAD.top + index * (HEIGHT - PAD.top - PAD.bottom)
+            return (
+              <g key={value}>
+                <line
+                  x1={PAD.left}
+                  x2={WIDTH - PAD.right}
+                  y1={y}
+                  y2={y}
+                  stroke="rgba(148, 163, 184, 0.18)"
+                  strokeWidth="1"
+                />
+                <text x={WIDTH - PAD.right + 5} y={y + 3} fill="var(--text-sub)" fontSize="9" fontWeight="600">
+                  {value}
+                </text>
+              </g>
+            )
+          })}
 
-      {/* Dernière valeur libellée en direct plutôt qu'un nombre sur chaque point. */}
-      <circle cx={last.x} cy={last.y} r="4.5" fill={color} stroke="var(--card-bg)" strokeWidth="2" />
+          <path d={areaPath} fill={`url(#${gradientId})`} />
+          <path d={path} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
-      {focused && focused !== last ? (
-        <>
-          <line
-            x1={focused.x}
-            x2={focused.x}
-            y1={PAD.top}
-            y2={HEIGHT - PAD.bottom}
-            stroke="rgba(148, 163, 184, 0.35)"
-            strokeWidth="1"
-          />
+          {showMarkers
+            ? model.points.map((point) => (
+                <circle
+                  key={point.entry.date}
+                  cx={point.x}
+                  cy={point.y}
+                  r="3.5"
+                  fill={color}
+                  stroke="var(--card-bg)"
+                  strokeWidth="2"
+                />
+              ))
+            : null}
+
           <circle
-            cx={focused.x}
-            cy={focused.y}
+            cx={lastPoint.x}
+            cy={lastPoint.y}
             r="4.5"
             fill={color}
             stroke="var(--card-bg)"
             strokeWidth="2"
           />
-        </>
-      ) : null}
 
-      <text x={PAD.left} y={HEIGHT - 6} fill="var(--text-sub)" fontSize="9" fontWeight="600">
-        {formatShort(entries[0].date, lang)}
-      </text>
-      <text
-        x={WIDTH - PAD.right}
-        y={HEIGHT - 6}
-        textAnchor="end"
-        fill="var(--text-sub)"
-        fontSize="9"
-        fontWeight="600"
-      >
-        {formatShort((focused ?? last).entry.date, lang)}
-      </text>
-      {/* Valeur mise en avant à gauche : les graduations occupent déjà la marge droite. */}
-      <text x={PAD.left} y={13} fill="var(--text-main)" fontSize="11" fontWeight="700">
-        {(focused ?? last).entry.value} {unit}
-      </text>
-    </svg>
+          {focused && focused !== lastPoint ? (
+            <>
+              <line
+                x1={focused.x}
+                x2={focused.x}
+                y1={PAD.top}
+                y2={HEIGHT - PAD.bottom}
+                stroke="rgba(148, 163, 184, 0.35)"
+                strokeWidth="1"
+              />
+              <circle cx={focused.x} cy={focused.y} r="4.5" fill={color} stroke="var(--card-bg)" strokeWidth="2" />
+            </>
+          ) : null}
+
+          <text x={PAD.left} y={HEIGHT - 6} fill="var(--text-sub)" fontSize="9" fontWeight="600">
+            {formatShort(entries[0].date, lang)}
+          </text>
+          <text
+            x={WIDTH - PAD.right}
+            y={HEIGHT - 6}
+            textAnchor="end"
+            fill="var(--text-sub)"
+            fontSize="9"
+            fontWeight="600"
+          >
+            {formatShort((focused ?? lastPoint).entry.date, lang)}
+          </text>
+        </svg>
+      ) : (
+        <p className="hint">{t('chart.notEnough')}</p>
+      )}
+    </div>
   )
 }

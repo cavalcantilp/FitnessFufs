@@ -249,6 +249,7 @@ export const BUILTIN_FOODS: Food[] = [
 
   // ---------- Matières grasses ----------
   food('olive_oil', ["Huile d'olive", 'Azeite', 'Aceite de oliva', 'Olive oil', "Olio d'oliva"], 884, 0, 0, 100, 0, 10, 'fat', [2, 1, 1, 0.56, 0, 0, 0, 0, 0]),
+  food('grapeseed_oil', ['Huile de pépin de raisin', 'Óleo de semente de uva', 'Aceite de semilla de uva', 'Grapeseed oil', "Olio di semi d'uva"], 884, 0, 0, 100, 0, 10, 'fat'),
   food('butter', ['Beurre', 'Manteiga', 'Mantequilla', 'Butter', 'Burro'], 745, 0.9, 0.6, 82, 0, 10, 'fat', [11, 24, 24, 0.02, 2, 0.09, 0, 1.5, 0.2]),
   food('cream', ['Crème fraîche 30 %', 'Natas 30 %', 'Nata 30 %', 'Cream 30%', 'Panna 30%'], 292, 2.4, 3, 30, 0, 30, 'fat', [40, 90, 65, 0.05, 8, 0.3, 0.6, 0.6, 0.2]),
   food('avocado', ['Avocat', 'Abacate', 'Aguacate', 'Avocado', 'Avocado'], 160, 2, 8.5, 15, 6.7, 100, 'fat', [7, 485, 12, 0.6, 29, 0.64, 10, 0, 0]),
@@ -371,6 +372,8 @@ export const BUILTIN_FOODS: Food[] = [
   food('ketchup', ['Ketchup', 'Ketchup', 'Kétchup', 'Ketchup', 'Ketchup'], 102, 1.2, 24, 0.2, 0.3, 15, 'snack'),
   food('mustard', ['Moutarde', 'Mostarda', 'Mostaza', 'Mustard', 'Senape'], 66, 4, 5, 3.5, 2, 10, 'snack'),
   food('tomato_sauce', ['Sauce tomate', 'Molho de tomate', 'Salsa de tomate', 'Tomato sauce', 'Salsa di pomodoro'], 55, 1.6, 8, 1.8, 1.5, 100, 'veg'),
+  food('tomato_paste', ['Concentré de tomate', 'Extrato de tomate', 'Concentrado de tomate', 'Tomato paste', 'Concentrato di pomodoro'], 82, 4.3, 19, 0.5, 4.1, 30, 'veg'),
+  food('tomato_passata', ['Passata de tomate', 'Passata de tomate', 'Passata de tomate', 'Tomato passata', 'Passata di pomodoro'], 32, 1.3, 5.5, 0.2, 1.3, 100, 'veg'),
   food('soy_sauce', ['Sauce soja', 'Molho de soja', 'Salsa de soja', 'Soy sauce', 'Salsa di soia'], 53, 8, 5, 0.1, 0.8, 10, 'snack'),
   food('olives', ['Olives', 'Azeitonas', 'Aceitunas', 'Olives', 'Olive'], 145, 1, 4, 15, 3.2, 30, 'fat'),
   food('pickles', ['Cornichons', 'Pepinos de conserva', 'Pepinillos', 'Pickles', 'Cetriolini'], 12, 0.7, 2, 0.2, 1.2, 30, 'veg'),
@@ -515,6 +518,7 @@ const PORTIONS: Record<string, PortionUnit[]> = {
 
   // Matières grasses et oléagineux
   olive_oil: [{ key: 'spoon', grams: 10 }, { key: 'teaspoon', grams: 5 }],
+  grapeseed_oil: [{ key: 'spoon', grams: 10 }, { key: 'teaspoon', grams: 5 }],
   butter: [{ key: 'teaspoon', grams: 5 }, { key: 'spoon', grams: 15 }],
   cream: [{ key: 'spoon', grams: 15 }],
   peanut_butter: [{ key: 'spoon', grams: 20 }],
@@ -577,6 +581,7 @@ const PORTIONS: Record<string, PortionUnit[]> = {
   ketchup: [{ key: 'spoon', grams: 15 }],
   mustard: [{ key: 'teaspoon', grams: 5 }],
   soy_sauce: [{ key: 'spoon', grams: 15 }],
+  tomato_paste: [{ key: 'spoon', grams: 15 }],
   tahini: [{ key: 'spoon', grams: 15 }],
   maple_syrup: [{ key: 'spoon', grams: 20 }],
   olives: [{ key: 'unit', grams: 4 }],

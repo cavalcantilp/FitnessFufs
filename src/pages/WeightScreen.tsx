@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { LineChart } from '../components/LineChart'
+import { LineChart, RANGE_LABEL, RANGE_ORDER, type RangeKey } from '../components/LineChart'
 import { BmiGauge } from '../components/BmiGauge'
 import { AddWeightSheet } from '../components/AddWeightSheet'
 import { HistoryScreen } from './HistoryScreen'
@@ -28,6 +28,7 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
   const [showHistory, setShowHistory] = useState(false)
   const [addWeightOpen, setAddWeightOpen] = useState(false)
   const [measureOpen, setMeasureOpen] = useState(false)
+  const [range, setRange] = useState<RangeKey>('all')
   const [measureDrafts, setMeasureDrafts] = useState<Record<MeasurementKey, string>>({
     waist: '',
     hips: '',
@@ -59,8 +60,25 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
     onToast(t('measure.logged'))
   }
 
+  const hasChartData = weights.length >= 2 || measurements.length >= 2
+
   return (
     <div className="screen">
+      {hasChartData ? (
+        <div className="chart-ranges">
+          {RANGE_ORDER.map((key) => (
+            <button
+              key={key}
+              type="button"
+              className={`chart-range${range === key ? ' active' : ''}`}
+              onClick={() => setRange(key)}
+            >
+              {t(RANGE_LABEL[key])}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       <div className="track-hero">
         <div className="card track-chart">
           <div className="card-title">{t('weight.trend')}</div>
@@ -69,6 +87,7 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
               points={weights.map((entry) => ({ date: entry.date, value: entry.weight }))}
               unit="kg"
               color="var(--accent)"
+              range={range}
             />
           ) : (
             <p className="hint">{t('weight.empty')}</p>
@@ -166,7 +185,7 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
                       {t(`measure.${key}` as TranslationKey)}
                     </span>
                   </div>
-                  <LineChart points={series} unit={MEASUREMENT_UNIT} color={MEASURE_COLOR[key]} />
+                  <LineChart points={series} unit={MEASUREMENT_UNIT} color={MEASURE_COLOR[key]} range={range} />
                 </div>
               )
             })}

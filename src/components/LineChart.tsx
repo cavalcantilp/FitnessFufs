@@ -14,13 +14,15 @@ interface LineChartProps {
   points: LineChartPoint[]
   unit: string
   color: string
+  /** Période affichée, pilotée depuis un sélecteur unique en tête d'onglet. */
+  range: RangeKey
 }
 
-type RangeKey = '1m' | '3m' | '6m' | '1a' | 'all'
+export type RangeKey = '1m' | '3m' | '6m' | '1a' | 'all'
 
 const RANGE_DAYS: Record<Exclude<RangeKey, 'all'>, number> = { '1m': 30, '3m': 90, '6m': 182, '1a': 365 }
-const RANGE_ORDER: RangeKey[] = ['1m', '3m', '6m', '1a', 'all']
-const RANGE_LABEL: Record<RangeKey, TranslationKey> = {
+export const RANGE_ORDER: RangeKey[] = ['1m', '3m', '6m', '1a', 'all']
+export const RANGE_LABEL: Record<RangeKey, TranslationKey> = {
   '1m': 'chart.range1m',
   '3m': 'chart.range3m',
   '6m': 'chart.range6m',
@@ -34,15 +36,16 @@ const HEIGHT = 180
 const PAD = { top: 14, right: 34, bottom: 20, left: 8 }
 
 /**
- * Courbe valeur/temps — poids ou une mesure corporelle — avec un en-tête et
- * un sélecteur de période façon suivi boursier : la seule ligne, sans repère
- * temporel, ne disait pas si on regardait une semaine ou six mois de
- * variation. L'en-tête reste toujours celui de la toute dernière saisie,
- * indépendant de la période choisie pour la courbe elle-même.
+ * Courbe valeur/temps — poids ou une mesure corporelle — avec un en-tête
+ * façon suivi boursier : la seule ligne, sans repère temporel, ne disait pas
+ * si on regardait une semaine ou six mois de variation. La période vient
+ * d'un sélecteur unique en tête d'onglet (`range`), partagé par toutes les
+ * courbes de la page plutôt que répété sur chacune. L'en-tête reste toujours
+ * celui de la toute dernière saisie, indépendant de la période choisie pour
+ * la courbe elle-même.
  */
-export function LineChart({ points: allPoints, unit, color }: LineChartProps) {
+export function LineChart({ points: allPoints, unit, color, range }: LineChartProps) {
   const { t, lang } = useApp()
-  const [range, setRange] = useState<RangeKey>('all')
   const [active, setActive] = useState<number | null>(null)
   const gradientId = useId()
 
@@ -57,7 +60,6 @@ export function LineChart({ points: allPoints, unit, color }: LineChartProps) {
   // Écart depuis le début de la période affichée, pas depuis la saisie précédente :
   // il doit changer avec le sélecteur, comme sur un graphique boursier.
   const delta = last && first && entries.length > 1 ? round1(last.value - first.value) : null
-  const deltaPercent = delta !== null && first && first.value !== 0 ? round1((delta / first.value) * 100) : null
   const trendClass = delta === null || delta === 0 ? '' : delta < 0 ? ' down' : ' up'
   const trendArrow = delta === null || delta === 0 ? '' : delta < 0 ? '▼' : '▲'
 
@@ -120,27 +122,11 @@ export function LineChart({ points: allPoints, unit, color }: LineChartProps) {
         {delta !== null ? (
           <div className={`chart-delta${trendClass}`}>
             {delta > 0 ? '+' : ''}
-            {delta} {unit}
-            {deltaPercent !== null ? ` (${deltaPercent > 0 ? '+' : ''}${deltaPercent} %)` : ''} {trendArrow}
+            {delta} {unit} {trendArrow}
           </div>
         ) : null}
         <div className="chart-date">{formatDay(last.date, lang)}</div>
       </div>
-
-      {allPoints.length >= 2 ? (
-        <div className="chart-ranges">
-          {RANGE_ORDER.map((key) => (
-            <button
-              key={key}
-              type="button"
-              className={`chart-range${range === key ? ' active' : ''}`}
-              onClick={() => setRange(key)}
-            >
-              {t(RANGE_LABEL[key])}
-            </button>
-          ))}
-        </div>
-      ) : null}
 
       {model && lastPoint ? (
         <svg

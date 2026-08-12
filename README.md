@@ -70,9 +70,13 @@ aucun serveur, aucun envoi de données.
   déplié sur toutes les journées.
 - **Calendrier** — vue mensuelle plein écran, doublée d'un suivi d'habitude.
   Chaque jour renseigné affiche quatre barres (calories, protéines, glucides,
-  lipides) remplies selon la part de l'objectif atteinte. Le contour d'un jour
-  verdit quand les calories sont respectées à 10 % près ; la case entière
-  verdit quand calories et les trois macros le sont toutes. Deux séries en
+  lipides, identifiées par une puce de couleur rappelée une fois en tête du
+  calendrier) centrées sur l'objectif : le remplissage part du milieu et
+  s'étend à droite en cas de dépassement, à gauche en cas de déficit, coloré
+  du vert au rouge selon l'ampleur de l'écart — dans un sens comme dans
+  l'autre, une barre courte reste l'idéal. Le contour d'un jour verdit quand
+  les calories sont respectées à 10 % près ; la case entière verdit quand
+  calories et les trois macros le sont toutes. Deux séries en
   bas d'écran comptent les jours consécutifs dans chaque cas, en s'arrêtant
   net au premier jour sans aucune saisie. Une pression brève ne fait que
   déplacer le contour du jour ; il faut rester appuyé trois secondes — un

@@ -8,9 +8,14 @@ const MOVE_CANCEL_PX = 16
 
 export interface CalendarDayBar {
   key: string
-  /** 0 à 100, déjà plafonné à l'objectif. */
-  pct: number
+  /** Sens de l'écart par rapport à l'objectif : la barre part du centre. */
+  side: 'over' | 'under'
+  /** 0 à 50, déjà plafonné : la moitié de la piste représente 50 % d'écart. */
+  width: number
+  /** Couleur selon l'ampleur de l'écart, pas selon la macro. */
   color: string
+  /** Couleur d'identité de la ligne (calories, protéines, glucides, lipides). */
+  dotColor: string
 }
 
 interface CalendarDayProps {
@@ -134,8 +139,12 @@ export function CalendarDay({
       {bars ? (
         <span className="day-bars">
           {bars.map((bar) => (
-            <span className="day-bar" key={bar.key}>
-              <span className="fill" style={{ width: `${bar.pct}%`, background: bar.color }} />
+            <span className="sbar-row" key={bar.key}>
+              <span className="row-dot" style={{ background: bar.dotColor }} />
+              <span className="sbar">
+                <span className="tick" />
+                <span className={`fill ${bar.side}`} style={{ width: `${bar.width}%`, background: bar.color }} />
+              </span>
             </span>
           ))}
         </span>

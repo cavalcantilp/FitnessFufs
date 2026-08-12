@@ -5,6 +5,29 @@ import { IconChevronLeft, IconChevronRight, IconFlame } from '../components/icon
 import { fromKey, localeOf, shiftDay, toKey, todayKey } from '../lib/date'
 import { sumNutrients, withinTolerance } from '../lib/nutrition'
 import type { DiaryEntry } from '../lib/types'
+import type { TranslationKey } from '../i18n/translations'
+
+type MacroKey = 'kcal' | 'protein' | 'carbs' | 'fat'
+
+const MACRO_KEYS: MacroKey[] = ['kcal', 'protein', 'carbs', 'fat']
+
+/** Couleur d'identité de chaque ligne, reprise des autres écrans (macros, profil). */
+const MACRO_DOT: Record<MacroKey, string> = {
+  kcal: 'var(--calendar-kcal)',
+  protein: 'var(--protein)',
+  carbs: 'var(--carbs)',
+  fat: 'var(--fat)',
+}
+
+/**
+ * Couleur selon l'ampleur de l'écart à l'objectif, pas selon son sens : une
+ * barre courte est l'idéal, qu'elle penche vers un dépassement ou un déficit.
+ */
+function deviationColor(absPct: number): string {
+  if (absPct <= 0.1) return 'var(--positive)'
+  if (absPct <= 0.25) return 'var(--warning)'
+  return 'var(--negative)'
+}
 
 interface CalendarScreenProps {
   /** Jour actuellement ouvert dans le journal. */
@@ -167,6 +190,15 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
       </div>
 
       <div className="calendar" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <div className="calendar-key">
+          {MACRO_KEYS.map((key) => (
+            <span className="key-item" key={key}>
+              <span className="key-dot" style={{ background: MACRO_DOT[key] }} />
+              {t(`macro.${key}` as TranslationKey)}
+            </span>
+          ))}
+        </div>
+
         <div className="calendar-weekdays">
           {weekdays.map((label, index) => (
             <span key={index}>{label}</span>
@@ -182,12 +214,17 @@ export function CalendarScreen({ date, onPick }: CalendarScreenProps) {
 
             const bars: CalendarDayBar[] | null =
               eaten && goal
-                ? [
-                    { key: 'kcal', pct: goal.kcal > 0 ? Math.min(100, (eaten.kcal / goal.kcal) * 100) : 0, color: 'var(--calendar-kcal)' },
-                    { key: 'protein', pct: goal.protein > 0 ? Math.min(100, (eaten.protein / goal.protein) * 100) : 0, color: 'var(--protein)' },
-                    { key: 'carbs', pct: goal.carbs > 0 ? Math.min(100, (eaten.carbs / goal.carbs) * 100) : 0, color: 'var(--carbs)' },
-                    { key: 'fat', pct: goal.fat > 0 ? Math.min(100, (eaten.fat / goal.fat) * 100) : 0, color: 'var(--fat)' },
-                  ]
+                ? MACRO_KEYS.map((key) => {
+                    const delta = goal[key] > 0 ? (eaten[key] - goal[key]) / goal[key] : 0
+                    const clamped = Math.max(-0.5, Math.min(0.5, delta))
+                    return {
+                      key,
+                      side: (clamped >= 0 ? 'over' : 'under') as CalendarDayBar['side'],
+                      width: (Math.abs(clamped) / 0.5) * 50,
+                      color: deviationColor(Math.abs(delta)),
+                      dotColor: MACRO_DOT[key],
+                    }
+                  })
                 : null
 
             const calOk = eaten && goal ? withinTolerance(eaten.kcal, goal.kcal) : false

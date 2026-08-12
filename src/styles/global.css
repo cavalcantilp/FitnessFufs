@@ -1452,6 +1452,32 @@ input[type='range']::-moz-range-thumb {
   background: var(--card-bg);
 }
 
+/* Rappelle une fois pour toutes quelle puce correspond à quelle macro : sans
+   elle, rien ne distingue plus les quatre lignes des jours une fois leur
+   couleur libérée pour indiquer l'écart plutôt que l'identité. */
+.calendar-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 10px 12px 0;
+}
+
+.calendar-key .key-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+.calendar-key .key-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: none;
+}
+
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -1555,18 +1581,56 @@ input[type='range']::-moz-range-thumb {
   margin-top: auto;
 }
 
-.calendar-day .day-bar {
+.calendar-day .sbar-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* Identifie la ligne (calories, protéines, glucides, lipides) : la couleur
+   de la barre elle-même est réservée à l'écart, pas à la macro. */
+.calendar-day .row-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* Piste centrée sur l'objectif : le remplissage part du repère du milieu
+   plutôt que de la gauche, pour montrer un dépassement ou un déficit et pas
+   seulement un pourcentage atteint. */
+.calendar-day .sbar {
+  position: relative;
+  flex: 1;
   height: 3px;
   border-radius: 999px;
   background: rgba(148, 163, 184, 0.22);
-  overflow: hidden;
 }
 
-.calendar-day .day-bar .fill {
-  display: block;
-  height: 100%;
+.calendar-day .sbar .tick {
+  position: absolute;
+  left: 50%;
+  top: -1px;
+  bottom: -1px;
+  width: 1px;
+  background: var(--text-sub);
+  opacity: 0.6;
+}
+
+.calendar-day .sbar .fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
   border-radius: 999px;
   transition: width 0.3s ease;
+}
+
+.calendar-day .sbar .fill.over {
+  left: 50%;
+}
+
+.calendar-day .sbar .fill.under {
+  right: 50%;
 }
 
 /*

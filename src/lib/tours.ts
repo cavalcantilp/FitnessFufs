@@ -7,8 +7,9 @@ export const TOURS: Record<string, CoachStep[]> = {
     { target: '.calendar-key', textKey: 'tour.calendar.2' },
   ],
   diary: [
-    { target: '.summary', textKey: 'tour.diary.1' },
-    { target: '.label-with-note .icon-btn', textKey: 'tour.diary.2' },
+    { target: '.day-nav', textKey: 'tour.diary.1' },
+    { target: '.summary', textKey: 'tour.diary.2' },
+    { target: '.label-with-note .icon-btn', textKey: 'tour.diary.3' },
   ],
   add: [
     { target: 'input[name="food-search"]', textKey: 'tour.add.1' },

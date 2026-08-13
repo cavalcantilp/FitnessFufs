@@ -252,11 +252,14 @@ const fr = {
   'tour.skip': 'Passer',
   'tour.next': 'Suivant',
   'tour.done': 'Terminé',
-  'tour.calendar.1': 'Touchez un jour pour le sélectionner ; restez appuyé pour ouvrir directement son journal.',
+  'tour.calendar.1':
+    "Touchez un jour pour le sélectionner ; restez appuyé pour ouvrir directement son journal. Balayez horizontalement pour changer de mois.",
   'tour.calendar.2':
     "Chaque barre montre l'écart par rapport à votre objectif : verte si proche, rouge si loin, dans les deux sens.",
-  'tour.diary.1': 'Votre progression calorique du jour, mise à jour à chaque aliment ajouté.',
-  'tour.diary.2': 'Ajoutez une note libre à cette journée — entraînement, voyage, repas sauté.',
+  'tour.diary.1':
+    "Changez de jour avec les flèches, ou balayez à deux doigts pour ne pas interférer avec le défilement de la page.",
+  'tour.diary.2': 'Votre progression calorique du jour, mise à jour à chaque aliment ajouté.',
+  'tour.diary.3': 'Ajoutez une note libre à cette journée — entraînement, voyage, repas sauté.',
   'tour.add.1': 'Cherchez un aliment, scannez un code-barres, ou créez le vôtre.',
   'tour.add.2': "Comparez les aliments pour atteindre une quantité cible d'un nutriment.",
   'tour.weight.1':
@@ -544,11 +547,13 @@ const pt: Dict = {
   'tour.next': 'Próximo',
   'tour.done': 'Concluído',
   'tour.calendar.1':
-    'Toque em um dia para selecioná-lo; mantenha pressionado para abrir o diário diretamente.',
+    'Toque em um dia para selecioná-lo; mantenha pressionado para abrir o diário diretamente. Deslize horizontalmente para trocar de mês.',
   'tour.calendar.2':
     'Cada barra mostra o desvio em relação à sua meta: verde se está perto, vermelha se está longe, nos dois sentidos.',
-  'tour.diary.1': 'Seu progresso calórico do dia, atualizado a cada alimento adicionado.',
-  'tour.diary.2': 'Adicione uma nota livre a este dia — treino, viagem, refeição pulada.',
+  'tour.diary.1':
+    'Troque de dia com as setas, ou deslize com dois dedos para não interferir na rolagem da página.',
+  'tour.diary.2': 'Seu progresso calórico do dia, atualizado a cada alimento adicionado.',
+  'tour.diary.3': 'Adicione uma nota livre a este dia — treino, viagem, refeição pulada.',
   'tour.add.1': 'Busque um alimento, escaneie um código de barras ou crie o seu.',
   'tour.add.2': 'Compare alimentos para atingir uma quantidade alvo de um nutriente.',
   'tour.weight.1':
@@ -832,11 +837,14 @@ const es: Dict = {
   'tour.skip': 'Omitir',
   'tour.next': 'Siguiente',
   'tour.done': 'Listo',
-  'tour.calendar.1': 'Toca un día para seleccionarlo; mantén pulsado para abrir su diario directamente.',
+  'tour.calendar.1':
+    'Toca un día para seleccionarlo; mantén pulsado para abrir su diario directamente. Desliza horizontalmente para cambiar de mes.',
   'tour.calendar.2':
     'Cada barra muestra la desviación respecto a tu objetivo: verde si está cerca, roja si está lejos, en ambos sentidos.',
-  'tour.diary.1': 'Tu progreso calórico del día, actualizado con cada alimento añadido.',
-  'tour.diary.2': 'Añade una nota libre a este día — entrenamiento, viaje, comida saltada.',
+  'tour.diary.1':
+    'Cambia de día con las flechas, o desliza con dos dedos para no interferir con el desplazamiento de la página.',
+  'tour.diary.2': 'Tu progreso calórico del día, actualizado con cada alimento añadido.',
+  'tour.diary.3': 'Añade una nota libre a este día — entrenamiento, viaje, comida saltada.',
   'tour.add.1': 'Busca un alimento, escanea un código de barras o crea el tuyo.',
   'tour.add.2': 'Compara alimentos para alcanzar una cantidad objetivo de un nutriente.',
   'tour.weight.1':
@@ -1119,11 +1127,14 @@ const en: Dict = {
   'tour.skip': 'Skip',
   'tour.next': 'Next',
   'tour.done': 'Done',
-  'tour.calendar.1': 'Tap a day to select it; hold it down to jump straight into its diary.',
+  'tour.calendar.1':
+    'Tap a day to select it; hold it down to jump straight into its diary. Swipe sideways to change month.',
   'tour.calendar.2':
     'Each bar shows how far you are from your target: green if close, red if far, in either direction.',
-  'tour.diary.1': 'Your calorie progress for the day, updated with every food you add.',
-  'tour.diary.2': 'Add a free-form note to this day — a workout, a trip, a skipped meal.',
+  'tour.diary.1':
+    "Change day with the arrows, or swipe with two fingers so it doesn't clash with scrolling the page.",
+  'tour.diary.2': 'Your calorie progress for the day, updated with every food you add.',
+  'tour.diary.3': 'Add a free-form note to this day — a workout, a trip, a skipped meal.',
   'tour.add.1': 'Search for a food, scan a barcode, or create your own.',
   'tour.add.2': 'Compare foods to reach a target amount of a nutrient.',
   'tour.weight.1':
@@ -1404,11 +1415,14 @@ const it: Dict = {
   'tour.skip': 'Salta',
   'tour.next': 'Avanti',
   'tour.done': 'Fatto',
-  'tour.calendar.1': 'Tocca un giorno per selezionarlo; tienilo premuto per aprire subito il suo diario.',
+  'tour.calendar.1':
+    'Tocca un giorno per selezionarlo; tienilo premuto per aprire subito il suo diario. Scorri orizzontalmente per cambiare mese.',
   'tour.calendar.2':
     'Ogni barra mostra lo scostamento dal tuo obiettivo: verde se vicino, rossa se lontano, in entrambe le direzioni.',
-  'tour.diary.1': 'Il tuo progresso calorico del giorno, aggiornato a ogni alimento aggiunto.',
-  'tour.diary.2': 'Aggiungi una nota libera a questo giorno — allenamento, viaggio, pasto saltato.',
+  'tour.diary.1':
+    'Cambia giorno con le frecce, oppure scorri con due dita per non interferire con lo scorrimento della pagina.',
+  'tour.diary.2': 'Il tuo progresso calorico del giorno, aggiornato a ogni alimento aggiunto.',
+  'tour.diary.3': 'Aggiungi una nota libera a questo giorno — allenamento, viaggio, pasto saltato.',
   'tour.add.1': 'Cerca un alimento, scansiona un codice a barre o crea il tuo.',
   'tour.add.2': 'Confronta gli alimenti per raggiungere una quantità obiettivo di un nutriente.',
   'tour.weight.1':

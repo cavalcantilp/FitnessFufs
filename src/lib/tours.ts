@@ -14,6 +14,16 @@ export const TOURS: Record<string, CoachStep[]> = {
     { target: 'input[name="food-search"]', textKey: 'tour.add.1' },
     { target: '.list-head-actions button:first-child', textKey: 'tour.add.2' },
   ],
+  'add.custom': [
+    { target: '#cf-name', textKey: 'tour.addCustom.1' },
+    { target: '#cf-recipe-btn', textKey: 'tour.addCustom.2' },
+    { target: '#cf-kcal', textKey: 'tour.addCustom.3' },
+  ],
+  'add.target': [
+    { target: '#target-category', textKey: 'tour.addTarget.1' },
+    { target: '#target-quantity', textKey: 'tour.addTarget.2' },
+    { target: '.target-result', textKey: 'tour.addTarget.3' },
+  ],
   weight: [
     { target: '.track-chart', textKey: 'tour.weight.1' },
     { target: '.bmi-gauge', textKey: 'tour.weight.2' },

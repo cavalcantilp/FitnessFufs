@@ -125,7 +125,7 @@ export function CustomFoodSheet({
         />
       </div>
 
-      <button type="button" className="btn secondary" onClick={() => setShowRecipe(true)}>
+      <button id="cf-recipe-btn" type="button" className="btn secondary" onClick={() => setShowRecipe(true)}>
         + {t('recipe.add')}
       </button>
 

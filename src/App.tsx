@@ -4,7 +4,7 @@ import { useApp } from './state/AppContext'
 import { Onboarding } from './pages/Onboarding'
 import { CalendarScreen } from './pages/CalendarScreen'
 import { Diary } from './pages/Diary'
-import { AddScreen } from './pages/AddScreen'
+import { AddScreen, type AddView } from './pages/AddScreen'
 import { WeightScreen } from './pages/WeightScreen'
 import { ProfileScreen } from './pages/ProfileScreen'
 import { Coachmark } from './components/Coachmark'
@@ -29,9 +29,15 @@ export function App() {
   const [date, setDate] = useState(() => load(STORAGE_KEYS.ui, { date: todayKey() }).date)
   const [meal, setMeal] = useState<MealId>(() => defaultMeal())
   const [toast, setToast] = useState<string | null>(null)
-  const [activeTour, setActiveTour] = useState<Tab | null>(null)
+  const [activeTour, setActiveTour] = useState<string | null>(null)
+  /** Sous-écran de l'onglet Ajouter, pour cibler le bon tutoriel (aliment personnalisé, objectif nutritionnel). */
+  const [addView, setAddView] = useState<AddView>('list')
 
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
+
+  // La liste de l'onglet Ajouter partage la visite guidée de l'onglet lui-même ;
+  // ses sous-écrans (aliment personnalisé, objectif nutritionnel) ont la leur.
+  const tourKey = tab === 'add' && addView !== 'list' ? `add.${addView}` : tab
 
   /**
    * Un léger délai laisse l'onglet finir de se peindre avant de mesurer les
@@ -39,15 +45,15 @@ export function App() {
    * élément pas encore à sa position finale.
    */
   useEffect(() => {
-    if (!tutorialsEnabled || tutorialSeen[tab] || !TOURS[tab]) return
-    const timer = window.setTimeout(() => setActiveTour(tab), 500)
+    if (!tutorialsEnabled || tutorialSeen[tourKey] || !TOURS[tourKey]) return
+    const timer = window.setTimeout(() => setActiveTour(tourKey), 500)
     return () => window.clearTimeout(timer)
-  }, [tab, tutorialsEnabled, tutorialSeen])
+  }, [tourKey, tutorialsEnabled, tutorialSeen])
 
   const handleTourDone = useCallback(() => {
-    markTutorialSeen(tab)
+    markTutorialSeen(tourKey)
     setActiveTour(null)
-  }, [tab, markTutorialSeen])
+  }, [tourKey, markTutorialSeen])
 
   useEffect(() => {
     save(STORAGE_KEYS.ui, { tab, date })
@@ -90,11 +96,11 @@ export function App() {
           <span className="subtitle">{t('app.tagline')}</span>
         </div>
         <div className="header-actions">
-          {TOURS[tab] ? (
+          {tutorialsEnabled && TOURS[tourKey] ? (
             <button
               type="button"
               className="help-btn"
-              onClick={() => setActiveTour(tab)}
+              onClick={() => setActiveTour(tourKey)}
               aria-label={t('tour.help')}
             >
               ?
@@ -141,7 +147,13 @@ export function App() {
         <Diary date={date} onDateChange={setDate} onAddTo={openAdd} onToast={setToast} />
       ) : null}
       {tab === 'add' ? (
-        <AddScreen date={date} meal={meal} onAdded={setToast} onLogged={() => setTab('diary')} />
+        <AddScreen
+          date={date}
+          meal={meal}
+          onAdded={setToast}
+          onLogged={() => setTab('diary')}
+          onViewChange={setAddView}
+        />
       ) : null}
       {tab === 'weight' ? <WeightScreen onToast={setToast} /> : null}
       {tab === 'profile' ? <ProfileScreen onToast={setToast} /> : null}

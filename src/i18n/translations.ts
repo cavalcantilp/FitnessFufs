@@ -265,6 +265,16 @@ const fr = {
     "Votre IMC, positionné sur une jauge colorée pour voir en un coup d'œil où vous vous situez.",
   'tour.profile.1':
     "Retrouvez ici comment couper ou réactiver le déclenchement automatique des tutoriels.",
+  'tour.addCustom.1': "Le nom de l'aliment, tel qu'il apparaîtra dans vos recherches.",
+  'tour.addCustom.2':
+    "Composez-le à partir d'aliments déjà enregistrés : la recette calcule automatiquement les macros et micros proportionnels.",
+  'tour.addCustom.3':
+    'Indiquez les calories, ou laissez-les vides : elles seront recalculées depuis les macros renseignées plus bas.',
+  'tour.addTarget.1':
+    "Comparez les aliments d'une catégorie donnée, ou de toutes les catégories à la fois.",
+  'tour.addTarget.2': 'Choisissez le nutriment visé et la quantité à atteindre.',
+  'tour.addTarget.3':
+    "Chaque résultat indique le poids nécessaire pour atteindre votre objectif ; touchez-le pour l'ajouter directement au journal.",
 
   'common.save': 'Enregistrer',
   'common.cancel': 'Annuler',
@@ -547,6 +557,16 @@ const pt: Dict = {
     'Seu IMC, posicionado em uma régua colorida para ver rapidamente onde você está.',
   'tour.profile.1':
     'Aqui você encontra como desativar ou reativar o disparo automático dos tutoriais.',
+  'tour.addCustom.1': 'O nome do alimento, como ele aparecerá nas suas buscas.',
+  'tour.addCustom.2':
+    'Monte-o a partir de alimentos já cadastrados: a receita calcula automaticamente as macros e os micros proporcionais.',
+  'tour.addCustom.3':
+    'Informe as calorias, ou deixe em branco: elas serão recalculadas a partir das macros preenchidas abaixo.',
+  'tour.addTarget.1':
+    'Compare os alimentos de uma categoria específica, ou de todas as categorias ao mesmo tempo.',
+  'tour.addTarget.2': 'Escolha o nutriente desejado e a quantidade a atingir.',
+  'tour.addTarget.3':
+    'Cada resultado mostra o peso necessário para atingir sua meta; toque nele para adicioná-lo diretamente ao diário.',
 
   'common.save': 'Salvar',
   'common.cancel': 'Cancelar',
@@ -824,6 +844,16 @@ const es: Dict = {
   'tour.weight.2':
     'Tu IMC, ubicado en una escala de colores para ver de un vistazo dónde te encuentras.',
   'tour.profile.1': 'Aquí puedes desactivar o reactivar el inicio automático de los tutoriales.',
+  'tour.addCustom.1': 'El nombre del alimento, tal como aparecerá en tus búsquedas.',
+  'tour.addCustom.2':
+    'Compónlo a partir de alimentos ya guardados: la receta calcula automáticamente las macros y micros proporcionales.',
+  'tour.addCustom.3':
+    'Indica las calorías, o déjalas en blanco: se recalcularán a partir de las macros indicadas más abajo.',
+  'tour.addTarget.1':
+    'Compara los alimentos de una categoría concreta, o de todas las categorías a la vez.',
+  'tour.addTarget.2': 'Elige el nutriente objetivo y la cantidad a alcanzar.',
+  'tour.addTarget.3':
+    'Cada resultado indica el peso necesario para alcanzar tu objetivo; tócalo para añadirlo directamente al diario.',
 
   'common.save': 'Guardar',
   'common.cancel': 'Cancelar',
@@ -1101,6 +1131,14 @@ const en: Dict = {
   'tour.weight.2':
     'Your BMI, placed on a colour-coded gauge so you can see where you stand at a glance.',
   'tour.profile.1': 'Here you can turn the automatic tutorials off or back on.',
+  'tour.addCustom.1': "The food's name, exactly as it will appear in your searches.",
+  'tour.addCustom.2':
+    "Build it from foods you've already saved: the recipe automatically works out the proportional macros and micros.",
+  'tour.addCustom.3': "Enter the calories, or leave them blank: they'll be recalculated from the macros below.",
+  'tour.addTarget.1': 'Compare foods within one category, or across every category at once.',
+  'tour.addTarget.2': 'Choose the target nutrient and the amount to reach.',
+  'tour.addTarget.3':
+    'Each result shows the weight needed to hit your target; tap it to log it straight into your diary.',
 
   'common.save': 'Save',
   'common.cancel': 'Cancel',
@@ -1378,6 +1416,16 @@ const it: Dict = {
   'tour.weight.2':
     "Il tuo IMC, posizionato su una scala colorata per vedere a colpo d'occhio dove ti trovi.",
   'tour.profile.1': "Qui puoi disattivare o riattivare l'avvio automatico dei tutorial.",
+  'tour.addCustom.1': "Il nome dell'alimento, così come apparirà nelle tue ricerche.",
+  'tour.addCustom.2':
+    'Componilo a partire da alimenti già salvati: la ricetta calcola automaticamente macro e micronutrienti proporzionali.',
+  'tour.addCustom.3':
+    'Indica le calorie, oppure lasciale vuote: verranno ricalcolate dalle macro inserite più sotto.',
+  'tour.addTarget.1':
+    'Confronta gli alimenti di una categoria specifica, o di tutte le categorie insieme.',
+  'tour.addTarget.2': 'Scegli il nutriente obiettivo e la quantità da raggiungere.',
+  'tour.addTarget.3':
+    'Ogni risultato mostra il peso necessario per raggiungere il tuo obiettivo; toccalo per aggiungerlo direttamente al diario.',
 
   'common.save': 'Salva',
   'common.cancel': 'Annulla',

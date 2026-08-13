@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { FoodPicker } from '../components/FoodPicker'
 import { QuantitySheet } from '../components/QuantitySheet'
@@ -9,21 +9,34 @@ import { fetchByBarcode } from '../lib/openfoodfacts'
 import { formatDay } from '../lib/date'
 import type { Food, MealId } from '../lib/types'
 
+export type AddView = 'list' | 'custom' | 'target'
+
 interface AddScreenProps {
   date: string
   meal: MealId
   onAdded: (message: string) => void
   /** Un aliment vient d'être journalisé : on revient au journal, comme après une saisie MyFitnessPal. */
   onLogged: () => void
+  /** Sous-écran affiché, pour que le tutoriel de l'en-tête cible la bonne visite guidée. */
+  onViewChange: (view: AddView) => void
 }
 
-export function AddScreen({ date, meal, onAdded, onLogged }: AddScreenProps) {
+export function AddScreen({ date, meal, onAdded, onLogged, onViewChange }: AddScreenProps) {
   const { t, lang, addEntry, removeCustomFood, saveFood } = useApp()
   const [selected, setSelected] = useState<Food | null>(null)
   const [creating, setCreating] = useState<string | null>(null)
   const [editing, setEditing] = useState<Food | null>(null)
   const [scanning, setScanning] = useState(false)
   const [showTarget, setShowTarget] = useState(false)
+
+  // Prévient le parent du sous-écran affiché, pour que le bouton d'aide et le
+  // déclenchement automatique ciblent la bonne visite guidée. Réinitialisé en
+  // quittant l'onglet, pour ne pas laisser un sous-écran fantôme au retour.
+  useEffect(() => {
+    const view: AddView = creating !== null || editing ? 'custom' : showTarget ? 'target' : 'list'
+    onViewChange(view)
+    return () => onViewChange('list')
+  }, [creating, editing, showTarget, onViewChange])
 
   /**
    * Un code scanné est résolu chez Open Food Facts puis rangé dans les

@@ -199,15 +199,18 @@ export function IconComment({ size = 14 }: IconProps) {
   )
 }
 
-export function IconGrip({ size = 18 }: IconProps) {
+export function IconArrowUp({ size = 16 }: IconProps) {
   return (
-    <svg {...base(size)} fill="currentColor" stroke="none" aria-hidden="true">
-      <circle cx="9" cy="6" r="1.4" />
-      <circle cx="15" cy="6" r="1.4" />
-      <circle cx="9" cy="12" r="1.4" />
-      <circle cx="15" cy="12" r="1.4" />
-      <circle cx="9" cy="18" r="1.4" />
-      <circle cx="15" cy="18" r="1.4" />
+    <svg {...base(size)} aria-hidden="true">
+      <path d="m6 15 6-6 6 6" />
+    </svg>
+  )
+}
+
+export function IconArrowDown({ size = 16 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="m6 9 6 6 6-6" />
     </svg>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { Ring } from '../components/Ring'
 import { MacroBars } from '../components/MacroBars'
@@ -6,12 +6,13 @@ import { MicroPanel } from '../components/MicroPanel'
 import { DayMacroPanel } from '../components/DayMacroPanel'
 import { DayNoteSheet } from '../components/DayNoteSheet'
 import {
+  IconArrowDown,
+  IconArrowUp,
   IconChevronLeft,
   IconChevronRight,
   IconComment,
   IconCopy,
   IconEdit,
-  IconGrip,
   IconPlus,
   IconTrash,
 } from '../components/icons'
@@ -27,11 +28,6 @@ interface DiaryProps {
   onAddTo: (meal: MealId) => void
   onToast: (message: string) => void
 }
-
-/** Doigt immobile assez longtemps sur la poignée pour déclencher le glisser, pas juste un tap. */
-const LONG_PRESS_MS = 350
-/** Au-delà, un doigt qui bouge avant la fin du long-press est un scroll, pas une intention de glisser. */
-const MOVE_CANCEL_PX = 10
 
 export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
   const {
@@ -76,181 +72,14 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
 
   const remaining = targets.kcal - eaten.kcal
 
-  // --- Réorganisation des repas par glisser-déposer (appui long sur la poignée) ---
-  const [order, setOrder] = useState<string[]>(() => mealDefs.map((meal) => meal.id))
-  const orderRef = useRef(order)
-  orderRef.current = order
-  const [draggingId, setDraggingId] = useState<string | null>(null)
-  const nodeRefs = useRef<Map<string, HTMLElement>>(new Map())
-  const dragInfo = useRef<{
-    id: string
-    pointerId: number
-    pointerStartX: number
-    pointerStartY: number
-    naturalTop: number
-    height: number
-    longPressTimer: number | null
-    active: boolean
-  } | null>(null)
-
-  useEffect(() => {
-    // Ne pas resynchroniser pendant un glisser en cours : ça couperait l'ordre en vol.
-    if (!dragInfo.current) setOrder(mealDefs.map((meal) => meal.id))
-  }, [mealDefs])
-
-  const orderedMeals = order
-    .map((id) => mealDefs.find((meal) => meal.id === id))
-    .filter((meal): meal is MealDef => Boolean(meal))
-
-  /**
-   * FLIP : quand une carte non tenue change de position suite à un
-   * échange, elle glisse jusqu'à sa nouvelle place au lieu d'y sauter —
-   * la carte tenue, elle, suit déjà le doigt en continu via onDragMove.
-   */
-  const prevTopsRef = useRef<Map<string, number>>(new Map())
-  useLayoutEffect(() => {
-    const prevTops = prevTopsRef.current
-    orderedMeals.forEach((meal) => {
-      const node = nodeRefs.current.get(meal.id)
-      if (!node || meal.id === draggingId) return
-      const prevTop = prevTops.get(meal.id)
-      const newTop = node.getBoundingClientRect().top
-      if (prevTop !== undefined && prevTop !== newTop) {
-        const delta = prevTop - newTop
-        node.style.transition = 'none'
-        node.style.transform = `translateY(${delta}px)`
-        node.getBoundingClientRect() // force le reflow avant de relâcher la transition
-        requestAnimationFrame(() => {
-          node.style.transition = 'transform 200ms ease'
-          node.style.transform = ''
-        })
-      }
-      prevTops.set(meal.id, newTop)
-    })
-  }, [order, draggingId])
-
-  const endDrag = () => {
-    const info = dragInfo.current
-    if (info) {
-      if (info.longPressTimer) window.clearTimeout(info.longPressTimer)
-      const node = nodeRefs.current.get(info.id)
-      if (node) {
-        node.style.transition = ''
-        node.style.transform = ''
-        // Sans ça, la prochaine passe FLIP comparerait la position au repos à
-        // une mesure prise avant le dépôt et ferait sauter la carte qu'on vient de lâcher.
-        prevTopsRef.current.set(info.id, node.getBoundingClientRect().top)
-      }
-      if (info.active) reorderMeals(orderRef.current)
-    }
-    dragInfo.current = null
-    setDraggingId(null)
-    window.removeEventListener('pointermove', onDragMove)
-    window.removeEventListener('pointerup', endDrag)
-    window.removeEventListener('pointercancel', endDrag)
-  }
-
-  const onDragMove = (event: PointerEvent) => {
-    const info = dragInfo.current
-    if (!info) return
-
-    if (!info.active) {
-      if (
-        Math.abs(event.clientX - info.pointerStartX) > MOVE_CANCEL_PX ||
-        Math.abs(event.clientY - info.pointerStartY) > MOVE_CANCEL_PX
-      ) {
-        // Le doigt a bougé avant la fin de l'appui long : c'est un scroll, pas un glisser.
-        if (info.longPressTimer) window.clearTimeout(info.longPressTimer)
-        dragInfo.current = null
-        window.removeEventListener('pointermove', onDragMove)
-        window.removeEventListener('pointerup', endDrag)
-        window.removeEventListener('pointercancel', endDrag)
-      }
-      return
-    }
-
-    const translateY = event.clientY - info.pointerStartY
-    const node = nodeRefs.current.get(info.id)
-    if (node) {
-      // Le premier mouvement coupe la transition d'agrippement : au-delà, le
-      // doigt doit être suivi au pixel près, sans le moindre retard animé.
-      node.style.transition = 'none'
-      node.style.transform = `translateY(${translateY}px) scale(1.02)`
-    }
-
-    const visualCenter = info.naturalTop + translateY + info.height / 2
-    const current = orderRef.current
-    const idx = current.indexOf(info.id)
-
-    if (idx < current.length - 1) {
-      const nextNode = nodeRefs.current.get(current[idx + 1])
-      if (nextNode) {
-        const nextRect = nextNode.getBoundingClientRect()
-        if (visualCenter > nextRect.top + nextRect.height / 2) {
-          info.naturalTop += nextRect.height
-          const next = [...current]
-          ;[next[idx], next[idx + 1]] = [next[idx + 1], next[idx]]
-          setOrder(next)
-          return
-        }
-      }
-    }
-    if (idx > 0) {
-      const prevNode = nodeRefs.current.get(current[idx - 1])
-      if (prevNode) {
-        const prevRect = prevNode.getBoundingClientRect()
-        if (visualCenter < prevRect.top + prevRect.height / 2) {
-          info.naturalTop -= prevRect.height
-          const next = [...current]
-          ;[next[idx], next[idx - 1]] = [next[idx - 1], next[idx]]
-          setOrder(next)
-        }
-      }
-    }
-  }
-
-  const onGripPointerDown = (id: string, event: React.PointerEvent) => {
-    event.preventDefault()
-    const pointerId = event.pointerId
-    const pointerStartX = event.clientX
-    const pointerStartY = event.clientY
-
-    const timer = window.setTimeout(() => {
-      const node = nodeRefs.current.get(id)
-      if (!node || !dragInfo.current) return
-      const rect = node.getBoundingClientRect()
-      dragInfo.current = {
-        ...dragInfo.current,
-        naturalTop: rect.top,
-        height: rect.height,
-        longPressTimer: null,
-        active: true,
-      }
-      setDraggingId(id)
-      // Petit effet de saisie immédiat, avant même le premier mouvement du doigt.
-      node.style.transition = 'transform 120ms ease'
-      node.style.transform = 'scale(1.02)'
-      try {
-        node.setPointerCapture(pointerId)
-      } catch {
-        // Le pointeur a pu être relâché entre-temps : rien à faire de plus.
-      }
-    }, LONG_PRESS_MS)
-
-    dragInfo.current = {
-      id,
-      pointerId,
-      pointerStartX,
-      pointerStartY,
-      naturalTop: 0,
-      height: 0,
-      longPressTimer: timer,
-      active: false,
-    }
-
-    window.addEventListener('pointermove', onDragMove)
-    window.addEventListener('pointerup', endDrag)
-    window.addEventListener('pointercancel', endDrag)
+  // --- Réorganisation des repas par flèches haut/bas ---
+  const moveMeal = (id: string, direction: -1 | 1) => {
+    const ids = mealDefs.map((meal) => meal.id)
+    const idx = ids.indexOf(id)
+    const swapIdx = idx + direction
+    if (idx === -1 || swapIdx < 0 || swapIdx >= ids.length) return
+    ;[ids[idx], ids[swapIdx]] = [ids[swapIdx], ids[idx]]
+    reorderMeals(ids)
   }
 
   // --- Renommage d'un repas ---
@@ -419,27 +248,30 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
         <MicroPanel micros={dayMicros} coverage={microCoverage} />
       </div>
 
-      {orderedMeals.map((meal) => {
+      {mealDefs.map((meal, index) => {
         const items = byMeal.get(meal.id) ?? []
         const total = sumNutrients(items.map((entry) => entry.nutrients))
         return (
-          <section
-            className={`meal${draggingId === meal.id ? ' dragging' : ''}`}
-            key={meal.id}
-            ref={(node) => {
-              if (node) nodeRefs.current.set(meal.id, node)
-              else nodeRefs.current.delete(meal.id)
-            }}
-          >
+          <section className="meal" key={meal.id}>
             <header className="meal-head">
-              <button
-                type="button"
-                className="meal-grip"
-                aria-label={t('diary.reorderMeal')}
-                onPointerDown={(event) => onGripPointerDown(meal.id, event)}
-              >
-                <IconGrip size={22} />
-              </button>
+              <div className="meal-move">
+                <button
+                  type="button"
+                  disabled={index === 0}
+                  aria-label={t('diary.moveMealUp')}
+                  onClick={() => moveMeal(meal.id, -1)}
+                >
+                  <IconArrowUp size={14} />
+                </button>
+                <button
+                  type="button"
+                  disabled={index === mealDefs.length - 1}
+                  aria-label={t('diary.moveMealDown')}
+                  onClick={() => moveMeal(meal.id, 1)}
+                >
+                  <IconArrowDown size={14} />
+                </button>
+              </div>
 
               {renamingId === meal.id ? (
                 <input

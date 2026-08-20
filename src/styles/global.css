@@ -673,14 +673,6 @@ input[type='range']::-moz-range-thumb {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-  position: relative;
-}
-
-/* Pendant le glisser : au-dessus des autres repas, avec un peu de relief. */
-.meal.dragging {
-  z-index: 30;
-  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.45);
-  touch-action: none;
 }
 
 .meal-head {
@@ -691,26 +683,26 @@ input[type='range']::-moz-range-thumb {
   border-bottom: 1px solid rgba(71, 85, 105, 0.5);
 }
 
-.meal-grip {
-  display: grid;
-  place-items: center;
-  /* Cible tactile confortable (44px) : la précédente, trop petite, rendait
-     la prise en main du repas peu fiable au toucher. */
-  width: 44px;
-  height: 44px;
-  margin: -8px;
-  border-radius: 10px;
+.meal-move {
+  display: flex;
+  flex-direction: column;
   flex: none;
-  color: var(--text-sub);
-  cursor: grab;
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
-.meal-grip:active {
-  background: rgba(148, 163, 184, 0.15);
+.meal-move button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 22px;
+  color: var(--text-sub);
+}
+
+.meal-move button:active:not(:disabled) {
   color: var(--text-main);
+}
+
+.meal-move button:disabled {
+  opacity: 0.3;
 }
 
 .meal-head .name {

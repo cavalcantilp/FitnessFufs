@@ -7,7 +7,8 @@ interface ProfileScreenProps {
 }
 
 export function ProfileScreen({ onToast }: ProfileScreenProps) {
-  const { t, targets, exportData, importData, resetAll, tutorialsEnabled, setTutorialsEnabled } = useApp()
+  const { t, targets, exportData, importData, resetAll, tutorialsEnabled, setTutorialsEnabled, apiKey, setApiKey } =
+    useApp()
   const fileInput = useRef<HTMLInputElement>(null)
 
   const download = () => {
@@ -69,6 +70,23 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
           </div>
         </div>
         {/* L'explication du plancher est donnée sous les curseurs, avec les macros. */}
+      </div>
+
+      <div className="card stack">
+        <div className="card-title">{t('chat.title')}</div>
+        <p className="hint">{t('profile.apiKeyHint')}</p>
+        <div className="field">
+          <label htmlFor="api-key">{t('profile.apiKey')}</label>
+          <input
+            id="api-key"
+            name="api-key"
+            type="password"
+            autoComplete="off"
+            value={apiKey}
+            onChange={(event) => setApiKey(event.target.value)}
+            placeholder="sk-ant-…"
+          />
+        </div>
       </div>
 
       <div className="card stack">

@@ -133,13 +133,21 @@ aucun serveur, aucun envoi de données.
   discret « ? » à côté du sélecteur de langue. Le déclenchement automatique
   se coupe depuis le profil ; le bouton « ? » disparaît alors avec lui. Une
   étape dont la cible n'est pas à l'écran est sautée sans bloquer la visite.
-- **Frigo** — inventaire des aliments sous la main, avec leur poids, pour
-  préparer de futures suggestions de repas tenant compte des macros
-  restants du jour. Recherche identique aux autres écrans ; chaque
-  aliment ajouté garde un poids modifiable et se retire d'un geste. Le
-  Profil a quitté la barre d'onglets pour laisser sa place à cet onglet :
-  il s'ouvre désormais depuis un bouton dédié de l'en-tête, à droite du
-  sélecteur de langue.
+- **Frigo** — inventaire des aliments sous la main, avec leur poids, base
+  des suggestions de repas de l'assistant. Recherche identique aux autres
+  écrans ; chaque aliment ajouté garde un poids modifiable et se retire
+  d'un geste. Le Profil a quitté la barre d'onglets pour laisser sa place
+  à cet onglet : il s'ouvre désormais depuis un bouton dédié de l'en-tête,
+  à droite du sélecteur de langue.
+- **Assistant nutrition** — bouton flottant en bas à droite, façon
+  WhatsApp, qui ouvre une conversation avec Claude. Chaque message part
+  avec le contenu du frigo et les macros restants du jour en contexte
+  invisible, sans qu'il faille les retaper. Des suggestions toutes prêtes
+  (« plan du jour avec le frigo », « que me reste-t-il à manger ? ») lancent
+  la conversation d'un geste. Fonctionne en appelant l'API Anthropic
+  directement depuis le navigateur avec une clé personnelle, saisie dans le
+  profil et jamais incluse dans l'export — pensé pour un usage individuel,
+  sans backend.
 
 ## Développement
 

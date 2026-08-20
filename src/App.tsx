@@ -8,6 +8,8 @@ import { AddScreen, type AddView } from './pages/AddScreen'
 import { WeightScreen } from './pages/WeightScreen'
 import { ProfileScreen } from './pages/ProfileScreen'
 import { FridgeScreen } from './pages/FridgeScreen'
+import { ChatScreen } from './pages/ChatScreen'
+import { ChatButton } from './components/ChatButton'
 import { Coachmark } from './components/Coachmark'
 import { IconCalendar, IconDiary, IconFridge, IconPlus, IconScale, IconUser } from './components/icons'
 import { LANGS } from './i18n/translations'
@@ -40,6 +42,8 @@ export function App() {
   const [addView, setAddView] = useState<AddView>('list')
   /** Le Profil n'est plus un onglet : un bouton dédié de l'en-tête l'ouvre par-dessus l'onglet courant. */
   const [showProfile, setShowProfile] = useState(false)
+  /** L'assistant nutrition, ouvert par le bouton flottant façon WhatsApp. */
+  const [showChat, setShowChat] = useState(false)
 
   const { needRefresh: [needRefresh], updateServiceWorker } = useRegisterSW()
 
@@ -187,6 +191,18 @@ export function App() {
       {toast ? <div className="toast">{toast}</div> : null}
 
       {activeTour ? <Coachmark key={activeTour} steps={TOURS[activeTour]} onDone={handleTourDone} /> : null}
+
+      {!showChat ? <ChatButton onClick={() => setShowChat(true)} /> : null}
+
+      {showChat ? (
+        <ChatScreen
+          onClose={() => setShowChat(false)}
+          onOpenProfile={() => {
+            setShowChat(false)
+            setShowProfile(true)
+          }}
+        />
+      ) : null}
 
       <nav className="tabbar">
         {tabs.map((entry) => (

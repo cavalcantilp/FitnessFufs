@@ -103,6 +103,23 @@ export function IconBarcode({ size = 20 }: IconProps) {
   )
 }
 
+export function IconChat({ size = 24 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-5 4V5a1 1 0 0 1 1-1Z" />
+      <path d="M8 9h8M8 12.5h5" />
+    </svg>
+  )
+}
+
+export function IconSend({ size = 18 }: IconProps) {
+  return (
+    <svg {...base(size)} fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M3 11.5 20 4l-6.5 17-3-7-7.5-2.5Z" />
+    </svg>
+  )
+}
+
 export function IconTrash({ size = 18 }: IconProps) {
   return (
     <svg {...base(size)} aria-hidden="true">

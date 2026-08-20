@@ -55,4 +55,6 @@ export const STORAGE_KEYS = {
   ui: 'ui',
   tutorialsEnabled: 'tutorialsEnabled',
   tutorialSeen: 'tutorialSeen',
+  apiKey: 'apiKey',
+  chat: 'chat',
 } as const

@@ -200,4 +200,13 @@ export interface FridgeItem {
   state?: FoodState
 }
 
+/** Un message de la conversation avec l'assistant nutrition. */
+export interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  text: string
+  /** Horodatage ISO, pour un futur affichage — pas encore utilisé à l'écran. */
+  at: string
+}
+
 export type Lang = 'fr' | 'pt' | 'es' | 'en' | 'it'

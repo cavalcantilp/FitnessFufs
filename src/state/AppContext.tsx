@@ -12,6 +12,7 @@ import { computeTargets, nutrientsFor, type Targets } from '../lib/nutrition'
 import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
 import type {
+  ChatMessage,
   DayMacros,
   DiaryEntry,
   Food,
@@ -117,6 +118,19 @@ interface AppState {
   updateFridgeItem: (id: string, grams: number) => void
   removeFridgeItem: (id: string) => void
 
+  /**
+   * Clé personnelle Anthropic, envoyée directement depuis le navigateur.
+   * Volontairement absente de l'export/import : un secret ne doit pas finir
+   * dans une sauvegarde JSON partagée par erreur.
+   */
+  apiKey: string
+  setApiKey: (key: string) => void
+
+  /** Conversation avec l'assistant nutrition, locale à cet appareil. */
+  chatMessages: ChatMessage[]
+  addChatMessage: (message: ChatMessage) => void
+  clearChat: () => void
+
   exportData: () => ExportPayload
   importData: (payload: unknown) => boolean
   resetAll: () => void
@@ -153,6 +167,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   )
   const [notes, setNotes] = useState<Record<string, string>>(() => load(STORAGE_KEYS.notes, {}))
   const [fridge, setFridge] = useState<FridgeItem[]>(() => load(STORAGE_KEYS.fridge, []))
+  const [apiKey, setApiKey] = useState<string>(() => load(STORAGE_KEYS.apiKey, ''))
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => load(STORAGE_KEYS.chat, []))
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
@@ -167,6 +183,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
   useEffect(() => save(STORAGE_KEYS.notes, notes), [notes])
   useEffect(() => save(STORAGE_KEYS.fridge, fridge), [fridge])
+  useEffect(() => save(STORAGE_KEYS.apiKey, apiKey), [apiKey])
+  useEffect(() => save(STORAGE_KEYS.chat, chatMessages), [chatMessages])
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -355,6 +373,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFridge((current) => current.filter((item) => item.id !== id))
   }, [])
 
+  const addChatMessage = useCallback((message: ChatMessage) => {
+    setChatMessages((current) => [...current, message])
+  }, [])
+
+  const clearChat = useCallback(() => setChatMessages([]), [])
+
   const exportData = useCallback(
     (): ExportPayload => ({
       version: 1,
@@ -402,6 +426,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setDayMacros({})
     setNotes({})
     setFridge([])
+    setApiKey('')
+    setChatMessages([])
     setOnboarded(false)
     setTutorialsEnabled(true)
     setTutorialSeen({})
@@ -450,6 +476,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addFridgeItem,
       updateFridgeItem,
       removeFridgeItem,
+      apiKey,
+      setApiKey,
+      chatMessages,
+      addChatMessage,
+      clearChat,
       exportData,
       importData,
       resetAll,
@@ -494,6 +525,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addFridgeItem,
       updateFridgeItem,
       removeFridgeItem,
+      apiKey,
+      setApiKey,
+      chatMessages,
+      addChatMessage,
+      clearChat,
       exportData,
       importData,
       resetAll,

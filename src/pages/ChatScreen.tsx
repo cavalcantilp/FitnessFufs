@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { GeminiError, askAssistant } from '../lib/gemini'
+import { AnthropicError, askAssistant } from '../lib/anthropic'
+import { MONTHLY_CAP_USD } from '../lib/usage'
 import { foodName } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
 import { todayKey } from '../lib/date'
@@ -51,8 +52,20 @@ function buildSystemPrompt(
 }
 
 export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
-  const { t, lang, foods, fridge, targetsFor, entriesFor, apiKey, chatMessages, addChatMessage, clearChat } =
-    useApp()
+  const {
+    t,
+    lang,
+    foods,
+    fridge,
+    targetsFor,
+    entriesFor,
+    apiKey,
+    chatMessages,
+    addChatMessage,
+    clearChat,
+    usage,
+    addUsageCost,
+  } = useApp()
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -61,6 +74,10 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
   // envoie un message dans cette visite, historique ou pas.
   const [interacted, setInteracted] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
+
+  // Estimation seulement — pas une vraie limite de facturation Anthropic —
+  // mais suffisante pour éviter les mauvaises surprises côté personnel.
+  const capped = usage.costUsd >= MONTHLY_CAP_USD
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
@@ -71,7 +88,7 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
 
   const send = async (text: string) => {
     const trimmed = text.trim()
-    if (!trimmed || sending || !apiKey) return
+    if (!trimmed || sending || !apiKey || capped) return
     setInput('')
     setError(null)
     setInteracted(true)
@@ -97,9 +114,10 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
         .filter((line): line is string => Boolean(line))
       const system = buildSystemPrompt(lang, fridgeLines, remaining)
       const reply = await askAssistant(apiKey, [...chatMessages, userMessage], system)
-      addChatMessage({ id: newId(), role: 'assistant', text: reply, at: new Date().toISOString() })
+      addChatMessage({ id: newId(), role: 'assistant', text: reply.text, at: new Date().toISOString() })
+      addUsageCost(reply.costUsd)
     } catch (err) {
-      setError(err instanceof GeminiError ? err.message : t('chat.error'))
+      setError(err instanceof AnthropicError ? err.message : t('chat.error'))
     } finally {
       setSending(false)
     }
@@ -148,7 +166,7 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
 
       {error ? <p className="notice chat-error">{error}</p> : null}
 
-      {!interacted ? (
+      {!interacted && !capped ? (
         <div className="chip-list">
           {SUGGESTIONS.map((key) => (
             <button type="button" className="chip" key={key} onClick={() => void send(t(key))} disabled={!apiKey}>
@@ -161,6 +179,13 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
       {!apiKey ? (
         <div className="notice info chat-nokey">
           <span>{t('chat.noKey')}</span>
+          <button type="button" className="btn secondary" onClick={onOpenProfile}>
+            {t('nav.profile')}
+          </button>
+        </div>
+      ) : capped ? (
+        <div className="notice chat-nokey">
+          <span>{t('chat.capped', { cap: MONTHLY_CAP_USD.toFixed(2) })}</span>
           <button type="button" className="btn secondary" onClick={onOpenProfile}>
             {t('nav.profile')}
           </button>

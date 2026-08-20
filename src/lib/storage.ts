@@ -57,4 +57,5 @@ export const STORAGE_KEYS = {
   tutorialSeen: 'tutorialSeen',
   apiKey: 'apiKey',
   chat: 'chat',
+  usage: 'usage',
 } as const

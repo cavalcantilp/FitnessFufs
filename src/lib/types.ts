@@ -209,4 +209,11 @@ export interface ChatMessage {
   at: string
 }
 
+/** Dépense estimée de l'assistant pour le mois en cours, à partir des tokens facturés par l'API. */
+export interface MonthlyUsage {
+  /** Clé du mois (« 2026-08 ») : sert à détecter le passage à un nouveau mois. */
+  month: string
+  costUsd: number
+}
+
 export type Lang = 'fr' | 'pt' | 'es' | 'en' | 'it'

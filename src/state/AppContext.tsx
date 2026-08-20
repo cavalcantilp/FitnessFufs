@@ -10,6 +10,7 @@ import {
 import { BUILTIN_FOODS } from '../lib/foods'
 import { computeTargets, nutrientsFor, type Targets } from '../lib/nutrition'
 import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
+import { currentMonthKey } from '../lib/usage'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
 import type {
   ChatMessage,
@@ -22,6 +23,7 @@ import type {
   MealId,
   MeasurementEntry,
   MeasurementKey,
+  MonthlyUsage,
   Profile,
   WeightEntry,
 } from '../lib/types'
@@ -119,7 +121,7 @@ interface AppState {
   removeFridgeItem: (id: string) => void
 
   /**
-   * Clé personnelle Google Gemini, envoyée directement depuis le navigateur.
+   * Clé personnelle Anthropic, envoyée directement depuis le navigateur.
    * Volontairement absente de l'export/import : un secret ne doit pas finir
    * dans une sauvegarde JSON partagée par erreur.
    */
@@ -130,6 +132,10 @@ interface AppState {
   chatMessages: ChatMessage[]
   addChatMessage: (message: ChatMessage) => void
   clearChat: () => void
+
+  /** Dépense estimée de l'assistant pour le mois en cours — jamais une facturation réelle. */
+  usage: MonthlyUsage
+  addUsageCost: (costUsd: number) => void
 
   exportData: () => ExportPayload
   importData: (payload: unknown) => boolean
@@ -169,6 +175,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [fridge, setFridge] = useState<FridgeItem[]>(() => load(STORAGE_KEYS.fridge, []))
   const [apiKey, setApiKey] = useState<string>(() => load(STORAGE_KEYS.apiKey, ''))
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => load(STORAGE_KEYS.chat, []))
+  const [usage, setUsage] = useState<MonthlyUsage>(() => {
+    const loaded = load<MonthlyUsage>(STORAGE_KEYS.usage, { month: currentMonthKey(), costUsd: 0 })
+    // Un nouveau mois a pu commencer pendant que l'app était fermée.
+    return loaded.month === currentMonthKey() ? loaded : { month: currentMonthKey(), costUsd: 0 }
+  })
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
@@ -185,6 +196,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.fridge, fridge), [fridge])
   useEffect(() => save(STORAGE_KEYS.apiKey, apiKey), [apiKey])
   useEffect(() => save(STORAGE_KEYS.chat, chatMessages), [chatMessages])
+  useEffect(() => save(STORAGE_KEYS.usage, usage), [usage])
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -379,6 +391,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const clearChat = useCallback(() => setChatMessages([]), [])
 
+  const addUsageCost = useCallback((costUsd: number) => {
+    setUsage((current) => {
+      const month = currentMonthKey()
+      return month === current.month
+        ? { month, costUsd: current.costUsd + costUsd }
+        : { month, costUsd }
+    })
+  }, [])
+
   const exportData = useCallback(
     (): ExportPayload => ({
       version: 1,
@@ -428,6 +449,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFridge([])
     setApiKey('')
     setChatMessages([])
+    setUsage({ month: currentMonthKey(), costUsd: 0 })
     setOnboarded(false)
     setTutorialsEnabled(true)
     setTutorialSeen({})
@@ -481,6 +503,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       chatMessages,
       addChatMessage,
       clearChat,
+      usage,
+      addUsageCost,
       exportData,
       importData,
       resetAll,
@@ -530,6 +554,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       chatMessages,
       addChatMessage,
       clearChat,
+      usage,
+      addUsageCost,
       exportData,
       importData,
       resetAll,

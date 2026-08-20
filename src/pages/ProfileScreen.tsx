@@ -1,14 +1,28 @@
 import { useRef } from 'react'
 import { useApp } from '../state/AppContext'
 import { ProfileForm } from '../components/ProfileForm'
+import { MONTHLY_CAP_USD } from '../lib/usage'
+
+const formatUsd = (value: number) => `${value.toFixed(2)} $`
 
 interface ProfileScreenProps {
   onToast: (message: string) => void
 }
 
 export function ProfileScreen({ onToast }: ProfileScreenProps) {
-  const { t, targets, exportData, importData, resetAll, tutorialsEnabled, setTutorialsEnabled, apiKey, setApiKey } =
-    useApp()
+  const {
+    t,
+    targets,
+    exportData,
+    importData,
+    resetAll,
+    tutorialsEnabled,
+    setTutorialsEnabled,
+    apiKey,
+    setApiKey,
+    usage,
+  } = useApp()
+  const usagePct = Math.min(100, Math.round((usage.costUsd / MONTHLY_CAP_USD) * 100))
   const fileInput = useRef<HTMLInputElement>(null)
 
   const download = () => {
@@ -84,8 +98,23 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
             autoComplete="off"
             value={apiKey}
             onChange={(event) => setApiKey(event.target.value)}
-            placeholder="AIzaSy…"
+            placeholder="sk-ant-…"
           />
+        </div>
+        <div className="usage-bar-wrap">
+          <div className="usage-bar-label">
+            <span>{t('profile.usageLabel')}</span>
+            <span>
+              {formatUsd(usage.costUsd)} / {formatUsd(MONTHLY_CAP_USD)}
+            </span>
+          </div>
+          <div className="usage-bar">
+            <div
+              className={`usage-bar-fill${usagePct >= 100 ? ' full' : ''}`}
+              style={{ width: `${usagePct}%` }}
+            />
+          </div>
+          <p className="hint">{t('profile.usageHint')}</p>
         </div>
       </div>
 

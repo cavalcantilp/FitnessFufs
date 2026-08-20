@@ -802,6 +802,10 @@ input[type='range']::-moz-range-thumb {
   color: #0f172a;
 }
 
+.chip:disabled {
+  opacity: 0.4;
+}
+
 .food-list {
   display: flex;
   flex-direction: column;
@@ -2271,4 +2275,39 @@ input[type='range']::-moz-range-thumb {
 
 .chat-send:disabled {
   opacity: 0.4;
+}
+
+/* ---------- Dépense estimée de l'assistant, dans le profil ---------- */
+
+.usage-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.usage-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-sub);
+  font-variant-numeric: tabular-nums;
+}
+
+.usage-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--input-bg);
+  overflow: hidden;
+}
+
+.usage-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.usage-bar-fill.full {
+  background: var(--negative);
 }

@@ -96,6 +96,7 @@ const fr = {
   'fridge.section.pantry': 'Placard',
   'fridge.section.freezer': 'Congélateur',
   'fridge.quantityOptional': 'optionnel',
+  'fridge.addTo': 'Ajouter — {section}',
 
   'chat.title': 'Assistant nutrition',
   'chat.placeholder': 'Écrivez un message…',
@@ -431,6 +432,7 @@ const pt: Dict = {
   'fridge.section.pantry': 'Armário',
   'fridge.section.freezer': 'Freezer',
   'fridge.quantityOptional': 'opcional',
+  'fridge.addTo': 'Adicionar — {section}',
 
   'chat.title': 'Assistente de nutrição',
   'chat.placeholder': 'Escreva uma mensagem…',
@@ -763,6 +765,7 @@ const es: Dict = {
   'fridge.section.pantry': 'Armario',
   'fridge.section.freezer': 'Congelador',
   'fridge.quantityOptional': 'opcional',
+  'fridge.addTo': 'Añadir — {section}',
 
   'chat.title': 'Asistente de nutrición',
   'chat.placeholder': 'Escribe un mensaje…',
@@ -1092,6 +1095,7 @@ const en: Dict = {
   'fridge.section.pantry': 'Pantry',
   'fridge.section.freezer': 'Freezer',
   'fridge.quantityOptional': 'optional',
+  'fridge.addTo': 'Add — {section}',
 
   'chat.title': 'Nutrition assistant',
   'chat.placeholder': 'Type a message…',
@@ -1420,6 +1424,7 @@ const it: Dict = {
   'fridge.section.pantry': 'Dispensa',
   'fridge.section.freezer': 'Congelatore',
   'fridge.quantityOptional': 'facoltativo',
+  'fridge.addTo': 'Aggiungi — {section}',
 
   'chat.title': 'Assistente nutrizionale',
   'chat.placeholder': 'Scrivi un messaggio…',

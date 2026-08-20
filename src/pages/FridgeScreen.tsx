@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { IconCupboard, IconFridge, IconSnowflake, IconTrash } from '../components/icons'
+import { FormPage } from '../components/FormPage'
+import { IconCupboard, IconFridge, IconPlus, IconSnowflake, IconTrash } from '../components/icons'
 import { useApp } from '../state/AppContext'
 import { foodName, searchFoods, statesOf } from '../lib/foods'
 import type { Food, FridgeItem, FridgeLocation } from '../lib/types'
@@ -17,8 +18,8 @@ const SECTIONS: { location: FridgeLocation; icon: ReactNode; titleKey: 'fridge.s
  */
 export function FridgeScreen() {
   const { t, lang, foods, fridge, addFridgeItem, updateFridgeItem, removeFridgeItem } = useApp()
+  const [searchingLocation, setSearchingLocation] = useState<FridgeLocation | null>(null)
   const [query, setQuery] = useState('')
-  const [addTarget, setAddTarget] = useState<FridgeLocation>('fridge')
 
   const results = useMemo(() => {
     if (!query.trim()) return []
@@ -44,68 +45,71 @@ export function FridgeScreen() {
     return grouped
   }, [fridge, foods])
 
+  const closeSearch = () => {
+    setSearchingLocation(null)
+    setQuery('')
+  }
+
   const add = (food: Food) => {
+    if (!searchingLocation) return
     addFridgeItem(
       food,
-      addTarget,
-      addTarget === 'fridge' ? food.serving : undefined,
+      searchingLocation,
+      searchingLocation === 'fridge' ? food.serving : undefined,
       statesOf(food).length > 0 ? food.state : undefined,
     )
-    setQuery('')
+    closeSearch()
+  }
+
+  if (searchingLocation) {
+    const section = SECTIONS.find((entry) => entry.location === searchingLocation)
+    return (
+      <FormPage title={section ? t(section.titleKey) : ''} onBack={closeSearch}>
+        <div className="field">
+          <label htmlFor="fridge-search">{t('add.search')}</label>
+          <input
+            id="fridge-search"
+            name="fridge-search"
+            type="search"
+            autoComplete="off"
+            autoFocus
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t('add.search')}
+          />
+        </div>
+
+        {results.length > 0 ? (
+          <div className="food-list">
+            {results.map((food) => (
+              <div className="food-row" key={food.id}>
+                <button
+                  type="button"
+                  className="info"
+                  style={{ textAlign: 'left', background: 'none' }}
+                  onClick={() => add(food)}
+                >
+                  <div className="name">{foodName(food, lang)}</div>
+                  <div className="macros">
+                    {t('macro.protein.short')} {food.per100.protein} · {t('macro.carbs.short')} {food.per100.carbs} ·{' '}
+                    {t('macro.fat.short')} {food.per100.fat} — {t('add.per100')}
+                    {stateLabel(food.state)}
+                  </div>
+                </button>
+                <span className="kcal">{food.per100.kcal}</span>
+              </div>
+            ))}
+          </div>
+        ) : query.trim() ? (
+          <p className="hint">{t('add.noResults')}</p>
+        ) : null}
+      </FormPage>
+    )
   }
 
   return (
     <div className="screen">
       <p className="hint">{t('fridge.hint')}</p>
-
-      <div className="field">
-        <label htmlFor="fridge-search">{t('add.search')}</label>
-        <input
-          id="fridge-search"
-          name="fridge-search"
-          type="search"
-          autoComplete="off"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={t('add.search')}
-        />
-      </div>
-
-      <div className="segmented">
-        {SECTIONS.map((section) => (
-          <button
-            type="button"
-            key={section.location}
-            className={addTarget === section.location ? 'active' : ''}
-            onClick={() => setAddTarget(section.location)}
-          >
-            {t(section.titleKey)}
-          </button>
-        ))}
-      </div>
-
-      {results.length > 0 ? (
-        <div className="food-list">
-          {results.map((food) => (
-            <div className="food-row" key={food.id}>
-              <button
-                type="button"
-                className="info"
-                style={{ textAlign: 'left', background: 'none' }}
-                onClick={() => add(food)}
-              >
-                <div className="name">{foodName(food, lang)}</div>
-                <div className="macros">
-                  {t('macro.protein.short')} {food.per100.protein} · {t('macro.carbs.short')} {food.per100.carbs} ·{' '}
-                  {t('macro.fat.short')} {food.per100.fat} — {t('add.per100')}
-                  {stateLabel(food.state)}
-                </div>
-              </button>
-              <span className="kcal">{food.per100.kcal}</span>
-            </div>
-          ))}
-        </div>
-      ) : null}
 
       {SECTIONS.map((section) => {
         const entries = entriesByLocation[section.location]
@@ -115,6 +119,14 @@ export function FridgeScreen() {
               {section.icon}
               <span className="fridge-section-title">{t(section.titleKey)}</span>
               <span className="fridge-section-count">{entries.length}</span>
+              <button
+                type="button"
+                className="icon-btn"
+                aria-label={t('fridge.addTo', { section: t(section.titleKey) })}
+                onClick={() => setSearchingLocation(section.location)}
+              >
+                <IconPlus size={18} />
+              </button>
             </div>
 
             {entries.length === 0 ? (

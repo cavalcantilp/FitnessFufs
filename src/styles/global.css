@@ -746,6 +746,11 @@ input[type='range']::-moz-range-thumb {
 .entry .info {
   flex: 1;
   min-width: 0;
+  text-align: left;
+}
+
+.entry .info:disabled {
+  cursor: default;
 }
 
 .entry .name {

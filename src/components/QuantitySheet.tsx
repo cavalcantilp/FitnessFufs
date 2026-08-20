@@ -12,16 +12,31 @@ interface QuantitySheetProps {
   food: Food
   /** Repas pré-sélectionné ; le sélecteur reste visible pour changer d'avis. */
   meal: MealId
+  /** Quantité et état déjà loggés, en correction d'une entrée existante. */
+  initialGrams?: number
+  initialState?: FoodState
+  /** Remplace le libellé du bouton de validation (« Enregistrer » en correction, sinon « Ajouter au journal »). */
+  confirmLabel?: string
   onConfirm: (grams: number, meal: MealId, state?: FoodState) => void
   onClose: () => void
   onDelete?: () => void
   onEdit?: () => void
 }
 
-export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit }: QuantitySheetProps) {
+export function QuantitySheet({
+  food,
+  meal,
+  initialGrams,
+  initialState,
+  confirmLabel,
+  onConfirm,
+  onClose,
+  onDelete,
+  onEdit,
+}: QuantitySheetProps) {
   const { t, lang, mealDefs } = useApp()
   const states = statesOf(food)
-  const [state, setState] = useState<FoodState | undefined>(food.state)
+  const [state, setState] = useState<FoodState | undefined>(initialState ?? food.state)
   const [selectedMeal, setSelectedMeal] = useState<MealId>(meal)
 
   /**
@@ -33,7 +48,7 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
   const gramsPerUnit = unit === 'g' ? 1 : (units.find((entry) => entry.key === unit)?.grams ?? 1)
 
   const portion = portionOf(food, state)
-  const [count, setCount] = useState(String(portion.serving))
+  const [count, setCount] = useState(initialGrams !== undefined ? String(initialGrams) : String(portion.serving))
 
   const typed = Number(count.replace(',', '.'))
   const valid = Number.isFinite(typed) && typed > 0
@@ -174,7 +189,7 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
         disabled={!valid}
         onClick={() => onConfirm(amount, selectedMeal, states.length > 0 ? state : undefined)}
       >
-        {t('add.confirm')} · {preview.kcal} kcal
+        {confirmLabel ?? t('add.confirm')} · {preview.kcal} kcal
       </button>
 
       {onEdit ? (

@@ -5,6 +5,7 @@ import { MacroBars } from '../components/MacroBars'
 import { MicroPanel } from '../components/MicroPanel'
 import { DayMacroPanel } from '../components/DayMacroPanel'
 import { DayNoteSheet } from '../components/DayNoteSheet'
+import { QuantitySheet } from '../components/QuantitySheet'
 import {
   IconArrowDown,
   IconArrowUp,
@@ -20,7 +21,7 @@ import { formatDay, shiftDay, todayKey } from '../lib/date'
 import { microsFor, sumMicros, sumNutrients } from '../lib/nutrition'
 import { DEFAULT_MEALS, MAX_CUSTOM_MEALS, mealLabel } from '../lib/meals'
 import { foodName } from '../lib/foods'
-import type { MealDef, MealId } from '../lib/types'
+import type { DiaryEntry, MealDef, MealId } from '../lib/types'
 
 interface DiaryProps {
   date: string
@@ -35,6 +36,7 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
     lang,
     entriesFor,
     removeEntry,
+    updateEntry,
     targetsFor,
     copyDay,
     foods,
@@ -45,6 +47,7 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
     reorderMeals,
   } = useApp()
   const [noteOpen, setNoteOpen] = useState(false)
+  const [editingEntry, setEditingEntry] = useState<DiaryEntry | null>(null)
 
   // Les objectifs du jour consulté, pas ceux du profil : la journée peut avoir
   // sa propre répartition.
@@ -163,6 +166,27 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
     const dy = lifted.clientY - origin.y
     if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return
     onDateChange(shiftDay(date, dx < 0 ? 1 : -1))
+  }
+
+  if (editingEntry) {
+    const food = foods.find((entry) => entry.id === editingEntry.foodId)
+    if (food) {
+      return (
+        <QuantitySheet
+          food={food}
+          meal={editingEntry.meal}
+          initialGrams={editingEntry.grams}
+          initialState={editingEntry.state}
+          confirmLabel={t('common.save')}
+          onClose={() => setEditingEntry(null)}
+          onConfirm={(grams, mealId, state) => {
+            updateEntry(editingEntry.id, grams, mealId, state)
+            setEditingEntry(null)
+            onToast(t('add.updated'))
+          }}
+        />
+      )
+    }
   }
 
   return (
@@ -306,29 +330,37 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
             {items.length === 0 ? (
               <p className="empty">{t('diary.emptyMeal')}</p>
             ) : (
-              items.map((entry) => (
-                <div className="entry" key={entry.id}>
-                  <div className="info">
-                    <div className="name">{labelOf(entry.foodId, entry.label)}</div>
-                    <div className="detail">
-                      {entry.grams} g
-                      {entry.state ? ` ${t(entry.state === 'raw' ? 'state.raw' : 'state.cooked')}` : ''}{' '}
-                      · {t('macro.protein.short')} {entry.nutrients.protein} ·{' '}
-                      {t('macro.carbs.short')} {entry.nutrients.carbs} · {t('macro.fat.short')}{' '}
-                      {entry.nutrients.fat}
-                    </div>
+              items.map((entry) => {
+                const editable = foods.some((food) => food.id === entry.foodId)
+                return (
+                  <div className="entry" key={entry.id}>
+                    <button
+                      type="button"
+                      className="info"
+                      disabled={!editable}
+                      onClick={() => setEditingEntry(entry)}
+                    >
+                      <div className="name">{labelOf(entry.foodId, entry.label)}</div>
+                      <div className="detail">
+                        {entry.grams} g
+                        {entry.state ? ` ${t(entry.state === 'raw' ? 'state.raw' : 'state.cooked')}` : ''}{' '}
+                        · {t('macro.protein.short')} {entry.nutrients.protein} ·{' '}
+                        {t('macro.carbs.short')} {entry.nutrients.carbs} · {t('macro.fat.short')}{' '}
+                        {entry.nutrients.fat}
+                      </div>
+                    </button>
+                    <span className="kcal">{entry.nutrients.kcal}</span>
+                    <button
+                      type="button"
+                      className="icon-btn danger"
+                      onClick={() => removeEntry(entry.id)}
+                      aria-label={t('common.delete')}
+                    >
+                      <IconTrash />
+                    </button>
                   </div>
-                  <span className="kcal">{entry.nutrients.kcal}</span>
-                  <button
-                    type="button"
-                    className="icon-btn danger"
-                    onClick={() => removeEntry(entry.id)}
-                    aria-label={t('common.delete')}
-                  >
-                    <IconTrash />
-                  </button>
-                </div>
-              ))
+                )
+              })
             )}
 
             <button type="button" className="meal-add" onClick={() => onAddTo(meal.id)}>

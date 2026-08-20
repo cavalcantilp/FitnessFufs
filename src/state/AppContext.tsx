@@ -92,6 +92,7 @@ interface AppState {
   entries: DiaryEntry[]
   entriesFor: (date: string) => DiaryEntry[]
   addEntry: (date: string, meal: MealId, food: Food, grams: number, state?: FoodState) => void
+  updateEntry: (id: string, grams: number, meal: MealId, state?: FoodState) => void
   removeEntry: (id: string) => void
   copyDay: (from: string, to: string) => number
 
@@ -295,6 +296,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ])
     },
     [],
+  )
+
+  /** Corrige une ligne déjà loggée (quantité, repas, état) sans en changer l'aliment. */
+  const updateEntry = useCallback(
+    (id: string, grams: number, meal: MealId, state?: FoodState) => {
+      setEntries((current) =>
+        current.map((entry) => {
+          if (entry.id !== id) return entry
+          const food = foods.find((item) => item.id === entry.foodId)
+          if (!food) return entry
+          return { ...entry, meal, grams, state, nutrients: nutrientsFor(food, grams, state) }
+        }),
+      )
+    },
+    [foods],
   )
 
   const removeEntry = useCallback((id: string) => {
@@ -519,6 +535,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       entries,
       entriesFor,
       addEntry,
+      updateEntry,
       removeEntry,
       copyDay,
       weights,
@@ -574,6 +591,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       entries,
       entriesFor,
       addEntry,
+      updateEntry,
       removeEntry,
       copyDay,
       weights,

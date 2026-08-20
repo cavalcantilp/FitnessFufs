@@ -63,6 +63,22 @@ body {
   background: var(--bg);
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
+  /*
+   * Sans ça, un appui un peu long sur du texte (liste d'aliments, macros...)
+   * le sélectionne et déclenche la barre "Rechercher avec Google" native
+   * d'Android — jamais voulu dans une appli qui se veut tactile. Les champs
+   * de saisie ci-dessous retrouvent une sélection normale pour s'éditer.
+   */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
 }
 
 button {

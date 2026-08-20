@@ -75,6 +75,13 @@ export function App() {
     save(STORAGE_KEYS.ui, { tab, date })
   }, [tab, date])
 
+  // Le scroll de la page est partagé entre tous les écrans (aucun d'eux n'a
+  // son propre conteneur défilant) : sans ce reset, ouvrir "Ajouter" juste
+  // après avoir fait défiler le journal l'affichait déjà scrollé.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [tab, showProfile, addView])
+
   // Durée proportionnée au texte : « Ajouté au journal » se lit en deux secondes,
   // une explication d'une ligne et demie non.
   useEffect(() => {

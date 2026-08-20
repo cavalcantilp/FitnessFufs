@@ -1994,6 +1994,28 @@ input[type='range']::-moz-range-thumb {
   background: rgba(148, 163, 184, 0.15);
 }
 
+/* Le Profil a quitté la barre d'onglets pour rejoindre l'en-tête : un simple
+   bouton icône, dans le même esprit discret que le bouton d'aide. */
+.profile-btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--text-sub);
+}
+
+.profile-btn:active {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+.profile-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ---------- Visite guidée (tutoriel par onglet) ---------- */
 
 .coach-overlay {

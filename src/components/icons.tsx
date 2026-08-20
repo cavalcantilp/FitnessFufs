@@ -47,6 +47,16 @@ export function IconUser({ size = 22 }: IconProps) {
   )
 }
 
+export function IconFridge({ size = 22 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <path d="M5 9h14" />
+      <path d="M8 4.5v2M8 11.5v2" />
+    </svg>
+  )
+}
+
 export function IconChevronLeft({ size = 20 }: IconProps) {
   return (
     <svg {...base(size)} aria-hidden="true">

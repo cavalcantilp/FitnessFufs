@@ -29,5 +29,9 @@ export const TOURS: Record<string, CoachStep[]> = {
     { target: '.track-chart', textKey: 'tour.weight.1' },
     { target: '.bmi-gauge', textKey: 'tour.weight.2' },
   ],
+  fridge: [
+    { target: '#fridge-search', textKey: 'tour.fridge.1' },
+    { target: '.recipe-line', textKey: 'tour.fridge.2' },
+  ],
   profile: [{ target: '#tutorials-toggle', textKey: 'tour.profile.1' }],
 }

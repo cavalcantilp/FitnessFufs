@@ -16,6 +16,7 @@ import type {
   DiaryEntry,
   Food,
   FoodState,
+  FridgeItem,
   Lang,
   MealId,
   MeasurementEntry,
@@ -47,6 +48,7 @@ export interface ExportPayload {
   dayMacros?: Record<string, DayMacros>
   notes?: Record<string, string>
   measurements?: MeasurementEntry[]
+  fridge?: FridgeItem[]
 }
 
 interface AppState {
@@ -109,6 +111,12 @@ interface AppState {
   favorites: string[]
   toggleFavorite: (id: string) => void
 
+  /** Aliments disponibles au frigo, avec leur poids — base des suggestions de repas. */
+  fridge: FridgeItem[]
+  addFridgeItem: (food: Food, grams: number, state?: FoodState) => void
+  updateFridgeItem: (id: string, grams: number) => void
+  removeFridgeItem: (id: string) => void
+
   exportData: () => ExportPayload
   importData: (payload: unknown) => boolean
   resetAll: () => void
@@ -144,6 +152,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     load(STORAGE_KEYS.dayMacros, {}),
   )
   const [notes, setNotes] = useState<Record<string, string>>(() => load(STORAGE_KEYS.notes, {}))
+  const [fridge, setFridge] = useState<FridgeItem[]>(() => load(STORAGE_KEYS.fridge, []))
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
@@ -157,6 +166,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.favorites, favorites), [favorites])
   useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
   useEffect(() => save(STORAGE_KEYS.notes, notes), [notes])
+  useEffect(() => save(STORAGE_KEYS.fridge, fridge), [fridge])
 
   useEffect(() => {
     document.documentElement.lang = lang
@@ -333,6 +343,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     )
   }, [])
 
+  const addFridgeItem = useCallback((food: Food, grams: number, state?: FoodState) => {
+    setFridge((current) => [...current, { id: newId(), foodId: food.id, grams, state }])
+  }, [])
+
+  const updateFridgeItem = useCallback((id: string, grams: number) => {
+    setFridge((current) => current.map((item) => (item.id === id ? { ...item, grams } : item)))
+  }, [])
+
+  const removeFridgeItem = useCallback((id: string) => {
+    setFridge((current) => current.filter((item) => item.id !== id))
+  }, [])
+
   const exportData = useCallback(
     (): ExportPayload => ({
       version: 1,
@@ -345,8 +367,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       dayMacros,
       notes,
       measurements,
+      fridge,
     }),
-    [profile, entries, weights, customFoods, favorites, dayMacros, notes, measurements],
+    [profile, entries, weights, customFoods, favorites, dayMacros, notes, measurements, fridge],
   )
 
   const importData = useCallback((payload: unknown) => {
@@ -363,6 +386,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setDayMacros(data.dayMacros ?? {})
     setNotes(data.notes ?? {})
     setMeasurements(Array.isArray(data.measurements) ? data.measurements : [])
+    setFridge(Array.isArray(data.fridge) ? data.fridge : [])
     setOnboarded(true)
     return true
   }, [])
@@ -377,6 +401,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFavorites([])
     setDayMacros({})
     setNotes({})
+    setFridge([])
     setOnboarded(false)
     setTutorialsEnabled(true)
     setTutorialSeen({})
@@ -421,6 +446,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       removeCustomFood,
       favorites,
       toggleFavorite,
+      fridge,
+      addFridgeItem,
+      updateFridgeItem,
+      removeFridgeItem,
       exportData,
       importData,
       resetAll,
@@ -461,6 +490,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       removeCustomFood,
       favorites,
       toggleFavorite,
+      fridge,
+      addFridgeItem,
+      updateFridgeItem,
+      removeFridgeItem,
       exportData,
       importData,
       resetAll,

@@ -133,6 +133,13 @@ aucun serveur, aucun envoi de données.
   discret « ? » à côté du sélecteur de langue. Le déclenchement automatique
   se coupe depuis le profil ; le bouton « ? » disparaît alors avec lui. Une
   étape dont la cible n'est pas à l'écran est sautée sans bloquer la visite.
+- **Frigo** — inventaire des aliments sous la main, avec leur poids, pour
+  préparer de futures suggestions de repas tenant compte des macros
+  restants du jour. Recherche identique aux autres écrans ; chaque
+  aliment ajouté garde un poids modifiable et se retire d'un geste. Le
+  Profil a quitté la barre d'onglets pour laisser sa place à cet onglet :
+  il s'ouvre désormais depuis un bouton dédié de l'en-tête, à droite du
+  sélecteur de langue.
 
 ## Développement
 

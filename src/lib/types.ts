@@ -187,4 +187,17 @@ export interface MeasurementEntry {
   values: Partial<Record<MeasurementKey, number>>
 }
 
+/**
+ * Un aliment présent au frigo, avec son poids disponible. Sert de base aux
+ * suggestions de repas : ce qu'il y a réellement sous la main, comparé aux
+ * macros restants du jour.
+ */
+export interface FridgeItem {
+  id: string
+  foodId: string
+  grams: number
+  /** État pesé, quand l'aliment en propose deux. */
+  state?: FoodState
+}
+
 export type Lang = 'fr' | 'pt' | 'es' | 'en' | 'it'

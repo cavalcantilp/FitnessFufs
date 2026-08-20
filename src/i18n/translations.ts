@@ -10,6 +10,7 @@ const fr = {
   'nav.weight': 'Suivi',
   'nav.profile': 'Profil',
   'nav.calendar': 'Calendrier',
+  'nav.fridge': 'Frigo',
 
   'meal.breakfast': 'Petit-déjeuner',
   'meal.lunch': 'Déjeuner',
@@ -82,6 +83,11 @@ const fr = {
   'recipe.per100Hint': 'Valeurs recalculées pour 100 g de ce mélange.',
   'recipe.apply': 'Utiliser ces valeurs',
   'recipe.of': 'de',
+
+  'fridge.hint':
+    "Les aliments que vous avez sous la main, pour préparer des suggestions de repas selon vos macros restants.",
+  'fridge.empty': "Le frigo est vide. Cherchez un aliment ci-dessus pour l'ajouter.",
+  'fridge.items': 'Au frigo : {n}',
   'add.deleteFood': 'Supprimer cet aliment',
   'add.editFood': 'Corriger cet aliment',
   'add.updated': 'Valeurs mises à jour',
@@ -266,6 +272,9 @@ const fr = {
     "L'évolution de votre poids, avec un sélecteur de période pour zoomer sur les dernières semaines ou tout l'historique.",
   'tour.weight.2':
     "Votre IMC, positionné sur une jauge colorée pour voir en un coup d'œil où vous vous situez.",
+  'tour.fridge.1': "Cherchez un aliment et touchez-le pour l'ajouter au frigo avec son poids.",
+  'tour.fridge.2':
+    'Ajustez le poids disponible à tout moment, ou retirez un aliment une fois utilisé.',
   'tour.profile.1':
     "Retrouvez ici comment couper ou réactiver le déclenchement automatique des tutoriels.",
   'tour.addCustom.1': "Le nom de l'aliment, tel qu'il apparaîtra dans vos recherches.",
@@ -304,6 +313,7 @@ const pt: Dict = {
   'nav.weight': 'Registro',
   'nav.profile': 'Perfil',
   'nav.calendar': 'Calendário',
+  'nav.fridge': 'Geladeira',
 
   'meal.breakfast': 'Café da manhã',
   'meal.lunch': 'Almoço',
@@ -376,6 +386,11 @@ const pt: Dict = {
   'recipe.per100Hint': 'Valores recalculados para 100 g desta mistura.',
   'recipe.apply': 'Usar estes valores',
   'recipe.of': 'de',
+
+  'fridge.hint':
+    'Os alimentos que você tem à mão, para preparar sugestões de refeição de acordo com as macros restantes.',
+  'fridge.empty': 'A geladeira está vazia. Busque um alimento acima para adicioná-lo.',
+  'fridge.items': 'Na geladeira: {n}',
   'add.deleteFood': 'Eliminar este alimento',
   'add.editFood': 'Corrigir este alimento',
   'add.updated': 'Valores atualizados',
@@ -560,6 +575,9 @@ const pt: Dict = {
     'A evolução do seu peso, com um seletor de período para focar nas últimas semanas ou em todo o histórico.',
   'tour.weight.2':
     'Seu IMC, posicionado em uma régua colorida para ver rapidamente onde você está.',
+  'tour.fridge.1': 'Busque um alimento e toque nele para adicioná-lo à geladeira com o peso.',
+  'tour.fridge.2':
+    'Ajuste o peso disponível a qualquer momento, ou remova um alimento depois de usá-lo.',
   'tour.profile.1':
     'Aqui você encontra como desativar ou reativar o disparo automático dos tutoriais.',
   'tour.addCustom.1': 'O nome do alimento, como ele aparecerá nas suas buscas.',
@@ -595,6 +613,7 @@ const es: Dict = {
   'nav.weight': 'Seguimiento',
   'nav.profile': 'Perfil',
   'nav.calendar': 'Calendario',
+  'nav.fridge': 'Nevera',
 
   'meal.breakfast': 'Desayuno',
   'meal.lunch': 'Comida',
@@ -667,6 +686,11 @@ const es: Dict = {
   'recipe.per100Hint': 'Valores recalculados para 100 g de esta mezcla.',
   'recipe.apply': 'Usar estos valores',
   'recipe.of': 'de',
+
+  'fridge.hint':
+    'Los alimentos que tienes a mano, para preparar sugerencias de comida según tus macros restantes.',
+  'fridge.empty': 'La nevera está vacía. Busca un alimento arriba para añadirlo.',
+  'fridge.items': 'En la nevera: {n}',
   'add.deleteFood': 'Eliminar este alimento',
   'add.editFood': 'Corregir este alimento',
   'add.updated': 'Valores actualizados',
@@ -851,6 +875,8 @@ const es: Dict = {
     'La evolución de tu peso, con un selector de periodo para ver las últimas semanas o todo el historial.',
   'tour.weight.2':
     'Tu IMC, ubicado en una escala de colores para ver de un vistazo dónde te encuentras.',
+  'tour.fridge.1': 'Busca un alimento y tócalo para añadirlo a la nevera con su peso.',
+  'tour.fridge.2': 'Ajusta el peso disponible en cualquier momento, o quita un alimento una vez usado.',
   'tour.profile.1': 'Aquí puedes desactivar o reactivar el inicio automático de los tutoriales.',
   'tour.addCustom.1': 'El nombre del alimento, tal como aparecerá en tus búsquedas.',
   'tour.addCustom.2':
@@ -885,6 +911,7 @@ const en: Dict = {
   'nav.weight': 'Tracking',
   'nav.profile': 'Profile',
   'nav.calendar': 'Calendar',
+  'nav.fridge': 'Fridge',
 
   'meal.breakfast': 'Breakfast',
   'meal.lunch': 'Lunch',
@@ -957,6 +984,10 @@ const en: Dict = {
   'recipe.per100Hint': 'Values recalculated per 100 g of this mix.',
   'recipe.apply': 'Use these values',
   'recipe.of': 'of',
+
+  'fridge.hint': 'The foods you have on hand, to put together meal suggestions around your remaining macros.',
+  'fridge.empty': 'The fridge is empty. Search for a food above to add it.',
+  'fridge.items': 'In the fridge: {n}',
   'add.deleteFood': 'Delete this food',
   'add.editFood': 'Edit this food',
   'add.updated': 'Values updated',
@@ -1141,6 +1172,8 @@ const en: Dict = {
     'Your weight over time, with a period picker to zoom into recent weeks or the full history.',
   'tour.weight.2':
     'Your BMI, placed on a colour-coded gauge so you can see where you stand at a glance.',
+  'tour.fridge.1': 'Search for a food and tap it to add it to the fridge with its weight.',
+  'tour.fridge.2': 'Adjust the weight on hand at any time, or remove a food once you use it.',
   'tour.profile.1': 'Here you can turn the automatic tutorials off or back on.',
   'tour.addCustom.1': "The food's name, exactly as it will appear in your searches.",
   'tour.addCustom.2':
@@ -1173,6 +1206,7 @@ const it: Dict = {
   'nav.weight': 'Monitoraggio',
   'nav.profile': 'Profilo',
   'nav.calendar': 'Calendario',
+  'nav.fridge': 'Frigo',
 
   'meal.breakfast': 'Colazione',
   'meal.lunch': 'Pranzo',
@@ -1245,6 +1279,11 @@ const it: Dict = {
   'recipe.per100Hint': 'Valori ricalcolati per 100 g di questo mix.',
   'recipe.apply': 'Usa questi valori',
   'recipe.of': 'di',
+
+  'fridge.hint':
+    'Gli alimenti che hai a disposizione, per preparare suggerimenti di pasto in base alle macro rimanenti.',
+  'fridge.empty': 'Il frigo è vuoto. Cerca un alimento qui sopra per aggiungerlo.',
+  'fridge.items': 'In frigo: {n}',
   'add.deleteFood': 'Elimina questo alimento',
   'add.editFood': 'Correggi questo alimento',
   'add.updated': 'Valori aggiornati',
@@ -1429,6 +1468,9 @@ const it: Dict = {
     "L'andamento del tuo peso, con un selettore di periodo per le ultime settimane o tutta la cronologia.",
   'tour.weight.2':
     "Il tuo IMC, posizionato su una scala colorata per vedere a colpo d'occhio dove ti trovi.",
+  'tour.fridge.1': 'Cerca un alimento e toccalo per aggiungerlo al frigo con il suo peso.',
+  'tour.fridge.2':
+    'Modifica il peso disponibile in qualsiasi momento, oppure rimuovi un alimento una volta usato.',
   'tour.profile.1': "Qui puoi disattivare o riattivare l'avvio automatico dei tutorial.",
   'tour.addCustom.1': "Il nome dell'alimento, così come apparirà nelle tue ricerche.",
   'tour.addCustom.2':

@@ -6,7 +6,7 @@ import { extractMealSuggestions, mealFullyResolved } from '../lib/mealSuggestion
 import { foodName, statesOf } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
 import { formatDay, shiftDay, todayKey } from '../lib/date'
-import { defaultMeal, mealLabel } from '../lib/meals'
+import { defaultMeal, guessMealFromLabel, mealLabel } from '../lib/meals'
 import { IconCalendar, IconCheck, IconChevronLeft, IconClose, IconPlus, IconSend, IconTrash } from '../components/icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { CustomFoodSheet } from '../components/CustomFoodSheet'
@@ -256,6 +256,9 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     messageId: string
     mealIndex: number
     items: ChatMealSuggestion['items']
+    // Deviné depuis le résumé du repas ("Petit-déj", "Collation"...) — l'heure de la
+    // conversation n'a aucun rapport avec le jour visé, donc pas de defaultMeal() ici.
+    initialMeal: MealId | undefined
   } | null>(null)
   // Repas déjà planifiés, avec la date et le repas choisis — le bouton « Planifier »
   // laisse alors place à une confirmation, comme pour l'envoi immédiat.
@@ -343,8 +346,9 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     }
   }
 
-  const sendMealToDiary = (messageId: string, mealIndex: number, items: ChatMealSuggestion['items']) => {
-    addMealToDiary(todayKey(), items, defaultMeal())
+  const sendMealToDiary = (messageId: string, mealIndex: number, suggestion: ChatMealSuggestion) => {
+    const meal = guessMealFromLabel(suggestion.label, mealDefs, lang) ?? defaultMeal()
+    addMealToDiary(todayKey(), suggestion.items, meal)
     setSentMeals((current) => ({ ...current, [`${messageId}-${mealIndex}`]: true }))
     onToast(t('chat.mealAdded'))
   }
@@ -526,7 +530,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
                             type="button"
                             className="meal-btn"
                             disabled={sent}
-                            onClick={() => sendMealToDiary(message.id, mealIndex, suggestion.items)}
+                            onClick={() => sendMealToDiary(message.id, mealIndex, suggestion)}
                           >
                             <span>{suggestion.label}</span>
                             {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
@@ -535,7 +539,14 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
                             <button
                               type="button"
                               className="meal-btn schedule"
-                              onClick={() => setSchedulingMeal({ messageId: message.id, mealIndex, items: suggestion.items })}
+                              onClick={() =>
+                                setSchedulingMeal({
+                                  messageId: message.id,
+                                  mealIndex,
+                                  items: suggestion.items,
+                                  initialMeal: guessMealFromLabel(suggestion.label, mealDefs, lang),
+                                })
+                              }
                             >
                               <span className="meal-btn-cta">
                                 <IconCalendar size={14} /> {t('chat.schedule')}
@@ -662,6 +673,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
       {schedulingMeal ? (
         <div className="chat-overlay">
           <SchedulePicker
+            initialMeal={schedulingMeal.initialMeal}
             onClose={() => setSchedulingMeal(null)}
             onPick={(date, meal) => {
               addMealToDiary(date, schedulingMeal.items, meal)

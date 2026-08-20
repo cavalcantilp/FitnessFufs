@@ -9,6 +9,8 @@ import type { MealId } from '../lib/types'
 interface SchedulePickerProps {
   onPick: (date: string, meal: MealId) => void
   onClose: () => void
+  /** Deviné depuis le résumé du repas suggéré, quand possible — à défaut, l'heure actuelle. */
+  initialMeal?: MealId
 }
 
 /** Lundi en tête, comme le calendrier principal. */
@@ -24,7 +26,7 @@ function startOfGrid(year: number, month: number): Date {
  * Contrairement au calendrier principal, aucun appui long : ici, choisir un
  * jour est la seule action possible, pas la première d'un enchaînement.
  */
-export function SchedulePicker({ onPick, onClose }: SchedulePickerProps) {
+export function SchedulePicker({ onPick, onClose, initialMeal }: SchedulePickerProps) {
   const { t, lang, mealDefs } = useApp()
   const today = todayKey()
   const [cursor, setCursor] = useState(() => {
@@ -32,8 +34,9 @@ export function SchedulePicker({ onPick, onClose }: SchedulePickerProps) {
     return { year: current.getFullYear(), month: current.getMonth() }
   })
   // Le jour choisi peut n'avoir aucun rapport avec l'heure actuelle : contrairement à
-  // l'ajout du jour même, impossible de deviner le repas visé depuis l'heure de saisie.
-  const [meal, setMeal] = useState<MealId>(() => defaultMeal())
+  // l'ajout du jour même, impossible de deviner le repas visé depuis l'heure de saisie —
+  // initialMeal (déduit du résumé du repas suggéré) prime, l'heure n'est qu'un dernier recours.
+  const [meal, setMeal] = useState<MealId>(() => initialMeal ?? defaultMeal())
 
   const { days, weeks } = useMemo(() => {
     const start = startOfGrid(cursor.year, cursor.month)

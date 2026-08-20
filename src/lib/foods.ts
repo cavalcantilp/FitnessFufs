@@ -214,6 +214,7 @@ export const BUILTIN_FOODS: Food[] = [
   food('corn', ['Maïs', 'Milho', 'Maíz', 'Sweetcorn', 'Mais'], 96, 3.4, 21, 1.5, 2.4, 100, 'carbs', [15, 270, 3, 0.5, 35, 0.6, 6, 0, 0]),
   food('farofa', ['Farofa', 'Farofa', 'Farofa', 'Farofa (toasted cassava flour)', 'Farofa'], 407, 2.5, 76, 10, 6.4, 30, 'carbs', [300, 80, 30, 1, 20, 0.5, 0, 0, 0]),
   food('tapioca', ['Galette de tapioca', 'Tapioca', 'Tapioca', 'Tapioca crepe', 'Crêpe di tapioca'], 240, 0.3, 59, 0.2, 0.5, 80, 'carbs', [1, 11, 20, 1.6, 1, 0.1, 0, 0, 0]),
+  food('rice_cake', ['Galette de riz', 'Bolacha de arroz', 'Torta de arroz', 'Rice cake', 'Galletta di riso'], 387, 8, 82, 2.8, 3, 25, 'carbs', [20, 130, 10, 0.5, 40, 0.8, 0, 0, 0]),
 
   // ---------- Fruits ----------
   food('apple', ['Pomme', 'Maçã', 'Manzana', 'Apple', 'Mela'], 52, 0.3, 14, 0.2, 2.4, 150, 'fruit', [1, 107, 6, 0.1, 5, 0.04, 4.6, 0, 0]),
@@ -653,6 +654,7 @@ const ALIASES: Record<string, string[]> = {
   skyr: ['quark', 'fromage blanc', 'queijo fresco batido', 'yaourt grec maigre'],
   milk_semi: ['leite', 'lait'],
   tuna_can: ['atum em lata', 'atum enlatado', 'thon en boite'],
+  rice_cake: ['galettes de riz', 'bolachas de arroz', 'tortas de arroz', 'rice cakes', 'gallette di riso'],
   chips: ['batata chips', 'salgadinho', 'patatas'],
   fries: ['batata frita', 'patatas fritas'],
   zucchini: ['abobrinha'],
@@ -802,6 +804,7 @@ const MIN_FUZZY_LABEL_LENGTH = 4
 export function findSimilarFoods(foods: Food[], name: string, lang: Lang, limit = 3): Food[] {
   const cleanedQuery = stripDescriptors(name)
   if (!cleanedQuery) return []
+  const queryWords = cleanedQuery.split(' ')
 
   const scored = foods
     .map((food) => {
@@ -817,6 +820,13 @@ export function findSimilarFoods(foods: Food[], name: string, lang: Lang, limit 
         if (cleanedLabel.includes(cleanedQuery)) return Math.max(acc, 2)
         if (cleanedLabel.length >= MIN_FUZZY_LABEL_LENGTH && cleanedQuery.includes(cleanedLabel)) {
           return Math.max(acc, 2)
+        }
+        // Un mot significatif partagé (« poulet » dans « poulet effiloché » et
+        // « blanc de poulet ») : signal plus faible, mais bien plus utile que de
+        // proposer une création à tort pour un aliment qui existe déjà.
+        const labelWords = cleanedLabel.split(' ')
+        if (labelWords.some((word) => word.length >= MIN_FUZZY_LABEL_LENGTH && queryWords.includes(word))) {
+          return Math.max(acc, 1)
         }
         return acc
       }, 0)

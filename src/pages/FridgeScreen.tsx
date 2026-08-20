@@ -5,19 +5,20 @@ import { useApp } from '../state/AppContext'
 import { foodName, searchFoods, statesOf } from '../lib/foods'
 import type { Food, FridgeItem, FridgeLocation } from '../lib/types'
 
-const SECTIONS: { location: FridgeLocation; icon: ReactNode; titleKey: 'fridge.section.fridge' | 'fridge.section.pantry' | 'fridge.section.freezer'; optionalGrams: boolean }[] = [
-  { location: 'fridge', icon: <IconFridge size={20} />, titleKey: 'fridge.section.fridge', optionalGrams: false },
-  { location: 'pantry', icon: <IconCupboard size={20} />, titleKey: 'fridge.section.pantry', optionalGrams: true },
-  { location: 'freezer', icon: <IconSnowflake size={20} />, titleKey: 'fridge.section.freezer', optionalGrams: true },
+const SECTIONS: { location: FridgeLocation; icon: ReactNode; titleKey: 'fridge.section.fridge' | 'fridge.section.pantry' | 'fridge.section.freezer' }[] = [
+  { location: 'fridge', icon: <IconFridge size={20} />, titleKey: 'fridge.section.fridge' },
+  { location: 'pantry', icon: <IconCupboard size={20} />, titleKey: 'fridge.section.pantry' },
+  { location: 'freezer', icon: <IconSnowflake size={20} />, titleKey: 'fridge.section.freezer' },
 ]
 
 /**
- * Inventaire de ce qu'il y a sous la main — frigo, placard, congélateur — avec
- * le poids disponible quand il est connu. Sert de base aux suggestions de
- * repas de l'assistant, qui lit les trois sections.
+ * Inventaire de ce qu'il y a sous la main — frigo, placard, congélateur.
+ * Seule la présence compte ; les quantités restent au modèle, qui suppose
+ * une portion raisonnable quand il en propose. Sert de base aux suggestions
+ * de repas de l'assistant, qui lit les trois sections.
  */
 export function FridgeScreen() {
-  const { t, lang, foods, fridge, addFridgeItem, updateFridgeItem, removeFridgeItem } = useApp()
+  const { t, lang, foods, fridge, addFridgeItem, removeFridgeItem } = useApp()
   const [searchingLocation, setSearchingLocation] = useState<FridgeLocation | null>(null)
   const [query, setQuery] = useState('')
 
@@ -28,12 +29,6 @@ export function FridgeScreen() {
 
   const stateLabel = (state: Food['state']) =>
     state ? ` (${t(state === 'raw' ? 'state.raw' : 'state.cooked').toLowerCase()})` : ''
-
-  const num = (value: string): number | undefined => {
-    if (!value.trim()) return undefined
-    const parsed = Number(value.replace(',', '.'))
-    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
-  }
 
   const entriesByLocation = useMemo(() => {
     const grouped: Record<FridgeLocation, { item: FridgeItem; food: Food }[]> = { fridge: [], pantry: [], freezer: [] }
@@ -52,12 +47,7 @@ export function FridgeScreen() {
 
   const add = (food: Food) => {
     if (!searchingLocation) return
-    addFridgeItem(
-      food,
-      searchingLocation,
-      searchingLocation === 'fridge' ? food.serving : undefined,
-      statesOf(food).length > 0 ? food.state : undefined,
-    )
+    addFridgeItem(food, searchingLocation, undefined, statesOf(food).length > 0 ? food.state : undefined)
     closeSearch()
   }
 
@@ -139,17 +129,6 @@ export function FridgeScreen() {
                       {foodName(food, lang)}
                       {stateLabel(item.state)}
                     </span>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      autoComplete="off"
-                      className={section.optionalGrams ? 'optional-qty' : undefined}
-                      value={item.grams === undefined ? '' : String(item.grams)}
-                      placeholder={section.optionalGrams ? t('fridge.quantityOptional') : undefined}
-                      onChange={(event) => updateFridgeItem(item.id, num(event.target.value))}
-                      aria-label={t('add.quantity')}
-                    />
-                    <span className="unit">g</span>
                     <button
                       type="button"
                       className="icon-btn danger"

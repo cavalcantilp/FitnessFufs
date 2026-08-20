@@ -968,12 +968,6 @@ input[type='range']::-moz-range-thumb {
   text-align: right;
 }
 
-/* Le placeholder traduit ("optionnel", "facoltativo"...) ne tient pas dans
-   les 64px habituels : élargi seulement pour le placard et le congélateur. */
-.recipe-line input.optional-qty {
-  width: 96px;
-}
-
 .recipe-line .unit {
   font-size: 0.78rem;
   color: var(--text-sub);
@@ -2358,6 +2352,33 @@ input[type='range']::-moz-range-thumb {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+.meal-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+}
+
+.meal-item > *:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.meal-item-remove {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  color: var(--text-sub);
+}
+
+.meal-item-remove:active {
+  background: rgba(248, 113, 113, 0.15);
+  color: var(--negative);
 }
 
 .chip-list {

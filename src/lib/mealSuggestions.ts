@@ -1,4 +1,4 @@
-import { findFoodByExactName, findSimilarFoods } from './foods'
+import { findFoodByExactName, findSimilarFoods, normalize, statesOf } from './foods'
 import type { ChatMealItem, ChatMealSuggestion, Food, FoodState, Lang } from './types'
 
 const BLOCK_RE = /<meals>([\s\S]*?)<\/meals>/i
@@ -35,6 +35,17 @@ function toNonNegativeNumber(value: unknown): number | null {
   return Number.isFinite(num) && num >= 0 ? num : null
 }
 
+const RAW_WORDS = new Set(['cru', 'crue', 'crus', 'crues'])
+const COOKED_WORDS = new Set(['cuit', 'cuite', 'cuits', 'cuites'])
+
+/** Devine l'état visé d'après le nom donné par l'assistant (« poulet cuit » → cooked). */
+function detectState(name: string): FoodState | undefined {
+  const words = normalize(name).split(/\s+/)
+  if (words.some((word) => RAW_WORDS.has(word))) return 'raw'
+  if (words.some((word) => COOKED_WORDS.has(word))) return 'cooked'
+  return undefined
+}
+
 /**
  * Résout un item brut du bloc <meals> : soit un foodId déjà connu, soit un
  * nom que l'assistant propose d'ajouter — dans ce dernier cas, on tente
@@ -55,7 +66,13 @@ function resolveItem(rawItem: RawMealItem, foods: Food[], lang: Lang): ChatMealI
   if (typeof rawItem?.name === 'string' && rawItem.name.trim()) {
     const name = rawItem.name.trim()
     const exact = findFoodByExactName(foods, name)
-    if (exact) return { kind: 'food', foodId: exact.id, grams: Math.round(grams), state: undefined }
+    if (exact) {
+      // Un aliment cru et cuit ont des valeurs très différentes pour 100 g : sans
+      // ce repérage, "poulet cuit" retombait silencieusement sur l'état par
+      // défaut du catalogue (souvent cru), avec des macros fausses à la clé.
+      const state = statesOf(exact).length > 0 ? (detectState(name) ?? exact.state) : undefined
+      return { kind: 'food', foodId: exact.id, grams: Math.round(grams), state }
+    }
 
     const kcal = toNonNegativeNumber(rawItem.kcal)
     const protein = toNonNegativeNumber(rawItem.protein)

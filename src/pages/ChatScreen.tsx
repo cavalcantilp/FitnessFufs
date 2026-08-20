@@ -3,11 +3,11 @@ import { useApp } from '../state/AppContext'
 import { AnthropicError, askAssistant, type AnthropicTool } from '../lib/anthropic'
 import { MONTHLY_CAP_USD } from '../lib/usage'
 import { extractMealSuggestions, mealFullyResolved } from '../lib/mealSuggestions'
-import { foodName } from '../lib/foods'
+import { foodName, statesOf } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
 import { shiftDay, todayKey } from '../lib/date'
 import { defaultMeal, mealLabel } from '../lib/meals'
-import { IconCheck, IconChevronLeft, IconPlus, IconSend, IconTrash } from '../components/icons'
+import { IconCheck, IconChevronLeft, IconClose, IconPlus, IconSend, IconTrash } from '../components/icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { CustomFoodSheet } from '../components/CustomFoodSheet'
 import type { TranslationKey } from '../i18n/translations'
@@ -336,7 +336,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
   }
 
   /** Choisir un candidat résout l'ingrédient en place, sans toucher au journal — l'ajout reste au bouton du repas. */
-  const pickCandidate = (messageId: string, mealIndex: number, itemIndex: number, foodId: string) => {
+  const pickCandidate = (messageId: string, mealIndex: number, itemIndex: number, foodId: string, state: FoodState | undefined) => {
     const message = chatMessages.find((entry) => entry.id === messageId)
     if (!message?.meals) return
     const meals = message.meals.map((meal, mIdx) => {
@@ -345,11 +345,21 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
         ...meal,
         items: meal.items.map((item, iIdx) => {
           if (iIdx !== itemIndex || item.kind !== 'suggested') return item
-          return { kind: 'food' as const, foodId, grams: item.grams, state: undefined }
+          return { kind: 'food' as const, foodId, grams: item.grams, state }
         }),
       }
     })
     updateChatMessage(messageId, { meals })
+  }
+
+  /** Un ingrédient qu'on ne veut pas garder — le repas disparaît avec lui si c'était le dernier. */
+  const removeMealItem = (messageId: string, mealIndex: number, itemIndex: number) => {
+    const message = chatMessages.find((entry) => entry.id === messageId)
+    if (!message?.meals) return
+    const meals = message.meals
+      .map((meal, mIdx) => (mIdx !== mealIndex ? meal : { ...meal, items: meal.items.filter((_, iIdx) => iIdx !== itemIndex) }))
+      .filter((meal) => meal.items.length > 0)
+    updateChatMessage(messageId, { meals: meals.length > 0 ? meals : undefined })
   }
 
   if (creatingFood) {
@@ -402,8 +412,118 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
               <div className="meal-actions">
                 {message.meals.map((suggestion, mealIndex) => {
                   const sent = sentMeals[`${message.id}-${mealIndex}`]
+                  const removeBtn = (itemIndex: number) => (
+                    <button
+                      type="button"
+                      className="meal-item-remove"
+                      aria-label={t('chat.removeIngredient')}
+                      onClick={() => removeMealItem(message.id, mealIndex, itemIndex)}
+                    >
+                      <IconClose size={14} />
+                    </button>
+                  )
+
                   return (
                     <div className="meal-actions-group" key={mealIndex}>
+                      {suggestion.items.map((item, itemIndex) => {
+                        if (item.kind === 'food') {
+                          const food = foods.find((entry) => entry.id === item.foodId)
+                          if (!food) return null
+                          return (
+                            <div className="meal-item" key={itemIndex}>
+                              <span>
+                                {foodName(food, lang)}
+                                {stateLabel(item.state)} — {item.grams} g
+                              </span>
+                              {removeBtn(itemIndex)}
+                            </div>
+                          )
+                        }
+
+                        if (item.kind === 'newFood') {
+                          const key = `${message.id}-${mealIndex}-${itemIndex}`
+                          const created = createdFoods[key]
+                          return (
+                            <div className="meal-item" key={itemIndex}>
+                              <button
+                                type="button"
+                                className="meal-btn create"
+                                disabled={created}
+                                onClick={() => setCreatingFood({ messageId: message.id, mealIndex, itemIndex, item })}
+                              >
+                                <span>{item.name}</span>
+                                {created ? (
+                                  <IconCheck size={16} />
+                                ) : (
+                                  <span className="meal-btn-cta">
+                                    <IconPlus size={14} /> {t('chat.createFood')}
+                                  </span>
+                                )}
+                              </button>
+                              {!created ? removeBtn(itemIndex) : null}
+                            </div>
+                          )
+                        }
+
+                        if (item.kind === 'suggested') {
+                          const key = `${message.id}-${mealIndex}-${itemIndex}`
+                          if (createdFoods[key]) {
+                            return (
+                              <div className="meal-item" key={itemIndex}>
+                                <div className="meal-btn create">
+                                  <span>{item.name}</span>
+                                  <IconCheck size={16} />
+                                </div>
+                              </div>
+                            )
+                          }
+                          return (
+                            <div className="meal-item" key={itemIndex}>
+                              <div className="meal-suggest">
+                                <span className="meal-suggest-label">{t('chat.similarFound', { name: item.name })}</span>
+                                <div className="meal-suggest-row">
+                                  {item.candidateIds.flatMap((foodId) => {
+                                    const food = foods.find((entry) => entry.id === foodId)
+                                    if (!food) return []
+                                    // Un aliment cru et cuit ont des macros très différentes : les deux
+                                    // états se proposent séparément plutôt qu'un choix par défaut au hasard.
+                                    const states = statesOf(food)
+                                    const options = states.length > 0 ? states : [undefined]
+                                    return options.map((state) => (
+                                      <button
+                                        type="button"
+                                        className="chip"
+                                        key={`${foodId}-${state ?? 'default'}`}
+                                        onClick={() => pickCandidate(message.id, mealIndex, itemIndex, foodId, state)}
+                                      >
+                                        {foodName(food, lang)}
+                                        {stateLabel(state)}
+                                      </button>
+                                    ))
+                                  })}
+                                  <button
+                                    type="button"
+                                    className="chip"
+                                    onClick={() =>
+                                      setCreatingFood({
+                                        messageId: message.id,
+                                        mealIndex,
+                                        itemIndex,
+                                        item: { kind: 'newFood', name: item.name, grams: item.grams, ...item.newFood },
+                                      })
+                                    }
+                                  >
+                                    {t('chat.createInstead')}
+                                  </button>
+                                </div>
+                              </div>
+                              {removeBtn(itemIndex)}
+                            </div>
+                          )
+                        }
+
+                        return null
+                      })}
                       {mealFullyResolved(suggestion) ? (
                         <button
                           type="button"
@@ -415,79 +535,6 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
                           {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
                         </button>
                       ) : null}
-                      {suggestion.items.map((item, itemIndex) => {
-                        if (item.kind === 'newFood') {
-                          const key = `${message.id}-${mealIndex}-${itemIndex}`
-                          const created = createdFoods[key]
-                          return (
-                            <button
-                              type="button"
-                              className="meal-btn create"
-                              key={itemIndex}
-                              disabled={created}
-                              onClick={() => setCreatingFood({ messageId: message.id, mealIndex, itemIndex, item })}
-                            >
-                              <span>{item.name}</span>
-                              {created ? (
-                                <IconCheck size={16} />
-                              ) : (
-                                <span className="meal-btn-cta">
-                                  <IconPlus size={14} /> {t('chat.createFood')}
-                                </span>
-                              )}
-                            </button>
-                          )
-                        }
-
-                        if (item.kind === 'suggested') {
-                          const key = `${message.id}-${mealIndex}-${itemIndex}`
-                          if (createdFoods[key]) {
-                            return (
-                              <div className="meal-btn create" key={itemIndex}>
-                                <span>{item.name}</span>
-                                <IconCheck size={16} />
-                              </div>
-                            )
-                          }
-                          return (
-                            <div className="meal-suggest" key={itemIndex}>
-                              <span className="meal-suggest-label">{t('chat.similarFound', { name: item.name })}</span>
-                              <div className="meal-suggest-row">
-                                {item.candidateIds.map((foodId) => {
-                                  const food = foods.find((entry) => entry.id === foodId)
-                                  if (!food) return null
-                                  return (
-                                    <button
-                                      type="button"
-                                      className="chip"
-                                      key={foodId}
-                                      onClick={() => pickCandidate(message.id, mealIndex, itemIndex, foodId)}
-                                    >
-                                      {foodName(food, lang)}
-                                    </button>
-                                  )
-                                })}
-                                <button
-                                  type="button"
-                                  className="chip"
-                                  onClick={() =>
-                                    setCreatingFood({
-                                      messageId: message.id,
-                                      mealIndex,
-                                      itemIndex,
-                                      item: { kind: 'newFood', name: item.name, grams: item.grams, ...item.newFood },
-                                    })
-                                  }
-                                >
-                                  {t('chat.createInstead')}
-                                </button>
-                              </div>
-                            </div>
-                          )
-                        }
-
-                        return null
-                      })}
                     </div>
                   )
                 })}

@@ -95,7 +95,6 @@ const fr = {
   'fridge.section.fridge': 'Frigo',
   'fridge.section.pantry': 'Placard',
   'fridge.section.freezer': 'Congélateur',
-  'fridge.quantityOptional': 'optionnel',
   'fridge.addTo': 'Ajouter — {section}',
 
   'chat.title': 'Assistant nutrition',
@@ -117,6 +116,7 @@ const fr = {
   'chat.foodAdded': 'Aliment créé et ajouté au journal',
   'chat.similarFound': '« {name} » ressemble à :',
   'chat.createInstead': 'Créer un nouvel aliment',
+  'chat.removeIngredient': "Retirer cet ingrédient",
   'profile.apiKey': 'Clé API Anthropic',
   'profile.apiKeyHint':
     "Utilisée uniquement sur cet appareil, envoyée directement à Anthropic pour l'assistant nutrition. Jamais incluse dans l'export.",
@@ -433,7 +433,6 @@ const pt: Dict = {
   'fridge.section.fridge': 'Geladeira',
   'fridge.section.pantry': 'Armário',
   'fridge.section.freezer': 'Freezer',
-  'fridge.quantityOptional': 'opcional',
   'fridge.addTo': 'Adicionar — {section}',
 
   'chat.title': 'Assistente de nutrição',
@@ -455,6 +454,7 @@ const pt: Dict = {
   'chat.foodAdded': 'Alimento criado e adicionado ao diário',
   'chat.similarFound': '"{name}" parece com:',
   'chat.createInstead': 'Criar um novo alimento',
+  'chat.removeIngredient': 'Remover este ingrediente',
   'profile.apiKey': 'Chave de API da Anthropic',
   'profile.apiKeyHint':
     'Usada apenas neste aparelho, enviada diretamente à Anthropic para o assistente de nutrição. Nunca incluída na exportação.',
@@ -768,7 +768,6 @@ const es: Dict = {
   'fridge.section.fridge': 'Nevera',
   'fridge.section.pantry': 'Armario',
   'fridge.section.freezer': 'Congelador',
-  'fridge.quantityOptional': 'opcional',
   'fridge.addTo': 'Añadir — {section}',
 
   'chat.title': 'Asistente de nutrición',
@@ -790,6 +789,7 @@ const es: Dict = {
   'chat.foodAdded': 'Alimento creado y añadido al diario',
   'chat.similarFound': '"{name}" se parece a:',
   'chat.createInstead': 'Crear un nuevo alimento',
+  'chat.removeIngredient': 'Quitar este ingrediente',
   'profile.apiKey': 'Clave de API de Anthropic',
   'profile.apiKeyHint':
     'Se usa solo en este dispositivo, enviada directamente a Anthropic para el asistente de nutrición. Nunca incluida en la exportación.',
@@ -1100,7 +1100,6 @@ const en: Dict = {
   'fridge.section.fridge': 'Fridge',
   'fridge.section.pantry': 'Pantry',
   'fridge.section.freezer': 'Freezer',
-  'fridge.quantityOptional': 'optional',
   'fridge.addTo': 'Add — {section}',
 
   'chat.title': 'Nutrition assistant',
@@ -1122,6 +1121,7 @@ const en: Dict = {
   'chat.foodAdded': 'Food created and added to the diary',
   'chat.similarFound': '"{name}" looks like:',
   'chat.createInstead': 'Create a new food',
+  'chat.removeIngredient': 'Remove this ingredient',
   'profile.apiKey': 'Anthropic API key',
   'profile.apiKeyHint':
     'Used only on this device, sent directly to Anthropic for the nutrition assistant. Never included in the export.',
@@ -1431,7 +1431,6 @@ const it: Dict = {
   'fridge.section.fridge': 'Frigo',
   'fridge.section.pantry': 'Dispensa',
   'fridge.section.freezer': 'Congelatore',
-  'fridge.quantityOptional': 'facoltativo',
   'fridge.addTo': 'Aggiungi — {section}',
 
   'chat.title': 'Assistente nutrizionale',
@@ -1453,6 +1452,7 @@ const it: Dict = {
   'chat.foodAdded': 'Alimento creato e aggiunto al diario',
   'chat.similarFound': '"{name}" assomiglia a:',
   'chat.createInstead': 'Crea un nuovo alimento',
+  'chat.removeIngredient': 'Rimuovi questo ingrediente',
   'profile.apiKey': 'Chiave API Anthropic',
   'profile.apiKeyHint':
     "Usata solo su questo dispositivo, inviata direttamente ad Anthropic per l'assistente nutrizionale. Mai inclusa nell'esportazione.",

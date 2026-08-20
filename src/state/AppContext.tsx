@@ -121,7 +121,6 @@ interface AppState {
   /** Aliments disponibles au frigo, au placard et au congélateur — base des suggestions de repas. */
   fridge: FridgeItem[]
   addFridgeItem: (food: Food, location: FridgeLocation, grams?: number, state?: FoodState) => void
-  updateFridgeItem: (id: string, grams: number | undefined) => void
   removeFridgeItem: (id: string) => void
 
   /** Repas du journal, dans l'ordre d'affichage — les quatre par défaut, plus jusqu'à 3 personnalisés. */
@@ -390,10 +389,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFridge((current) => [...current, { id: newId(), foodId: food.id, location, grams, state }])
   }, [])
 
-  const updateFridgeItem = useCallback((id: string, grams: number | undefined) => {
-    setFridge((current) => current.map((item) => (item.id === id ? { ...item, grams } : item)))
-  }, [])
-
   const removeFridgeItem = useCallback((id: string) => {
     setFridge((current) => current.filter((item) => item.id !== id))
   }, [])
@@ -542,7 +537,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       toggleFavorite,
       fridge,
       addFridgeItem,
-      updateFridgeItem,
       removeFridgeItem,
       mealDefs,
       addMeal,
@@ -598,7 +592,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       toggleFavorite,
       fridge,
       addFridgeItem,
-      updateFridgeItem,
       removeFridgeItem,
       mealDefs,
       addMeal,

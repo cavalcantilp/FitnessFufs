@@ -129,6 +129,14 @@ export function IconTrash({ size = 18 }: IconProps) {
   )
 }
 
+export function IconCheck({ size = 18 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M5 12l5 5L19 7" />
+    </svg>
+  )
+}
+
 export function IconStar({ size = 18, filled = false }: IconProps & { filled?: boolean }) {
   return (
     <svg {...base(size)} fill={filled ? 'currentColor' : 'none'} aria-hidden="true">

@@ -200,6 +200,15 @@ export interface FridgeItem {
   state?: FoodState
 }
 
+/**
+ * Un repas concret proposé par l'assistant, extrait du bloc caché <meals> de
+ * sa réponse. Chaque item référence un aliment déjà présent au catalogue.
+ */
+export interface ChatMealSuggestion {
+  label: string
+  items: { foodId: string; grams: number; state?: FoodState }[]
+}
+
 /** Un message de la conversation avec l'assistant nutrition. */
 export interface ChatMessage {
   id: string
@@ -207,6 +216,8 @@ export interface ChatMessage {
   text: string
   /** Horodatage ISO, pour un futur affichage — pas encore utilisé à l'écran. */
   at: string
+  /** Repas suggérés dans ce message, envoyables au journal en un clic. */
+  meals?: ChatMealSuggestion[]
 }
 
 /** Dépense estimée de l'assistant pour le mois en cours, à partir des tokens facturés par l'API. */

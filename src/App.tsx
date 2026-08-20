@@ -201,6 +201,7 @@ export function App() {
             setShowChat(false)
             setShowProfile(true)
           }}
+          onToast={setToast}
         />
       ) : null}
 

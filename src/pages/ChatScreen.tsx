@@ -2,15 +2,24 @@ import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { AnthropicError, askAssistant } from '../lib/anthropic'
 import { MONTHLY_CAP_USD } from '../lib/usage'
+import { extractMealSuggestions } from '../lib/mealSuggestions'
 import { foodName } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
 import { todayKey } from '../lib/date'
-import { IconChevronLeft, IconSend, IconTrash } from '../components/icons'
-import type { ChatMessage, FoodState, Lang } from '../lib/types'
+import { defaultMeal } from '../lib/meals'
+import { IconCheck, IconChevronLeft, IconSend, IconTrash } from '../components/icons'
+import type { ChatMealSuggestion, ChatMessage, FoodState, Lang } from '../lib/types'
 
 interface ChatScreenProps {
   onClose: () => void
   onOpenProfile: () => void
+  onToast: (message: string) => void
+}
+
+interface FridgeIndexItem {
+  id: string
+  label: string
+  grams: number
 }
 
 function newId(): string {
@@ -26,10 +35,13 @@ const SUGGESTIONS = ['chat.suggest.plan', 'chat.suggest.remaining', 'chat.sugges
  */
 function buildSystemPrompt(
   lang: Lang,
-  fridgeLines: string[],
+  fridgeIndex: FridgeIndexItem[],
   remaining: { kcal: number; protein: number; carbs: number; fat: number },
 ): string {
-  const fridgeBlock = fridgeLines.length > 0 ? fridgeLines.map((line) => `- ${line}`).join('\n') : '(vide)'
+  const fridgeBlock =
+    fridgeIndex.length > 0
+      ? fridgeIndex.map((item) => `- id="${item.id}" | ${item.label} | ${item.grams} g disponibles`).join('\n')
+      : '(vide)'
   return [
     "Tu es l'assistant nutrition intégré à l'application FitnessFufs. Réponds dans la langue du dernier " +
       'message de l\'utilisateur.',
@@ -39,7 +51,8 @@ function buildSystemPrompt(
       'courtes suffisent la plupart du temps ; une liste à puces brève si plusieurs idées sont utiles. ' +
       "Jamais de longs paragraphes explicatifs, jamais d'options multiples détaillées sauf si demandé.",
     '',
-    'Aliments actuellement au frigo :',
+    'Aliments actuellement au frigo (avec identifiant technique interne, à ne jamais citer dans ta réponse ' +
+      'visible) :',
     fridgeBlock,
     '',
     "Macros restants pour aujourd'hui (objectif du jour moins ce qui a déjà été mangé) :",
@@ -53,10 +66,19 @@ function buildSystemPrompt(
       'ingrédient simple à ajouter si peu de choses manquent. (Langue de référence de l\'application : ' +
       lang +
       '.)',
+    '',
+    "Si ta réponse propose un ou plusieurs repas concrets à partir des aliments du frigo listés ci-dessus, " +
+      "ajoute tout à la fin, sur une seule ligne, ce bloc cache (jamais montré tel quel, jamais mentionné " +
+      'dans ta réponse) : <meals>[{"label":"court résumé du repas","items":[{"foodId":"identifiant exact ' +
+      'listé ci-dessus","grams":nombre,"state":"raw ou cooked, uniquement si applicable"}]}]</meals>. Un ' +
+      "objet par repas proposé. N'utilise jamais un foodId qui n'est pas listé ci-dessus — pour un " +
+      "ingrédient à ajouter absent du frigo, ne l'inclus simplement pas dans ce bloc. Si aucun repas " +
+      "concret n'est proposé dans cette réponse, ajoute quand même <meals>[]</meals>. Ce bloc doit " +
+      'toujours être la toute dernière chose de ta réponse, rien après lui.',
   ].join('\n')
 }
 
-export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
+export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps) {
   const {
     t,
     lang,
@@ -64,6 +86,7 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
     fridge,
     targetsFor,
     entriesFor,
+    addEntry,
     apiKey,
     chatMessages,
     addChatMessage,
@@ -78,6 +101,9 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
   // les suggestions reviennent à chaque visite, et disparaissent dès qu'on
   // envoie un message dans cette visite, historique ou pas.
   const [interacted, setInteracted] = useState(false)
+  // Repas déjà envoyés au journal, identifiés par "id du message-index du repas" —
+  // sert uniquement à désactiver le bouton une fois cliqué, pas persisté.
+  const [sentMeals, setSentMeals] = useState<Record<string, boolean>>({})
   const listRef = useRef<HTMLDivElement>(null)
 
   // Estimation seulement — pas une vraie limite de facturation Anthropic —
@@ -110,22 +136,41 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
         carbs: Math.round(targets.carbs - eaten.carbs),
         fat: Math.round(targets.fat - eaten.fat),
       }
-      const fridgeLines = fridge
+      const fridgeIndex: FridgeIndexItem[] = fridge
         .map((item) => {
           const food = foods.find((entry) => entry.id === item.foodId)
           if (!food) return null
-          return `${foodName(food, lang)}${stateLabel(item.state)} : ${item.grams} g`
+          return { id: item.foodId, label: `${foodName(food, lang)}${stateLabel(item.state)}`, grams: item.grams }
         })
-        .filter((line): line is string => Boolean(line))
-      const system = buildSystemPrompt(lang, fridgeLines, remaining)
+        .filter((entry): entry is FridgeIndexItem => Boolean(entry))
+      const system = buildSystemPrompt(lang, fridgeIndex, remaining)
       const reply = await askAssistant(apiKey, [...chatMessages, userMessage], system)
-      addChatMessage({ id: newId(), role: 'assistant', text: reply.text, at: new Date().toISOString() })
+      const { text, meals } = extractMealSuggestions(reply.text, foods)
+      addChatMessage({
+        id: newId(),
+        role: 'assistant',
+        text,
+        at: new Date().toISOString(),
+        meals: meals.length > 0 ? meals : undefined,
+      })
       addUsageCost(reply.costUsd)
     } catch (err) {
       setError(err instanceof AnthropicError ? err.message : t('chat.error'))
     } finally {
       setSending(false)
     }
+  }
+
+  const sendMealToDiary = (messageId: string, mealIndex: number, items: ChatMealSuggestion['items']) => {
+    const date = todayKey()
+    const meal = defaultMeal()
+    for (const item of items) {
+      const food = foods.find((entry) => entry.id === item.foodId)
+      if (!food) continue
+      addEntry(date, meal, food, item.grams, item.state)
+    }
+    setSentMeals((current) => ({ ...current, [`${messageId}-${mealIndex}`]: true }))
+    onToast(t('chat.mealAdded'))
   }
 
   return (
@@ -154,8 +199,27 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
       <div className="chat-messages" ref={listRef}>
         {chatMessages.length === 0 ? <p className="hint">{t('chat.empty')}</p> : null}
         {chatMessages.map((message) => (
-          <div className={`chat-bubble ${message.role}`} key={message.id}>
-            {message.text}
+          <div key={message.id} className="chat-message-group">
+            <div className={`chat-bubble ${message.role}`}>{message.text}</div>
+            {message.meals && message.meals.length > 0 ? (
+              <div className="meal-actions">
+                {message.meals.map((suggestion, index) => {
+                  const sent = sentMeals[`${message.id}-${index}`]
+                  return (
+                    <button
+                      type="button"
+                      className="meal-btn"
+                      key={index}
+                      disabled={sent}
+                      onClick={() => sendMealToDiary(message.id, index, suggestion.items)}
+                    >
+                      <span>{suggestion.label}</span>
+                      {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
+                    </button>
+                  )
+                })}
+              </div>
+            ) : null}
           </div>
         ))}
         {sending ? (

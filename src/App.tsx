@@ -22,7 +22,7 @@ import type { Lang, MealId } from './lib/types'
 type Tab = 'calendar' | 'diary' | 'add' | 'weight' | 'fridge'
 
 export function App() {
-  const { t, lang, setLang, onboarded, tutorialsEnabled, tutorialSeen, markTutorialSeen } = useApp()
+  const { t, lang, setLang, onboarded, tutorialsEnabled, tutorialSeen, markTutorialSeen, apiKey } = useApp()
   /**
    * L'onglet et le jour consultés survivent au rechargement : un simple
    * « tirer pour rafraîchir » renvoyait sinon systématiquement au journal
@@ -192,7 +192,7 @@ export function App() {
 
       {activeTour ? <Coachmark key={activeTour} steps={TOURS[activeTour]} onDone={handleTourDone} /> : null}
 
-      {!showChat ? <ChatButton onClick={() => setShowChat(true)} /> : null}
+      {!showChat && apiKey.trim() ? <ChatButton onClick={() => setShowChat(true)} /> : null}
 
       {showChat ? (
         <ChatScreen

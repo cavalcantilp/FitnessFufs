@@ -8,6 +8,7 @@ import { sumNutrients } from '../lib/nutrition'
 import { todayKey } from '../lib/date'
 import { defaultMeal } from '../lib/meals'
 import { IconCheck, IconChevronLeft, IconSend, IconTrash } from '../components/icons'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import type { ChatMealSuggestion, ChatMessage, FoodState, Lang } from '../lib/types'
 
 interface ChatScreenProps {
@@ -104,6 +105,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
   // Repas déjà envoyés au journal, identifiés par "id du message-index du repas" —
   // sert uniquement à désactiver le bouton une fois cliqué, pas persisté.
   const [sentMeals, setSentMeals] = useState<Record<string, boolean>>({})
+  const [confirmingClear, setConfirmingClear] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
 
   // Estimation seulement — pas une vraie limite de facturation Anthropic —
@@ -186,9 +188,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
           <button
             type="button"
             className="icon-btn danger"
-            onClick={() => {
-              if (window.confirm(t('chat.clearConfirm'))) clearChat()
-            }}
+            onClick={() => setConfirmingClear(true)}
             aria-label={t('chat.clear')}
           >
             <IconTrash size={18} />
@@ -280,6 +280,20 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
           </button>
         </form>
       )}
+
+      {confirmingClear ? (
+        <ConfirmDialog
+          message={t('chat.clearConfirm')}
+          confirmLabel={t('chat.clear')}
+          cancelLabel={t('common.cancel')}
+          danger
+          onCancel={() => setConfirmingClear(false)}
+          onConfirm={() => {
+            clearChat()
+            setConfirmingClear(false)
+          }}
+        />
+      ) : null}
     </div>
   )
 }

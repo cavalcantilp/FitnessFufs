@@ -71,6 +71,11 @@ button {
   background: none;
   border: none;
   cursor: pointer;
+  outline: none;
+  /* Sans ça, le rectangle de surbrillance tactile par défaut du navigateur
+     ignore le border-radius du bouton — visible surtout sur les boutons
+     ronds (profil, aide). */
+  -webkit-tap-highlight-color: transparent;
 }
 
 input,
@@ -1865,7 +1870,10 @@ input[type='range']::-moz-range-thumb {
 .calendar-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* Pas de space-between : ça pousse le bouton "Aujourd'hui" tout à droite,
+     sous le bouton flottant de l'assistant. Autant le garder près des streaks. */
+  justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -2018,6 +2026,50 @@ input[type='range']::-moz-range-thumb {
 .profile-btn.active {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* ---------- Confirmation (remplace window.confirm) ---------- */
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(2, 6, 23, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fade 0.15s ease;
+}
+
+.confirm-card {
+  width: 100%;
+  max-width: 340px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: rise 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.confirm-message {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-actions .btn {
+  width: auto;
+  flex: 1;
 }
 
 /* ---------- Visite guidée (tutoriel par onglet) ---------- */

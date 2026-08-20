@@ -1,6 +1,7 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { ProfileForm } from '../components/ProfileForm'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import { MONTHLY_CAP_USD } from '../lib/usage'
 
 interface ProfileScreenProps {
@@ -20,6 +21,7 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
     setApiKey,
     usage,
   } = useApp()
+  const [confirmingReset, setConfirmingReset] = useState(false)
   // Le pourcentage affiché n'est pas plafonné à 100 : un dépassement doit se lire
   // comme tel (120 %), pas être aplati au même niveau qu'un usage tout juste complet.
   const usagePctDisplay = Math.round((usage.costUsd / MONTHLY_CAP_USD) * 100)
@@ -148,16 +150,24 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
             event.target.value = ''
           }}
         />
-        <button
-          type="button"
-          className="btn danger"
-          onClick={() => {
-            if (window.confirm(t('profile.resetConfirm'))) resetAll()
-          }}
-        >
+        <button type="button" className="btn danger" onClick={() => setConfirmingReset(true)}>
           {t('profile.reset')}
         </button>
       </div>
+
+      {confirmingReset ? (
+        <ConfirmDialog
+          message={t('profile.resetConfirm')}
+          confirmLabel={t('profile.reset')}
+          cancelLabel={t('common.cancel')}
+          danger
+          onCancel={() => setConfirmingReset(false)}
+          onConfirm={() => {
+            resetAll()
+            setConfirmingReset(false)
+          }}
+        />
+      ) : null}
     </div>
   )
 }

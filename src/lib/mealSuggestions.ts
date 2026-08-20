@@ -1,7 +1,9 @@
 import { findFoodByExactName } from './foods'
 import type { ChatMealItem, ChatMealSuggestion, Food, FoodState } from './types'
 
-const BLOCK_RE = /<meals>([\s\S]*?)<\/meals>/gi
+const BLOCK_RE = /<meals>([\s\S]*?)<\/meals>/i
+/** Filet de sécurité si la réponse est tronquée (limite de tokens atteinte) avant la fermeture du bloc. */
+const UNCLOSED_BLOCK_RE = /<meals>[\s\S]*$/i
 
 interface RawMealItem {
   foodId?: unknown
@@ -72,15 +74,17 @@ function resolveItem(rawItem: RawMealItem, foods: Food[]): ChatMealItem | null {
  * cet ingrédient, sans jamais faire échouer l'affichage du reste.
  */
 export function extractMealSuggestions(raw: string, foods: Food[]): { text: string; meals: ChatMealSuggestion[] } {
-  let jsonBlock: string | null = null
-  const text = raw
-    .replace(BLOCK_RE, (_match, inner: string) => {
-      if (jsonBlock === null) jsonBlock = inner
-      return ''
-    })
-    .trim()
+  const closed = raw.match(BLOCK_RE)
 
-  if (jsonBlock === null) return { text, meals: [] }
+  if (!closed) {
+    // Le bloc a pu être coupé net par la limite de tokens avant sa fermeture :
+    // mieux vaut perdre les repas de cette réponse que montrer du JSON brut.
+    const text = raw.replace(UNCLOSED_BLOCK_RE, '').trim()
+    return { text, meals: [] }
+  }
+
+  const jsonBlock = closed[1]
+  const text = raw.replace(BLOCK_RE, '').trim()
 
   let parsed: unknown
   try {

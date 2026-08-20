@@ -5,10 +5,13 @@ const API_URL = 'https://api.anthropic.com/v1/messages'
 const MODEL = 'claude-haiku-4-5-20251001'
 /**
  * Garde-fou plutôt qu'une cible : le système prompt demande déjà des
- * réponses brèves. Cette limite évite juste qu'une réponse dérape en
- * longueur (et en coût) si l'instruction n'est pas suivie à la lettre.
+ * réponses brèves. Doit rester assez haut pour laisser le bloc <meals>
+ * se terminer même quand l'utilisateur demande de journaliser plusieurs
+ * repas détaillés d'un coup (à 400, le JSON coupé net s'affichait en
+ * clair, faute de balise fermante à trouver) — le texte visible, lui,
+ * reste court grâce au system prompt.
  */
-const MAX_TOKENS = 400
+const MAX_TOKENS = 1200
 
 /** Tarifs Haiku 4.5 par million de tokens — sert à l'estimation affichée dans le profil. */
 export const PRICE_PER_MILLION_INPUT = 1

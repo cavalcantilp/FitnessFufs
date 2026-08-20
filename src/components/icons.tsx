@@ -70,10 +70,17 @@ export function IconCupboard({ size = 22 }: IconProps) {
 export function IconSnowflake({ size = 22 }: IconProps) {
   return (
     <svg {...base(size)} aria-hidden="true">
-      <path d="M12 2v20M4.5 6.5l15 11M4.5 17.5l15-11" />
-      <path d="M12 2l-2 2M12 2l2 2M12 22l-2-2M12 22l2-2" />
-      <path d="M4.5 6.5l.6-2.6M4.5 6.5l2.6.6M19.5 17.5l-.6 2.6M19.5 17.5l-2.6-.6" />
-      <path d="M19.5 6.5l-.6-2.6M19.5 6.5l-2.6.6M4.5 17.5l.6 2.6M4.5 17.5l2.6-.6" />
+      {/* Trois axes à 120° passant par le centre, comme un flocon classique. */}
+      <path d="M4 12L20 12M8 5.1L16 18.9M16 5.1L8 18.9" />
+      {/* Deux branches à chacune des six pointes — assez longues pour rester lisibles en petit. */}
+      <path
+        d="M16.8 12L19.6 13.6M16.8 12L19.6 10.4
+           M7.2 12L4.4 10.4M7.2 12L4.4 13.6
+           M14.4 16.2L14.4 19.4M14.4 16.2L17.2 17.8
+           M9.6 7.8L9.6 4.6M9.6 7.8L6.8 6.2
+           M9.6 16.2L6.8 17.8M9.6 16.2L9.6 19.4
+           M14.4 7.8L17.2 6.2M14.4 7.8L14.4 4.6"
+      />
     </svg>
   )
 }

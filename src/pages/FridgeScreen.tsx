@@ -6,9 +6,9 @@ import { foodName, searchFoods, statesOf } from '../lib/foods'
 import type { Food, FridgeItem, FridgeLocation } from '../lib/types'
 
 const SECTIONS: { location: FridgeLocation; icon: ReactNode; titleKey: 'fridge.section.fridge' | 'fridge.section.pantry' | 'fridge.section.freezer'; optionalGrams: boolean }[] = [
-  { location: 'fridge', icon: <IconFridge size={18} />, titleKey: 'fridge.section.fridge', optionalGrams: false },
-  { location: 'pantry', icon: <IconCupboard size={18} />, titleKey: 'fridge.section.pantry', optionalGrams: true },
-  { location: 'freezer', icon: <IconSnowflake size={18} />, titleKey: 'fridge.section.freezer', optionalGrams: true },
+  { location: 'fridge', icon: <IconFridge size={20} />, titleKey: 'fridge.section.fridge', optionalGrams: false },
+  { location: 'pantry', icon: <IconCupboard size={20} />, titleKey: 'fridge.section.pantry', optionalGrams: true },
+  { location: 'freezer', icon: <IconSnowflake size={20} />, titleKey: 'fridge.section.freezer', optionalGrams: true },
 ]
 
 /**

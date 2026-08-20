@@ -3,8 +3,6 @@ import { useApp } from '../state/AppContext'
 import { ProfileForm } from '../components/ProfileForm'
 import { MONTHLY_CAP_USD } from '../lib/usage'
 
-const formatUsd = (value: number) => `${value.toFixed(2)} $`
-
 interface ProfileScreenProps {
   onToast: (message: string) => void
 }
@@ -22,7 +20,10 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
     setApiKey,
     usage,
   } = useApp()
-  const usagePct = Math.min(100, Math.round((usage.costUsd / MONTHLY_CAP_USD) * 100))
+  // Le pourcentage affiché n'est pas plafonné à 100 : un dépassement doit se lire
+  // comme tel (120 %), pas être aplati au même niveau qu'un usage tout juste complet.
+  const usagePctDisplay = Math.round((usage.costUsd / MONTHLY_CAP_USD) * 100)
+  const usagePctWidth = Math.min(100, usagePctDisplay)
   const fileInput = useRef<HTMLInputElement>(null)
 
   const download = () => {
@@ -88,7 +89,18 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
 
       <div className="card stack">
         <div className="card-title">{t('chat.title')}</div>
-        <p className="hint">{t('profile.apiKeyHint')}</p>
+        <div className="usage-bar-wrap">
+          <div className="usage-bar-label">
+            <span>{t('profile.usageLabel')}</span>
+            <span>{usagePctDisplay} %</span>
+          </div>
+          <div className="usage-bar">
+            <div
+              className={`usage-bar-fill${usagePctDisplay >= 100 ? ' full' : ''}`}
+              style={{ width: `${usagePctWidth}%` }}
+            />
+          </div>
+        </div>
         <div className="field">
           <label htmlFor="api-key">{t('profile.apiKey')}</label>
           <input
@@ -101,21 +113,8 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
             placeholder="sk-ant-…"
           />
         </div>
-        <div className="usage-bar-wrap">
-          <div className="usage-bar-label">
-            <span>{t('profile.usageLabel')}</span>
-            <span>
-              {formatUsd(usage.costUsd)} / {formatUsd(MONTHLY_CAP_USD)}
-            </span>
-          </div>
-          <div className="usage-bar">
-            <div
-              className={`usage-bar-fill${usagePct >= 100 ? ' full' : ''}`}
-              style={{ width: `${usagePct}%` }}
-            />
-          </div>
-          <p className="hint">{t('profile.usageHint')}</p>
-        </div>
+        <p className="hint">{t('profile.apiKeyHint')}</p>
+        <p className="hint">{t('profile.usageHint')}</p>
       </div>
 
       <div className="card stack">

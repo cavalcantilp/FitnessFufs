@@ -3,7 +3,12 @@ import type { ChatMessage } from './types'
 const API_URL = 'https://api.anthropic.com/v1/messages'
 /** Haiku 4.5 : le moins cher des modèles Claude actuels, cohérent avec un plafond de dépense serré. */
 const MODEL = 'claude-haiku-4-5-20251001'
-const MAX_TOKENS = 1024
+/**
+ * Garde-fou plutôt qu'une cible : le système prompt demande déjà des
+ * réponses brèves. Cette limite évite juste qu'une réponse dérape en
+ * longueur (et en coût) si l'instruction n'est pas suivie à la lettre.
+ */
+const MAX_TOKENS = 400
 
 /** Tarifs Haiku 4.5 par million de tokens — sert à l'estimation affichée dans le profil. */
 export const PRICE_PER_MILLION_INPUT = 1

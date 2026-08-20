@@ -694,14 +694,23 @@ input[type='range']::-moz-range-thumb {
 .meal-grip {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  /* Cible tactile confortable (44px) : la précédente, trop petite, rendait
+     la prise en main du repas peu fiable au toucher. */
+  width: 44px;
+  height: 44px;
+  margin: -8px;
+  border-radius: 10px;
   flex: none;
   color: var(--text-sub);
   cursor: grab;
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+}
+
+.meal-grip:active {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-main);
 }
 
 .meal-head .name {

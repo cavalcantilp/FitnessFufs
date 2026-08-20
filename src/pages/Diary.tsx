@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { Ring } from '../components/Ring'
 import { MacroBars } from '../components/MacroBars'
@@ -102,12 +102,45 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
     .map((id) => mealDefs.find((meal) => meal.id === id))
     .filter((meal): meal is MealDef => Boolean(meal))
 
+  /**
+   * FLIP : quand une carte non tenue change de position suite à un
+   * échange, elle glisse jusqu'à sa nouvelle place au lieu d'y sauter —
+   * la carte tenue, elle, suit déjà le doigt en continu via onDragMove.
+   */
+  const prevTopsRef = useRef<Map<string, number>>(new Map())
+  useLayoutEffect(() => {
+    const prevTops = prevTopsRef.current
+    orderedMeals.forEach((meal) => {
+      const node = nodeRefs.current.get(meal.id)
+      if (!node || meal.id === draggingId) return
+      const prevTop = prevTops.get(meal.id)
+      const newTop = node.getBoundingClientRect().top
+      if (prevTop !== undefined && prevTop !== newTop) {
+        const delta = prevTop - newTop
+        node.style.transition = 'none'
+        node.style.transform = `translateY(${delta}px)`
+        node.getBoundingClientRect() // force le reflow avant de relâcher la transition
+        requestAnimationFrame(() => {
+          node.style.transition = 'transform 200ms ease'
+          node.style.transform = ''
+        })
+      }
+      prevTops.set(meal.id, newTop)
+    })
+  }, [order, draggingId])
+
   const endDrag = () => {
     const info = dragInfo.current
     if (info) {
       if (info.longPressTimer) window.clearTimeout(info.longPressTimer)
       const node = nodeRefs.current.get(info.id)
-      if (node) node.style.transform = ''
+      if (node) {
+        node.style.transition = ''
+        node.style.transform = ''
+        // Sans ça, la prochaine passe FLIP comparerait la position au repos à
+        // une mesure prise avant le dépôt et ferait sauter la carte qu'on vient de lâcher.
+        prevTopsRef.current.set(info.id, node.getBoundingClientRect().top)
+      }
       if (info.active) reorderMeals(orderRef.current)
     }
     dragInfo.current = null
@@ -138,7 +171,12 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
 
     const translateY = event.clientY - info.pointerStartY
     const node = nodeRefs.current.get(info.id)
-    if (node) node.style.transform = `translateY(${translateY}px)`
+    if (node) {
+      // Le premier mouvement coupe la transition d'agrippement : au-delà, le
+      // doigt doit être suivi au pixel près, sans le moindre retard animé.
+      node.style.transition = 'none'
+      node.style.transform = `translateY(${translateY}px) scale(1.02)`
+    }
 
     const visualCenter = info.naturalTop + translateY + info.height / 2
     const current = orderRef.current
@@ -189,6 +227,9 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
         active: true,
       }
       setDraggingId(id)
+      // Petit effet de saisie immédiat, avant même le premier mouvement du doigt.
+      node.style.transition = 'transform 120ms ease'
+      node.style.transform = 'scale(1.02)'
       try {
         node.setPointerCapture(pointerId)
       } catch {
@@ -397,7 +438,7 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
                 aria-label={t('diary.reorderMeal')}
                 onPointerDown={(event) => onGripPointerDown(meal.id, event)}
               >
-                <IconGrip size={16} />
+                <IconGrip size={22} />
               </button>
 
               {renamingId === meal.id ? (

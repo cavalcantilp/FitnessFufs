@@ -141,6 +141,7 @@ interface AppState {
   /** Conversation avec l'assistant nutrition, locale à cet appareil. */
   chatMessages: ChatMessage[]
   addChatMessage: (message: ChatMessage) => void
+  updateChatMessage: (id: string, patch: Partial<ChatMessage>) => void
   clearChat: () => void
 
   /** Dépense estimée de l'assistant pour le mois en cours — jamais une facturation réelle. */
@@ -427,6 +428,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setChatMessages((current) => [...current, message])
   }, [])
 
+  const updateChatMessage = useCallback((id: string, patch: Partial<ChatMessage>) => {
+    setChatMessages((current) => current.map((message) => (message.id === id ? { ...message, ...patch } : message)))
+  }, [])
+
   const clearChat = useCallback(() => setChatMessages([]), [])
 
   const addUsageCost = useCallback((costUsd: number) => {
@@ -547,6 +552,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setApiKey,
       chatMessages,
       addChatMessage,
+      updateChatMessage,
       clearChat,
       usage,
       addUsageCost,
@@ -602,6 +608,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setApiKey,
       chatMessages,
       addChatMessage,
+      updateChatMessage,
       clearChat,
       usage,
       addUsageCost,

@@ -115,6 +115,8 @@ const fr = {
   'chat.mealAdded': 'Repas ajouté au journal',
   'chat.createFood': 'Créer',
   'chat.foodAdded': 'Aliment créé et ajouté au journal',
+  'chat.similarFound': '« {name} » ressemble à :',
+  'chat.createInstead': 'Créer un nouvel aliment',
   'profile.apiKey': 'Clé API Anthropic',
   'profile.apiKeyHint':
     "Utilisée uniquement sur cet appareil, envoyée directement à Anthropic pour l'assistant nutrition. Jamais incluse dans l'export.",
@@ -451,6 +453,8 @@ const pt: Dict = {
   'chat.mealAdded': 'Refeição adicionada ao diário',
   'chat.createFood': 'Criar',
   'chat.foodAdded': 'Alimento criado e adicionado ao diário',
+  'chat.similarFound': '"{name}" parece com:',
+  'chat.createInstead': 'Criar um novo alimento',
   'profile.apiKey': 'Chave de API da Anthropic',
   'profile.apiKeyHint':
     'Usada apenas neste aparelho, enviada diretamente à Anthropic para o assistente de nutrição. Nunca incluída na exportação.',
@@ -784,6 +788,8 @@ const es: Dict = {
   'chat.mealAdded': 'Comida añadida al diario',
   'chat.createFood': 'Crear',
   'chat.foodAdded': 'Alimento creado y añadido al diario',
+  'chat.similarFound': '"{name}" se parece a:',
+  'chat.createInstead': 'Crear un nuevo alimento',
   'profile.apiKey': 'Clave de API de Anthropic',
   'profile.apiKeyHint':
     'Se usa solo en este dispositivo, enviada directamente a Anthropic para el asistente de nutrición. Nunca incluida en la exportación.',
@@ -1114,6 +1120,8 @@ const en: Dict = {
   'chat.mealAdded': 'Meal added to the diary',
   'chat.createFood': 'Create',
   'chat.foodAdded': 'Food created and added to the diary',
+  'chat.similarFound': '"{name}" looks like:',
+  'chat.createInstead': 'Create a new food',
   'profile.apiKey': 'Anthropic API key',
   'profile.apiKeyHint':
     'Used only on this device, sent directly to Anthropic for the nutrition assistant. Never included in the export.',
@@ -1443,6 +1451,8 @@ const it: Dict = {
   'chat.mealAdded': 'Pasto aggiunto al diario',
   'chat.createFood': 'Crea',
   'chat.foodAdded': 'Alimento creato e aggiunto al diario',
+  'chat.similarFound': '"{name}" assomiglia a:',
+  'chat.createInstead': 'Crea un nuovo alimento',
   'profile.apiKey': 'Chiave API Anthropic',
   'profile.apiKeyHint':
     "Usata solo su questo dispositivo, inviata direttamente ad Anthropic per l'assistente nutrizionale. Mai inclusa nell'esportazione.",

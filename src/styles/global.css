@@ -2340,6 +2340,26 @@ input[type='range']::-moz-range-thumb {
   color: var(--text-sub);
 }
 
+.meal-suggest {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+}
+
+.meal-suggest-label {
+  font-size: 0.78rem;
+  color: var(--text-sub);
+}
+
+.meal-suggest-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .chip-list {
   display: flex;
   flex-direction: column;

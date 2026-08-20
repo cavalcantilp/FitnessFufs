@@ -246,7 +246,23 @@ export interface ChatMealNewFoodItem {
   fat: number
 }
 
-export type ChatMealItem = ChatMealFoodItem | ChatMealNewFoodItem
+/**
+ * Un ingrédient nommé par l'assistant qui ne correspond exactement à aucun
+ * aliment du catalogue, mais dont la recherche a trouvé des candidats
+ * proches (ex. « riz basmati cru » → « Riz basmati ») — proposés avant de
+ * retomber sur une création, pour éviter un doublon inutile.
+ */
+export interface ChatMealSuggestedItem {
+  kind: 'suggested'
+  name: string
+  grams: number
+  /** Identifiants de quelques aliments proches, du plus au moins probable. */
+  candidateIds: string[]
+  /** Estimation du modèle, réutilisée si l'utilisateur choisit de créer plutôt qu'un candidat. */
+  newFood: { kcal: number; protein: number; carbs: number; fat: number }
+}
+
+export type ChatMealItem = ChatMealFoodItem | ChatMealNewFoodItem | ChatMealSuggestedItem
 
 /**
  * Un repas concret proposé par l'assistant, extrait du bloc caché <meals> de

@@ -1,5 +1,5 @@
-import { findFoodByExactName } from './foods'
-import type { ChatMealItem, ChatMealSuggestion, Food, FoodState } from './types'
+import { findFoodByExactName, findSimilarFoods } from './foods'
+import type { ChatMealItem, ChatMealSuggestion, Food, FoodState, Lang } from './types'
 
 const BLOCK_RE = /<meals>([\s\S]*?)<\/meals>/i
 /** Filet de sécurité si la réponse est tronquée (limite de tokens atteinte) avant la fermeture du bloc. */
@@ -39,10 +39,11 @@ function toNonNegativeNumber(value: unknown): number | null {
  * Résout un item brut du bloc <meals> : soit un foodId déjà connu, soit un
  * nom que l'assistant propose d'ajouter — dans ce dernier cas, on tente
  * d'abord une correspondance exacte dans le catalogue (le modèle ne connaît
- * pas les ~500 aliments intégrés, donc "quinoa" peut très bien déjà exister)
- * avant de retomber sur une proposition de création.
+ * pas les ~500 aliments intégrés, donc "quinoa" peut très bien déjà exister),
+ * puis une recherche de candidats proches (« riz basmati cru » vs « Riz
+ * basmati ») à proposer avant de retomber sur une création.
  */
-function resolveItem(rawItem: RawMealItem, foods: Food[]): ChatMealItem | null {
+function resolveItem(rawItem: RawMealItem, foods: Food[], lang: Lang): ChatMealItem | null {
   const grams = toPositiveNumber(rawItem?.grams)
   if (grams === null) return null
 
@@ -52,15 +53,27 @@ function resolveItem(rawItem: RawMealItem, foods: Food[]): ChatMealItem | null {
   }
 
   if (typeof rawItem?.name === 'string' && rawItem.name.trim()) {
-    const match = findFoodByExactName(foods, rawItem.name)
-    if (match) return { kind: 'food', foodId: match.id, grams: Math.round(grams), state: undefined }
+    const name = rawItem.name.trim()
+    const exact = findFoodByExactName(foods, name)
+    if (exact) return { kind: 'food', foodId: exact.id, grams: Math.round(grams), state: undefined }
 
     const kcal = toNonNegativeNumber(rawItem.kcal)
     const protein = toNonNegativeNumber(rawItem.protein)
     const carbs = toNonNegativeNumber(rawItem.carbs)
     const fat = toNonNegativeNumber(rawItem.fat)
     if (kcal === null || protein === null || carbs === null || fat === null) return null
-    return { kind: 'newFood', name: rawItem.name.trim(), grams: Math.round(grams), kcal, protein, carbs, fat }
+
+    const candidates = findSimilarFoods(foods, name, lang)
+    if (candidates.length > 0) {
+      return {
+        kind: 'suggested',
+        name,
+        grams: Math.round(grams),
+        candidateIds: candidates.map((food) => food.id),
+        newFood: { kcal, protein, carbs, fat },
+      }
+    }
+    return { kind: 'newFood', name, grams: Math.round(grams), kcal, protein, carbs, fat }
   }
 
   return null
@@ -73,7 +86,11 @@ function resolveItem(rawItem: RawMealItem, foods: Food[]): ChatMealItem | null {
  * identifiant halluciné ou une entrée malformée fait simplement disparaître
  * cet ingrédient, sans jamais faire échouer l'affichage du reste.
  */
-export function extractMealSuggestions(raw: string, foods: Food[]): { text: string; meals: ChatMealSuggestion[] } {
+export function extractMealSuggestions(
+  raw: string,
+  foods: Food[],
+  lang: Lang,
+): { text: string; meals: ChatMealSuggestion[] } {
   const closed = raw.match(BLOCK_RE)
 
   if (!closed) {
@@ -100,7 +117,7 @@ export function extractMealSuggestions(raw: string, foods: Food[]): { text: stri
       continue
     }
     const items = (entry.items as RawMealItem[])
-      .map((rawItem) => resolveItem(rawItem, foods))
+      .map((rawItem) => resolveItem(rawItem, foods, lang))
       .filter((item): item is ChatMealItem => item !== null)
     if (items.length > 0) meals.push({ label: entry.label, items })
   }

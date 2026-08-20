@@ -763,6 +763,72 @@ export function findFoodByExactName(foods: Food[], name: string): Food | null {
 }
 
 /**
+ * Descripteurs d'état/préparation qu'un nom de catalogue ne porte
+ * généralement pas — les retirer avant de comparer permet de rapprocher
+ * « riz basmati cru » de l'entrée « Riz basmati » plutôt que de la manquer.
+ */
+const DESCRIPTOR_WORDS = new Set([
+  'cru', 'crue', 'crus', 'crues',
+  'cuit', 'cuite', 'cuits', 'cuites',
+  'egoutte', 'egouttee', 'egouttes', 'egouttees',
+  'frais', 'fraiche', 'fraiches',
+  'entier', 'entiere', 'entiers', 'entieres',
+  'hache', 'hachee', 'haches', 'hachees',
+  'rape', 'rapee', 'rapes', 'rapees',
+  'sec', 'seche', 'sechee', 'seches', 'sechees',
+])
+
+function stripDescriptors(label: string): string {
+  return normalize(label)
+    .split(/\s+/)
+    .filter((word) => word && !DESCRIPTOR_WORDS.has(word))
+    .join(' ')
+}
+
+/**
+ * Aliments dont le nom se rapproche de celui donné, une fois les mots d'état
+ * retirés des deux côtés — sert à proposer des candidats existants avant de
+ * suggérer une création, pour un nom qui ne correspond exactement à rien
+ * (findFoodByExactName) mais désigne probablement un aliment déjà présent.
+ */
+/**
+ * Sous ce seuil, un libellé catalogue (ex. « Té », normalisé « te ») matche
+ * comme préfixe/sous-chaîne de presque n'importe quelle requête plus longue
+ * par pur hasard (« thon en boi-TE ») — ces deux sens de comparaison sont
+ * donc réservés aux libellés assez longs pour être un vrai indice.
+ */
+const MIN_FUZZY_LABEL_LENGTH = 4
+
+export function findSimilarFoods(foods: Food[], name: string, lang: Lang, limit = 3): Food[] {
+  const cleanedQuery = stripDescriptors(name)
+  if (!cleanedQuery) return []
+
+  const scored = foods
+    .map((food) => {
+      const labels = [food.name, ...Object.values(food.i18n ?? {}), ...(food.aliases ?? [])]
+      const best = labels.reduce((acc, label) => {
+        const cleanedLabel = stripDescriptors(label)
+        if (!cleanedLabel) return acc
+        if (cleanedLabel === cleanedQuery) return Math.max(acc, 4)
+        if (cleanedLabel.startsWith(cleanedQuery)) return Math.max(acc, 3)
+        if (cleanedLabel.length >= MIN_FUZZY_LABEL_LENGTH && cleanedQuery.startsWith(cleanedLabel)) {
+          return Math.max(acc, 3)
+        }
+        if (cleanedLabel.includes(cleanedQuery)) return Math.max(acc, 2)
+        if (cleanedLabel.length >= MIN_FUZZY_LABEL_LENGTH && cleanedQuery.includes(cleanedLabel)) {
+          return Math.max(acc, 2)
+        }
+        return acc
+      }, 0)
+      return { food, score: best }
+    })
+    .filter((entry) => entry.score > 0)
+
+  scored.sort((a, b) => b.score - a.score || foodName(a.food, lang).localeCompare(foodName(b.food, lang)))
+  return scored.slice(0, limit).map((entry) => entry.food)
+}
+
+/**
  * Recherche sur tous les libellés traduits : un utilisateur en français
  * retrouve aussi un aliment en tapant son nom anglais.
  */

@@ -2346,6 +2346,26 @@ input[type='range']::-moz-range-thumb {
   gap: 6px;
 }
 
+.meal-scheduled-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  font-size: 0.8rem;
+  color: var(--positive);
+}
+
+/* Écran de sélection (création d'aliment, planification) ouvert depuis le chat :
+   par-dessus le chat plutôt qu'à sa place, pour que son défilement survive au retour. */
+.chat-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
 .meal-btn-row .meal-btn {
   flex: 1;
   justify-content: center;

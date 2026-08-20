@@ -21,6 +21,7 @@ import type {
   FridgeLocation,
   Lang,
   MealDef,
+  MealId,
   MeasurementEntry,
   WeightEntry,
 } from '../lib/types'
@@ -249,9 +250,16 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     itemIndex: number
     item: ChatMealNewFoodItem
   } | null>(null)
-  // Choix d'une date pour planifier un repas résolu — remplace tout l'écran,
-  // comme la création d'aliment.
-  const [schedulingMeal, setSchedulingMeal] = useState<{ items: ChatMealSuggestion['items'] } | null>(null)
+  // Choix d'une date pour planifier un repas résolu — un écran par-dessus,
+  // comme la création d'aliment, sans remplacer le chat en dessous (son défilement doit survivre au retour).
+  const [schedulingMeal, setSchedulingMeal] = useState<{
+    messageId: string
+    mealIndex: number
+    items: ChatMealSuggestion['items']
+  } | null>(null)
+  // Repas déjà planifiés, avec la date et le repas choisis — le bouton « Planifier »
+  // laisse alors place à une confirmation, comme pour l'envoi immédiat.
+  const [scheduledMeals, setScheduledMeals] = useState<Record<string, { date: string; meal: MealId }>>({})
   const listRef = useRef<HTMLDivElement>(null)
 
   // Estimation seulement — pas une vraie limite de facturation Anthropic —
@@ -326,8 +334,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     }
   }
 
-  const addMealToDiary = (date: string, items: ChatMealSuggestion['items']) => {
-    const meal = defaultMeal()
+  const addMealToDiary = (date: string, items: ChatMealSuggestion['items'], meal: MealId) => {
     for (const item of items) {
       if (item.kind !== 'food') continue
       const food = foods.find((entry) => entry.id === item.foodId)
@@ -337,7 +344,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
   }
 
   const sendMealToDiary = (messageId: string, mealIndex: number, items: ChatMealSuggestion['items']) => {
-    addMealToDiary(todayKey(), items)
+    addMealToDiary(todayKey(), items, defaultMeal())
     setSentMeals((current) => ({ ...current, [`${messageId}-${mealIndex}`]: true }))
     onToast(t('chat.mealAdded'))
   }
@@ -367,43 +374,6 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
       .map((meal, mIdx) => (mIdx !== mealIndex ? meal : { ...meal, items: meal.items.filter((_, iIdx) => iIdx !== itemIndex) }))
       .filter((meal) => meal.items.length > 0)
     updateChatMessage(messageId, { meals: meals.length > 0 ? meals : undefined })
-  }
-
-  if (creatingFood) {
-    const { item } = creatingFood
-    return (
-      <div className="chat-screen">
-        <CustomFoodSheet
-          initialName={item.name}
-          initialValues={{ kcal: item.kcal, protein: item.protein, carbs: item.carbs, fat: item.fat }}
-          onClose={() => setCreatingFood(null)}
-          onCreated={(food) => {
-            addEntry(todayKey(), defaultMeal(), food, item.grams)
-            setCreatedFoods((current) => ({
-              ...current,
-              [`${creatingFood.messageId}-${creatingFood.mealIndex}-${creatingFood.itemIndex}`]: true,
-            }))
-            setCreatingFood(null)
-            onToast(t('chat.foodAdded'))
-          }}
-        />
-      </div>
-    )
-  }
-
-  if (schedulingMeal) {
-    return (
-      <div className="chat-screen">
-        <SchedulePicker
-          onClose={() => setSchedulingMeal(null)}
-          onPick={(date) => {
-            addMealToDiary(date, schedulingMeal.items)
-            setSchedulingMeal(null)
-            onToast(t('chat.mealScheduled', { date: formatDay(date, lang) }))
-          }}
-        />
-      </div>
-    )
   }
 
   return (
@@ -436,6 +406,8 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
               <div className="meal-actions">
                 {message.meals.map((suggestion, mealIndex) => {
                   const sent = sentMeals[`${message.id}-${mealIndex}`]
+                  const scheduled = scheduledMeals[`${message.id}-${mealIndex}`]
+                  const scheduledMealDef = scheduled ? mealDefs.find((entry) => entry.id === scheduled.meal) : undefined
                   const removeBtn = (itemIndex: number) => (
                     <button
                       type="button"
@@ -559,15 +531,28 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
                             <span>{suggestion.label}</span>
                             {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
                           </button>
-                          <button
-                            type="button"
-                            className="meal-btn schedule"
-                            onClick={() => setSchedulingMeal({ items: suggestion.items })}
-                          >
-                            <span className="meal-btn-cta">
-                              <IconCalendar size={14} /> {t('chat.schedule')}
-                            </span>
-                          </button>
+                          {!scheduled ? (
+                            <button
+                              type="button"
+                              className="meal-btn schedule"
+                              onClick={() => setSchedulingMeal({ messageId: message.id, mealIndex, items: suggestion.items })}
+                            >
+                              <span className="meal-btn-cta">
+                                <IconCalendar size={14} /> {t('chat.schedule')}
+                              </span>
+                            </button>
+                          ) : null}
+                        </div>
+                      ) : null}
+                      {scheduled ? (
+                        <div className="meal-scheduled-note">
+                          <IconCheck size={14} />
+                          <span>
+                            {t('chat.mealScheduledLabel', {
+                              meal: scheduledMealDef ? mealLabel(scheduledMealDef, t) : scheduled.meal,
+                              date: formatDay(scheduled.date, lang),
+                            })}
+                          </span>
                         </div>
                       ) : null}
                     </div>
@@ -648,6 +633,47 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
             setConfirmingClear(false)
           }}
         />
+      ) : null}
+
+      {creatingFood ? (
+        <div className="chat-overlay">
+          <CustomFoodSheet
+            initialName={creatingFood.item.name}
+            initialValues={{
+              kcal: creatingFood.item.kcal,
+              protein: creatingFood.item.protein,
+              carbs: creatingFood.item.carbs,
+              fat: creatingFood.item.fat,
+            }}
+            onClose={() => setCreatingFood(null)}
+            onCreated={(food) => {
+              addEntry(todayKey(), defaultMeal(), food, creatingFood.item.grams)
+              setCreatedFoods((current) => ({
+                ...current,
+                [`${creatingFood.messageId}-${creatingFood.mealIndex}-${creatingFood.itemIndex}`]: true,
+              }))
+              setCreatingFood(null)
+              onToast(t('chat.foodAdded'))
+            }}
+          />
+        </div>
+      ) : null}
+
+      {schedulingMeal ? (
+        <div className="chat-overlay">
+          <SchedulePicker
+            onClose={() => setSchedulingMeal(null)}
+            onPick={(date, meal) => {
+              addMealToDiary(date, schedulingMeal.items, meal)
+              setScheduledMeals((current) => ({
+                ...current,
+                [`${schedulingMeal.messageId}-${schedulingMeal.mealIndex}`]: { date, meal },
+              }))
+              setSchedulingMeal(null)
+              onToast(t('chat.mealScheduled', { date: formatDay(date, lang) }))
+            }}
+          />
+        </div>
       ) : null}
     </div>
   )

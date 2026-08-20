@@ -3,9 +3,11 @@ import { FormPage } from './FormPage'
 import { IconChevronLeft, IconChevronRight } from './icons'
 import { useApp } from '../state/AppContext'
 import { fromKey, localeOf, toKey, todayKey } from '../lib/date'
+import { defaultMeal, mealLabel } from '../lib/meals'
+import type { MealId } from '../lib/types'
 
 interface SchedulePickerProps {
-  onPick: (date: string) => void
+  onPick: (date: string, meal: MealId) => void
   onClose: () => void
 }
 
@@ -23,12 +25,15 @@ function startOfGrid(year: number, month: number): Date {
  * jour est la seule action possible, pas la première d'un enchaînement.
  */
 export function SchedulePicker({ onPick, onClose }: SchedulePickerProps) {
-  const { t, lang } = useApp()
+  const { t, lang, mealDefs } = useApp()
   const today = todayKey()
   const [cursor, setCursor] = useState(() => {
     const current = fromKey(today)
     return { year: current.getFullYear(), month: current.getMonth() }
   })
+  // Le jour choisi peut n'avoir aucun rapport avec l'heure actuelle : contrairement à
+  // l'ajout du jour même, impossible de deviner le repas visé depuis l'heure de saisie.
+  const [meal, setMeal] = useState<MealId>(() => defaultMeal())
 
   const { days, weeks } = useMemo(() => {
     const start = startOfGrid(cursor.year, cursor.month)
@@ -68,6 +73,17 @@ export function SchedulePicker({ onPick, onClose }: SchedulePickerProps) {
 
   return (
     <FormPage title={t('chat.pickDate')} onBack={onClose}>
+      <div className="field">
+        <label htmlFor="schedule-meal">{t('add.meal')}</label>
+        <select id="schedule-meal" value={meal} onChange={(event) => setMeal(event.target.value)}>
+          {mealDefs.map((entry) => (
+            <option key={entry.id} value={entry.id}>
+              {mealLabel(entry, t)}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="day-nav">
         <button type="button" className="arrow" onClick={() => shiftMonth(-1)} aria-label={monthLabel}>
           <IconChevronLeft />
@@ -97,7 +113,7 @@ export function SchedulePicker({ onPick, onClose }: SchedulePickerProps) {
             .filter(Boolean)
             .join(' ')
           return (
-            <button type="button" className={classes} key={key} onClick={() => onPick(key)}>
+            <button type="button" className={classes} key={key} onClick={() => onPick(key, meal)}>
               <span className="day-top">
                 <span className="num">{day.getDate()}</span>
               </span>

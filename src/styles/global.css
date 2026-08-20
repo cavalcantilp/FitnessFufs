@@ -921,6 +921,12 @@ input[type='range']::-moz-range-thumb {
   text-align: right;
 }
 
+/* Le placeholder traduit ("optionnel", "facoltativo"...) ne tient pas dans
+   les 64px habituels : élargi seulement pour le placard et le congélateur. */
+.recipe-line input.optional-qty {
+  width: 96px;
+}
+
 .recipe-line .unit {
   font-size: 0.78rem;
   color: var(--text-sub);
@@ -1488,6 +1494,26 @@ input[type='range']::-moz-range-thumb {
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-sub);
+}
+
+.fridge-section-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-sub);
+}
+
+.fridge-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.fridge-section-count {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .list-head button {

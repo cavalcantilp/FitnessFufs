@@ -57,6 +57,27 @@ export function IconFridge({ size = 22 }: IconProps) {
   )
 }
 
+export function IconCupboard({ size = 22 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <path d="M12 2v20" />
+      <path d="M9.5 12v.01M14.5 12v.01" />
+    </svg>
+  )
+}
+
+export function IconSnowflake({ size = 22 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M12 2v20M4.5 6.5l15 11M4.5 17.5l15-11" />
+      <path d="M12 2l-2 2M12 2l2 2M12 22l-2-2M12 22l2-2" />
+      <path d="M4.5 6.5l.6-2.6M4.5 6.5l2.6.6M19.5 17.5l-.6 2.6M19.5 17.5l-2.6-.6" />
+      <path d="M19.5 6.5l-.6-2.6M19.5 6.5l-2.6.6M4.5 17.5l.6 2.6M4.5 17.5l2.6-.6" />
+    </svg>
+  )
+}
+
 export function IconChevronLeft({ size = 20 }: IconProps) {
   return (
     <svg {...base(size)} aria-hidden="true">

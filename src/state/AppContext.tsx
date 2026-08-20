@@ -19,6 +19,7 @@ import type {
   Food,
   FoodState,
   FridgeItem,
+  FridgeLocation,
   Lang,
   MealId,
   MeasurementEntry,
@@ -114,10 +115,10 @@ interface AppState {
   favorites: string[]
   toggleFavorite: (id: string) => void
 
-  /** Aliments disponibles au frigo, avec leur poids — base des suggestions de repas. */
+  /** Aliments disponibles au frigo, au placard et au congélateur — base des suggestions de repas. */
   fridge: FridgeItem[]
-  addFridgeItem: (food: Food, grams: number, state?: FoodState) => void
-  updateFridgeItem: (id: string, grams: number) => void
+  addFridgeItem: (food: Food, location: FridgeLocation, grams?: number, state?: FoodState) => void
+  updateFridgeItem: (id: string, grams: number | undefined) => void
   removeFridgeItem: (id: string) => void
 
   /**
@@ -373,11 +374,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     )
   }, [])
 
-  const addFridgeItem = useCallback((food: Food, grams: number, state?: FoodState) => {
-    setFridge((current) => [...current, { id: newId(), foodId: food.id, grams, state }])
+  const addFridgeItem = useCallback((food: Food, location: FridgeLocation, grams?: number, state?: FoodState) => {
+    setFridge((current) => [...current, { id: newId(), foodId: food.id, location, grams, state }])
   }, [])
 
-  const updateFridgeItem = useCallback((id: string, grams: number) => {
+  const updateFridgeItem = useCallback((id: string, grams: number | undefined) => {
     setFridge((current) => current.map((item) => (item.id === id ? { ...item, grams } : item)))
   }, [])
 

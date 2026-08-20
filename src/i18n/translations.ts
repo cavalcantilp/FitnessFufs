@@ -86,8 +86,11 @@ const fr = {
 
   'fridge.hint':
     "Les aliments que vous avez sous la main, pour préparer des suggestions de repas selon vos macros restants.",
-  'fridge.empty': "Le frigo est vide. Cherchez un aliment ci-dessus pour l'ajouter.",
-  'fridge.items': 'Au frigo : {n}',
+  'fridge.empty': "Rien pour l'instant. Cherchez un aliment ci-dessus pour l'ajouter ici.",
+  'fridge.section.fridge': 'Frigo',
+  'fridge.section.pantry': 'Placard',
+  'fridge.section.freezer': 'Congélateur',
+  'fridge.quantityOptional': 'optionnel',
 
   'chat.title': 'Assistant nutrition',
   'chat.placeholder': 'Écrivez un message…',
@@ -411,8 +414,11 @@ const pt: Dict = {
 
   'fridge.hint':
     'Os alimentos que você tem à mão, para preparar sugestões de refeição de acordo com as macros restantes.',
-  'fridge.empty': 'A geladeira está vazia. Busque um alimento acima para adicioná-lo.',
-  'fridge.items': 'Na geladeira: {n}',
+  'fridge.empty': 'Nada por aqui ainda. Busque um alimento acima para adicioná-lo.',
+  'fridge.section.fridge': 'Geladeira',
+  'fridge.section.pantry': 'Armário',
+  'fridge.section.freezer': 'Freezer',
+  'fridge.quantityOptional': 'opcional',
 
   'chat.title': 'Assistente de nutrição',
   'chat.placeholder': 'Escreva uma mensagem…',
@@ -733,8 +739,11 @@ const es: Dict = {
 
   'fridge.hint':
     'Los alimentos que tienes a mano, para preparar sugerencias de comida según tus macros restantes.',
-  'fridge.empty': 'La nevera está vacía. Busca un alimento arriba para añadirlo.',
-  'fridge.items': 'En la nevera: {n}',
+  'fridge.empty': 'Nada por aquí todavía. Busca un alimento arriba para añadirlo.',
+  'fridge.section.fridge': 'Nevera',
+  'fridge.section.pantry': 'Armario',
+  'fridge.section.freezer': 'Congelador',
+  'fridge.quantityOptional': 'opcional',
 
   'chat.title': 'Asistente de nutrición',
   'chat.placeholder': 'Escribe un mensaje…',
@@ -1052,8 +1061,11 @@ const en: Dict = {
   'recipe.of': 'of',
 
   'fridge.hint': 'The foods you have on hand, to put together meal suggestions around your remaining macros.',
-  'fridge.empty': 'The fridge is empty. Search for a food above to add it.',
-  'fridge.items': 'In the fridge: {n}',
+  'fridge.empty': 'Nothing here yet. Search for a food above to add it.',
+  'fridge.section.fridge': 'Fridge',
+  'fridge.section.pantry': 'Pantry',
+  'fridge.section.freezer': 'Freezer',
+  'fridge.quantityOptional': 'optional',
 
   'chat.title': 'Nutrition assistant',
   'chat.placeholder': 'Type a message…',
@@ -1370,8 +1382,11 @@ const it: Dict = {
 
   'fridge.hint':
     'Gli alimenti che hai a disposizione, per preparare suggerimenti di pasto in base alle macro rimanenti.',
-  'fridge.empty': 'Il frigo è vuoto. Cerca un alimento qui sopra per aggiungerlo.',
-  'fridge.items': 'In frigo: {n}',
+  'fridge.empty': 'Ancora niente qui. Cerca un alimento qui sopra per aggiungerlo.',
+  'fridge.section.fridge': 'Frigo',
+  'fridge.section.pantry': 'Dispensa',
+  'fridge.section.freezer': 'Congelatore',
+  'fridge.quantityOptional': 'facoltativo',
 
   'chat.title': 'Assistente nutrizionale',
   'chat.placeholder': 'Scrivi un messaggio…',

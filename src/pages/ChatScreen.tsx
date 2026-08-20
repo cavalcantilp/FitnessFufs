@@ -9,7 +9,7 @@ import { todayKey } from '../lib/date'
 import { defaultMeal } from '../lib/meals'
 import { IconCheck, IconChevronLeft, IconSend, IconTrash } from '../components/icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
-import type { ChatMealSuggestion, ChatMessage, FoodState, Lang } from '../lib/types'
+import type { ChatMealSuggestion, ChatMessage, FoodState, FridgeLocation, Lang } from '../lib/types'
 
 interface ChatScreenProps {
   onClose: () => void
@@ -17,10 +17,11 @@ interface ChatScreenProps {
   onToast: (message: string) => void
 }
 
-interface FridgeIndexItem {
+interface StockIndexItem {
   id: string
   label: string
-  grams: number
+  grams?: number
+  location: FridgeLocation
 }
 
 function newId(): string {
@@ -29,20 +30,33 @@ function newId(): string {
 
 const SUGGESTIONS = ['chat.suggest.plan', 'chat.suggest.remaining', 'chat.suggest.quick'] as const
 
+const LOCATION_LABEL: Record<FridgeLocation, string> = { fridge: 'Frigo', pantry: 'Placard', freezer: 'Congélateur' }
+const LOCATION_ORDER: FridgeLocation[] = ['fridge', 'pantry', 'freezer']
+
 /**
  * Construit le contexte invisible envoyé à chaque appel : ce qu'il y a au
- * frigo et ce qu'il reste à manger aujourd'hui. Sans lui, l'utilisateur
- * devrait retaper cette information à chaque message.
+ * frigo/placard/congélateur et ce qu'il reste à manger aujourd'hui. Sans lui,
+ * l'utilisateur devrait retaper cette information à chaque message.
  */
 function buildSystemPrompt(
   lang: Lang,
-  fridgeIndex: FridgeIndexItem[],
+  stock: StockIndexItem[],
   remaining: { kcal: number; protein: number; carbs: number; fat: number },
 ): string {
-  const fridgeBlock =
-    fridgeIndex.length > 0
-      ? fridgeIndex.map((item) => `- id="${item.id}" | ${item.label} | ${item.grams} g disponibles`).join('\n')
-      : '(vide)'
+  const stockBlock = LOCATION_ORDER.map((location) => {
+    const items = stock.filter((item) => item.location === location)
+    const lines =
+      items.length > 0
+        ? items
+            .map(
+              (item) =>
+                `  - id="${item.id}" | ${item.label}${item.grams !== undefined ? ` | ${item.grams} g disponibles` : ' | quantité non précisée'}`,
+            )
+            .join('\n')
+        : '  (vide)'
+    return `${LOCATION_LABEL[location]} :\n${lines}`
+  }).join('\n')
+
   return [
     "Tu es l'assistant nutrition intégré à l'application FitnessFufs. Réponds dans la langue du dernier " +
       'message de l\'utilisateur.',
@@ -52,9 +66,10 @@ function buildSystemPrompt(
       'courtes suffisent la plupart du temps ; une liste à puces brève si plusieurs idées sont utiles. ' +
       "Jamais de longs paragraphes explicatifs, jamais d'options multiples détaillées sauf si demandé.",
     '',
-    'Aliments actuellement au frigo (avec identifiant technique interne, à ne jamais citer dans ta réponse ' +
-      'visible) :',
-    fridgeBlock,
+    'Aliments actuellement disponibles, par emplacement (avec identifiant technique interne, à ne jamais ' +
+      'citer dans ta réponse visible). Le congélateur suppose une décongélation avant cuisson, le placard ' +
+      "des produits secs ou en conserve — tiens-en compte dans ce que tu proposes :",
+    stockBlock,
     '',
     "Macros restants pour aujourd'hui (objectif du jour moins ce qui a déjà été mangé) :",
     `- Calories : ${remaining.kcal} kcal`,
@@ -62,20 +77,23 @@ function buildSystemPrompt(
     `- Glucides : ${remaining.carbs} g`,
     `- Lipides : ${remaining.fat} g`,
     '',
-    'Propose des idées de repas réalistes avec ce qui est au frigo, en tenant compte de ces macros ' +
-      "restants. Indique les quantités à utiliser parmi ce qui est disponible. Tu peux suggérer un " +
-      'ingrédient simple à ajouter si peu de choses manquent. (Langue de référence de l\'application : ' +
+    'Propose des idées de repas réalistes avec ce qui est disponible (frigo, placard, congélateur), en ' +
+      'tenant compte de ces macros restants. Indique les quantités à utiliser parmi ce qui est ' +
+      "disponible ; pour un aliment sans quantité précisée, suppose une quantité raisonnable. Tu peux " +
+      'suggérer un ingrédient simple à ajouter si peu de choses manquent. (Langue de référence de ' +
+      "l'application : " +
       lang +
       '.)',
     '',
-    "Si ta réponse propose un ou plusieurs repas concrets à partir des aliments du frigo listés ci-dessus, " +
+    "Si ta réponse propose un ou plusieurs repas concrets à partir des aliments listés ci-dessus, " +
       "ajoute tout à la fin, sur une seule ligne, ce bloc cache (jamais montré tel quel, jamais mentionné " +
       'dans ta réponse) : <meals>[{"label":"court résumé du repas","items":[{"foodId":"identifiant exact ' +
       'listé ci-dessus","grams":nombre,"state":"raw ou cooked, uniquement si applicable"}]}]</meals>. Un ' +
-      "objet par repas proposé. N'utilise jamais un foodId qui n'est pas listé ci-dessus — pour un " +
-      "ingrédient à ajouter absent du frigo, ne l'inclus simplement pas dans ce bloc. Si aucun repas " +
-      "concret n'est proposé dans cette réponse, ajoute quand même <meals>[]</meals>. Ce bloc doit " +
-      'toujours être la toute dernière chose de ta réponse, rien après lui.',
+      "objet par repas proposé, avec un grams réaliste même pour un aliment sans quantité précisée. " +
+      "N'utilise jamais un foodId qui n'est pas listé ci-dessus — pour un ingrédient à ajouter absent de " +
+      "ces listes, ne l'inclus simplement pas dans ce bloc. Si aucun repas concret n'est proposé dans " +
+      "cette réponse, ajoute quand même <meals>[]</meals>. Ce bloc doit toujours être la toute dernière " +
+      'chose de ta réponse, rien après lui.',
   ].join('\n')
 }
 
@@ -138,14 +156,19 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
         carbs: Math.round(targets.carbs - eaten.carbs),
         fat: Math.round(targets.fat - eaten.fat),
       }
-      const fridgeIndex: FridgeIndexItem[] = fridge
-        .map((item) => {
+      const stockIndex: StockIndexItem[] = fridge
+        .map((item): StockIndexItem | null => {
           const food = foods.find((entry) => entry.id === item.foodId)
           if (!food) return null
-          return { id: item.foodId, label: `${foodName(food, lang)}${stateLabel(item.state)}`, grams: item.grams }
+          return {
+            id: item.foodId,
+            label: `${foodName(food, lang)}${stateLabel(item.state)}`,
+            grams: item.grams,
+            location: item.location ?? 'fridge',
+          }
         })
-        .filter((entry): entry is FridgeIndexItem => Boolean(entry))
-      const system = buildSystemPrompt(lang, fridgeIndex, remaining)
+        .filter((entry): entry is StockIndexItem => entry !== null)
+      const system = buildSystemPrompt(lang, stockIndex, remaining)
       const reply = await askAssistant(apiKey, [...chatMessages, userMessage], system)
       const { text, meals } = extractMealSuggestions(reply.text, foods)
       addChatMessage({

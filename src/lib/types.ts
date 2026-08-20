@@ -187,15 +187,21 @@ export interface MeasurementEntry {
   values: Partial<Record<MeasurementKey, number>>
 }
 
+/** Emplacement de stockage d'un aliment gardé sous la main. */
+export type FridgeLocation = 'fridge' | 'pantry' | 'freezer'
+
 /**
- * Un aliment présent au frigo, avec son poids disponible. Sert de base aux
+ * Un aliment présent au frigo, au placard ou au congélateur. Sert de base aux
  * suggestions de repas : ce qu'il y a réellement sous la main, comparé aux
  * macros restants du jour.
  */
 export interface FridgeItem {
   id: string
   foodId: string
-  grams: number
+  /** Absent sur les entrées créées avant le placard/congélateur : traité comme 'fridge'. */
+  location?: FridgeLocation
+  /** Poids disponible. Obligatoire au frigo ; facultatif au placard et au congélateur. */
+  grams?: number
   /** État pesé, quand l'aliment en propose deux. */
   state?: FoodState
 }

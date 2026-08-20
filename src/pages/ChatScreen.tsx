@@ -145,6 +145,14 @@ function buildSystemPrompt(
       "un foodId qui n'est pas listé ci-dessus. Si aucun repas concret n'est proposé dans cette réponse, " +
       'ajoute quand même <meals>[]</meals>. Ce bloc doit toujours être la toute dernière chose de ta ' +
       'réponse, rien après lui.',
+    '',
+    "Important : tu ne peux jamais écrire toi-même dans le journal, mais l'application le fait à ta place " +
+      "dès qu'un repas figure dans ce bloc — un bouton apparaît alors pour que l'utilisateur confirme " +
+      "l'ajout d'un clic. Ne dis donc jamais que tu n'as pas accès à cette fonction et ne demande jamais à " +
+      "l'utilisateur de tout ressaisir lui-même dans l'application. Si l'utilisateur demande d'ajouter au " +
+      "journal un ou plusieurs repas déjà décrits plus haut dans la conversation, republie-les simplement " +
+      "dans le bloc <meals> de cette réponse (même sans nouvelle suggestion), en reprenant les mêmes " +
+      "aliments et quantités.",
   ].join('\n')
 }
 

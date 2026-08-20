@@ -1,10 +1,13 @@
 import type { ChatMessage } from './types'
 
 /**
- * Alias auto-mis à jour par Google vers le dernier modèle Flash — celui du
- * palier gratuit de l'API Gemini, sans carte bancaire requise.
+ * Alias auto-mis à jour par Google vers le dernier modèle Flash Lite —
+ * palier gratuit de l'API Gemini, sans carte bancaire requise. Préféré à
+ * l'alias « flash » complet (`gemini-flash-latest`) : ce dernier a
+ * plusieurs fois renvoyé un 503 « high demand » persistant en test réel,
+ * le modèle Lite s'étant montré disponible dans les mêmes conditions.
  */
-const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent'
+const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent'
 
 /**
  * Le palier gratuit du dernier modèle Flash est sujet à des 503 en cas de

@@ -12,6 +12,12 @@ interface CustomFoodSheetProps {
   /** Nom pré-rempli depuis la recherche en cours. */
   initialName?: string
   /**
+   * Valeurs pour 100 g pré-remplies depuis une estimation externe (ex. une
+   * suggestion de l'assistant) — à vérifier avant d'enregistrer, comme toute
+   * saisie manuelle.
+   */
+  initialValues?: { kcal?: number; protein?: number; carbs?: number; fat?: number }
+  /**
    * Aliment à corriger. Les valeurs d'Open Food Facts viennent de saisies
    * communautaires et peuvent différer de l'étiquette qu'on a sous les yeux :
    * il faut pouvoir les rectifier plutôt que subir un chiffre faux.
@@ -23,6 +29,7 @@ interface CustomFoodSheetProps {
 
 export function CustomFoodSheet({
   initialName = '',
+  initialValues,
   editing,
   onCreated,
   onClose,
@@ -30,10 +37,10 @@ export function CustomFoodSheet({
   const { t, addCustomFood, updateCustomFood } = useApp()
   const text = (value: number | undefined) => (value === undefined || value === 0 ? '' : String(value))
   const [name, setName] = useState(editing?.name ?? initialName)
-  const [kcal, setKcal] = useState(text(editing?.per100.kcal))
-  const [protein, setProtein] = useState(text(editing?.per100.protein))
-  const [carbs, setCarbs] = useState(text(editing?.per100.carbs))
-  const [fat, setFat] = useState(text(editing?.per100.fat))
+  const [kcal, setKcal] = useState(text(editing?.per100.kcal ?? initialValues?.kcal))
+  const [protein, setProtein] = useState(text(editing?.per100.protein ?? initialValues?.protein))
+  const [carbs, setCarbs] = useState(text(editing?.per100.carbs ?? initialValues?.carbs))
+  const [fat, setFat] = useState(text(editing?.per100.fat ?? initialValues?.fat))
   const [fiber, setFiber] = useState(text(editing?.per100.fiber))
   const [serving, setServing] = useState(String(editing?.serving ?? 100))
   const [category, setCategory] = useState<FoodCategory>(editing?.category ?? 'dish')

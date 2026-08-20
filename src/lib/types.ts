@@ -206,13 +206,39 @@ export interface FridgeItem {
   state?: FoodState
 }
 
+/** Un ingrédient du repas qui existe déjà dans le catalogue. */
+export interface ChatMealFoodItem {
+  kind: 'food'
+  foodId: string
+  grams: number
+  state?: FoodState
+}
+
+/**
+ * Un ingrédient suggéré par l'assistant qui n'a pas pu être rapproché d'un
+ * aliment du catalogue — proposé à la création, pré-rempli avec l'estimation
+ * du modèle (à vérifier/corriger avant d'enregistrer, comme tout aliment
+ * personnalisé).
+ */
+export interface ChatMealNewFoodItem {
+  kind: 'newFood'
+  name: string
+  grams: number
+  kcal: number
+  protein: number
+  carbs: number
+  fat: number
+}
+
+export type ChatMealItem = ChatMealFoodItem | ChatMealNewFoodItem
+
 /**
  * Un repas concret proposé par l'assistant, extrait du bloc caché <meals> de
- * sa réponse. Chaque item référence un aliment déjà présent au catalogue.
+ * sa réponse.
  */
 export interface ChatMealSuggestion {
   label: string
-  items: { foodId: string; grams: number; state?: FoodState }[]
+  items: ChatMealItem[]
 }
 
 /** Un message de la conversation avec l'assistant nutrition. */

@@ -747,6 +747,22 @@ export function normalize(value: string): string {
 }
 
 /**
+ * Correspondance stricte (nom exact, accents/casse ignorés) sur un libellé
+ * traduit ou un alias — sert à résoudre automatiquement un aliment nommé par
+ * l'assistant sans risquer un faux positif du type « riz » → « riz au lait ».
+ */
+export function findFoodByExactName(foods: Food[], name: string): Food | null {
+  const q = normalize(name)
+  if (!q) return null
+  return (
+    foods.find((item) => {
+      const labels = [item.name, ...Object.values(item.i18n ?? {}), ...(item.aliases ?? [])]
+      return labels.some((label) => normalize(label) === q)
+    }) ?? null
+  )
+}
+
+/**
  * Recherche sur tous les libellés traduits : un utilisateur en français
  * retrouve aussi un aliment en tapant son nom anglais.
  */

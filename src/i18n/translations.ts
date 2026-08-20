@@ -107,6 +107,8 @@ const fr = {
   'chat.suggest.quick': 'Une idée de repas rapide avec le frigo ?',
   'chat.sendToDiary': 'Envoyer au journal',
   'chat.mealAdded': 'Repas ajouté au journal',
+  'chat.createFood': 'Créer',
+  'chat.foodAdded': 'Aliment créé et ajouté au journal',
   'profile.apiKey': 'Clé API Anthropic',
   'profile.apiKeyHint':
     "Utilisée uniquement sur cet appareil, envoyée directement à Anthropic pour l'assistant nutrition. Jamais incluse dans l'export.",
@@ -435,6 +437,8 @@ const pt: Dict = {
   'chat.suggest.quick': 'Uma ideia de refeição rápida com a geladeira?',
   'chat.sendToDiary': 'Enviar ao diário',
   'chat.mealAdded': 'Refeição adicionada ao diário',
+  'chat.createFood': 'Criar',
+  'chat.foodAdded': 'Alimento criado e adicionado ao diário',
   'profile.apiKey': 'Chave de API da Anthropic',
   'profile.apiKeyHint':
     'Usada apenas neste aparelho, enviada diretamente à Anthropic para o assistente de nutrição. Nunca incluída na exportação.',
@@ -760,6 +764,8 @@ const es: Dict = {
   'chat.suggest.quick': '¿Una idea de comida rápida con la nevera?',
   'chat.sendToDiary': 'Enviar al diario',
   'chat.mealAdded': 'Comida añadida al diario',
+  'chat.createFood': 'Crear',
+  'chat.foodAdded': 'Alimento creado y añadido al diario',
   'profile.apiKey': 'Clave de API de Anthropic',
   'profile.apiKeyHint':
     'Se usa solo en este dispositivo, enviada directamente a Anthropic para el asistente de nutrición. Nunca incluida en la exportación.',
@@ -1082,6 +1088,8 @@ const en: Dict = {
   'chat.suggest.quick': 'A quick meal idea with the fridge?',
   'chat.sendToDiary': 'Send to diary',
   'chat.mealAdded': 'Meal added to the diary',
+  'chat.createFood': 'Create',
+  'chat.foodAdded': 'Food created and added to the diary',
   'profile.apiKey': 'Anthropic API key',
   'profile.apiKeyHint':
     'Used only on this device, sent directly to Anthropic for the nutrition assistant. Never included in the export.',
@@ -1403,6 +1411,8 @@ const it: Dict = {
   'chat.suggest.quick': "Un'idea di pasto veloce con il frigo?",
   'chat.sendToDiary': 'Invia al diario',
   'chat.mealAdded': 'Pasto aggiunto al diario',
+  'chat.createFood': 'Crea',
+  'chat.foodAdded': 'Alimento creato e aggiunto al diario',
   'profile.apiKey': 'Chiave API Anthropic',
   'profile.apiKeyHint':
     "Usata solo su questo dispositivo, inviata direttamente ad Anthropic per l'assistente nutrizionale. Mai inclusa nell'esportazione.",

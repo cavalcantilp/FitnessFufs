@@ -2252,6 +2252,12 @@ input[type='range']::-moz-range-thumb {
   max-width: 82%;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.meal-actions-group {
+  display: flex;
+  flex-direction: column;
   gap: 6px;
 }
 
@@ -2269,7 +2275,14 @@ input[type='range']::-moz-range-thumb {
   text-align: left;
 }
 
+.meal-btn.create {
+  border-style: dashed;
+}
+
 .meal-btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   white-space: nowrap;
   font-weight: 600;
 }

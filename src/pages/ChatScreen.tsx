@@ -2,15 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { AnthropicError, askAssistant, type AnthropicTool } from '../lib/anthropic'
 import { MONTHLY_CAP_USD } from '../lib/usage'
-import { extractMealSuggestions } from '../lib/mealSuggestions'
+import { extractMealSuggestions, mealFullyResolved } from '../lib/mealSuggestions'
 import { foodName } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
 import { shiftDay, todayKey } from '../lib/date'
 import { defaultMeal } from '../lib/meals'
-import { IconCheck, IconChevronLeft, IconSend, IconTrash } from '../components/icons'
+import { IconCheck, IconChevronLeft, IconPlus, IconSend, IconTrash } from '../components/icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { CustomFoodSheet } from '../components/CustomFoodSheet'
 import type { TranslationKey } from '../i18n/translations'
 import type {
+  ChatMealNewFoodItem,
   ChatMealSuggestion,
   ChatMessage,
   DiaryEntry,
@@ -129,15 +131,19 @@ function buildSystemPrompt(
       lang +
       '.)',
     '',
-    "Si ta réponse propose un ou plusieurs repas concrets à partir des aliments listés ci-dessus, " +
-      "ajoute tout à la fin, sur une seule ligne, ce bloc cache (jamais montré tel quel, jamais mentionné " +
-      'dans ta réponse) : <meals>[{"label":"court résumé du repas","items":[{"foodId":"identifiant exact ' +
-      'listé ci-dessus","grams":nombre,"state":"raw ou cooked, uniquement si applicable"}]}]</meals>. Un ' +
-      "objet par repas proposé, avec un grams réaliste même pour un aliment sans quantité précisée. " +
-      "N'utilise jamais un foodId qui n'est pas listé ci-dessus — pour un ingrédient à ajouter absent de " +
-      "ces listes, ne l'inclus simplement pas dans ce bloc. Si aucun repas concret n'est proposé dans " +
-      "cette réponse, ajoute quand même <meals>[]</meals>. Ce bloc doit toujours être la toute dernière " +
-      'chose de ta réponse, rien après lui.',
+    "Si ta réponse propose un ou plusieurs repas concrets, ajoute tout à la fin, sur une seule ligne, ce " +
+      "bloc caché (jamais montré tel quel, jamais mentionné dans ta réponse) : " +
+      '<meals>[{"label":"court résumé du repas","items":[...]}]</meals>. Chaque item est soit ' +
+      '{"foodId":"identifiant exact listé ci-dessus","grams":nombre,"state":"raw ou cooked, uniquement si ' +
+      'applicable"} pour un aliment déjà disponible, soit {"name":"nom de l\'ingrédient à ajouter",' +
+      '"grams":nombre,"kcal":nombre,"protein":nombre,"carbs":nombre,"fat":nombre} pour un ingrédient simple ' +
+      "qui manque — kcal/protein/carbs/fat étant ton estimation pour 100 g (l'application vérifie d'abord " +
+      "si cet aliment existe déjà dans son catalogue avant de proposer de le créer, donc n'hésite pas à " +
+      "nommer des ingrédients courants même si tu ne sais pas s'ils sont déjà disponibles). Un objet par " +
+      "repas proposé, avec un grams réaliste même pour un aliment sans quantité précisée. N'utilise jamais " +
+      "un foodId qui n'est pas listé ci-dessus. Si aucun repas concret n'est proposé dans cette réponse, " +
+      'ajoute quand même <meals>[]</meals>. Ce bloc doit toujours être la toute dernière chose de ta ' +
+      'réponse, rien après lui.',
   ].join('\n')
 }
 
@@ -216,7 +222,18 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
   // Repas déjà envoyés au journal, identifiés par "id du message-index du repas" —
   // sert uniquement à désactiver le bouton une fois cliqué, pas persisté.
   const [sentMeals, setSentMeals] = useState<Record<string, boolean>>({})
+  // Ingrédients créés depuis une suggestion et déjà ajoutés au journal — sert
+  // uniquement à désactiver la puce "Créer", pas persisté.
+  const [createdFoods, setCreatedFoods] = useState<Record<string, boolean>>({})
   const [confirmingClear, setConfirmingClear] = useState(false)
+  // Écran de création d'aliment ouvert depuis une suggestion, pré-rempli avec
+  // l'estimation du modèle — remplace tout l'écran, comme dans l'onglet Ajouter.
+  const [creatingFood, setCreatingFood] = useState<{
+    messageId: string
+    mealIndex: number
+    itemIndex: number
+    item: ChatMealNewFoodItem
+  } | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
   // Estimation seulement — pas une vraie limite de facturation Anthropic —
@@ -292,12 +309,33 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     const date = todayKey()
     const meal = defaultMeal()
     for (const item of items) {
+      if (item.kind !== 'food') continue
       const food = foods.find((entry) => entry.id === item.foodId)
       if (!food) continue
       addEntry(date, meal, food, item.grams, item.state)
     }
     setSentMeals((current) => ({ ...current, [`${messageId}-${mealIndex}`]: true }))
     onToast(t('chat.mealAdded'))
+  }
+
+  if (creatingFood) {
+    const { item } = creatingFood
+    return (
+      <CustomFoodSheet
+        initialName={item.name}
+        initialValues={{ kcal: item.kcal, protein: item.protein, carbs: item.carbs, fat: item.fat }}
+        onClose={() => setCreatingFood(null)}
+        onCreated={(food) => {
+          addEntry(todayKey(), defaultMeal(), food, item.grams)
+          setCreatedFoods((current) => ({
+            ...current,
+            [`${creatingFood.messageId}-${creatingFood.mealIndex}-${creatingFood.itemIndex}`]: true,
+          }))
+          setCreatingFood(null)
+          onToast(t('chat.foodAdded'))
+        }}
+      />
+    )
   }
 
   return (
@@ -328,19 +366,45 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
             <div className={`chat-bubble ${message.role}`}>{message.text}</div>
             {message.meals && message.meals.length > 0 ? (
               <div className="meal-actions">
-                {message.meals.map((suggestion, index) => {
-                  const sent = sentMeals[`${message.id}-${index}`]
+                {message.meals.map((suggestion, mealIndex) => {
+                  const sent = sentMeals[`${message.id}-${mealIndex}`]
                   return (
-                    <button
-                      type="button"
-                      className="meal-btn"
-                      key={index}
-                      disabled={sent}
-                      onClick={() => sendMealToDiary(message.id, index, suggestion.items)}
-                    >
-                      <span>{suggestion.label}</span>
-                      {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
-                    </button>
+                    <div className="meal-actions-group" key={mealIndex}>
+                      {mealFullyResolved(suggestion) ? (
+                        <button
+                          type="button"
+                          className="meal-btn"
+                          disabled={sent}
+                          onClick={() => sendMealToDiary(message.id, mealIndex, suggestion.items)}
+                        >
+                          <span>{suggestion.label}</span>
+                          {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
+                        </button>
+                      ) : null}
+                      {suggestion.items.map((item, itemIndex) => {
+                        if (item.kind !== 'newFood') return null
+                        const key = `${message.id}-${mealIndex}-${itemIndex}`
+                        const created = createdFoods[key]
+                        return (
+                          <button
+                            type="button"
+                            className="meal-btn create"
+                            key={itemIndex}
+                            disabled={created}
+                            onClick={() => setCreatingFood({ messageId: message.id, mealIndex, itemIndex, item })}
+                          >
+                            <span>{item.name}</span>
+                            {created ? (
+                              <IconCheck size={16} />
+                            ) : (
+                              <span className="meal-btn-cta">
+                                <IconPlus size={14} /> {t('chat.createFood')}
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
                   )
                 })}
               </div>

@@ -140,14 +140,15 @@ aucun serveur, aucun envoi de données.
   à cet onglet : il s'ouvre désormais depuis un bouton dédié de l'en-tête,
   à droite du sélecteur de langue.
 - **Assistant nutrition** — bouton flottant en bas à droite, façon
-  WhatsApp, qui ouvre une conversation avec Claude. Chaque message part
-  avec le contenu du frigo et les macros restants du jour en contexte
+  WhatsApp, qui ouvre une conversation avec Google Gemini. Chaque message
+  part avec le contenu du frigo et les macros restants du jour en contexte
   invisible, sans qu'il faille les retaper. Des suggestions toutes prêtes
   (« plan du jour avec le frigo », « que me reste-t-il à manger ? ») lancent
-  la conversation d'un geste. Fonctionne en appelant l'API Anthropic
-  directement depuis le navigateur avec une clé personnelle, saisie dans le
-  profil et jamais incluse dans l'export — pensé pour un usage individuel,
-  sans backend.
+  la conversation d'un geste. Fonctionne en appelant l'API Gemini
+  directement depuis le navigateur avec une clé personnelle gratuite
+  (aistudio.google.com), saisie dans le profil et jamais incluse dans
+  l'export — pensé pour un usage individuel, sans backend. Le bouton ne
+  s'affiche qu'une fois la clé renseignée.
 
 ## Développement
 

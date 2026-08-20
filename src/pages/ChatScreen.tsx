@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { AnthropicError, askAssistant } from '../lib/anthropic'
+import { GeminiError, askAssistant } from '../lib/gemini'
 import { foodName } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
 import { todayKey } from '../lib/date'
@@ -94,7 +94,7 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
       const reply = await askAssistant(apiKey, [...chatMessages, userMessage], system)
       addChatMessage({ id: newId(), role: 'assistant', text: reply, at: new Date().toISOString() })
     } catch (err) {
-      setError(err instanceof AnthropicError ? err.message : t('chat.error'))
+      setError(err instanceof GeminiError ? err.message : t('chat.error'))
     } finally {
       setSending(false)
     }

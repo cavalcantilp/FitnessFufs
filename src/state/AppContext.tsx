@@ -119,7 +119,7 @@ interface AppState {
   removeFridgeItem: (id: string) => void
 
   /**
-   * Clé personnelle Anthropic, envoyée directement depuis le navigateur.
+   * Clé personnelle Google Gemini, envoyée directement depuis le navigateur.
    * Volontairement absente de l'export/import : un secret ne doit pas finir
    * dans une sauvegarde JSON partagée par erreur.
    */

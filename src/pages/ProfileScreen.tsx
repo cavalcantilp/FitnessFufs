@@ -84,7 +84,7 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
             autoComplete="off"
             value={apiKey}
             onChange={(event) => setApiKey(event.target.value)}
-            placeholder="sk-ant-…"
+            placeholder="AIzaSy…"
           />
         </div>
       </div>

@@ -247,6 +247,10 @@ export const BUILTIN_FOODS: Food[] = [
   food('cauliflower', ['Chou-fleur', 'Couve-flor', 'Coliflor', 'Cauliflower', 'Cavolfiore'], 25, 1.9, 5, 0.3, 2, 150, 'veg', [30, 299, 22, 0.4, 15, 0.27, 48, 0, 0]),
   food('cabbage_kale', ['Chou kale', 'Couve', 'Col rizada', 'Kale', 'Cavolo nero'], 49, 4.3, 9, 0.9, 3, 100, 'veg', [38, 447, 150, 1.5, 47, 0.56, 120, 0, 0]),
   food('eggplant', ['Aubergine', 'Beringela', 'Berenjena', 'Aubergine', 'Melanzana'], 25, 1, 6, 0.2, 3, 150, 'veg', [2, 229, 9, 0.2, 14, 0.16, 2.2, 0, 0]),
+  food('cherry_tomato', ['Tomate cerise', 'Tomate cereja', 'Tomate cherry', 'Cherry tomato', 'Pomodorino'], 18, 0.9, 3.9, 0.2, 1.2, 100, 'veg', [5, 237, 10, 0.3, 11, 0.17, 25, 0, 0]),
+  food('parsley', ['Persil', 'Salsa', 'Perejil', 'Parsley', 'Prezzemolo'], 36, 3, 6.3, 0.8, 3.3, 10, 'veg', [56, 554, 138, 6.2, 50, 1.07, 133, 0, 0]),
+  food('cabbage_white', ['Chou blanc', 'Repolho', 'Repollo', 'White cabbage', 'Cavolo cappuccio'], 25, 1.3, 5.8, 0.1, 2.5, 150, 'veg', [18, 170, 40, 0.47, 12, 0.18, 36.6, 0, 0]),
+  food('snow_pea', ['Pois gourmand', 'Ervilha-torta', 'Tirabeque', 'Snow pea', 'Taccole'], 42, 2.8, 7.6, 0.2, 2.6, 100, 'veg', [4, 200, 43, 2.1, 24, 0.27, 60, 0, 0]),
 
   // ---------- Matières grasses ----------
   food('olive_oil', ["Huile d'olive", 'Azeite', 'Aceite de oliva', 'Olive oil', "Olio d'oliva"], 884, 0, 0, 100, 0, 10, 'fat', [2, 1, 1, 0.56, 0, 0, 0, 0, 0]),
@@ -401,6 +405,7 @@ export const BUILTIN_FOODS: Food[] = [
   food('lime', ['Citron vert', 'Lima', 'Lima', 'Lime', 'Lime'], 30, 0.7, 11, 0.2, 2.8, 40, 'fruit'),
   food('pear', ['Poire', 'Pera', 'Pera', 'Pear', 'Pera'], 57, 0.4, 15, 0.1, 3.1, 150, 'fruit'),
   food('peach', ['Pêche', 'Pêssego', 'Melocotón', 'Peach', 'Pesca'], 39, 0.9, 10, 0.3, 1.5, 150, 'fruit'),
+  food('nectarine', ['Nectarine', 'Nectarina', 'Nectarina', 'Nectarine', 'Nettarina'], 44, 1.1, 10.6, 0.3, 1.7, 150, 'fruit'),
   food('apricot', ['Abricot', 'Alperce', 'Albaricoque', 'Apricot', 'Albicocca'], 48, 1.4, 11, 0.4, 2, 40, 'fruit'),
   food('plum', ['Prune', 'Ameixa', 'Ciruela', 'Plum', 'Prugna'], 46, 0.7, 11, 0.3, 1.4, 60, 'fruit'),
   food('cherry', ['Cerises', 'Cerejas', 'Cerezas', 'Cherries', 'Ciliegie'], 63, 1.1, 16, 0.2, 2.1, 100, 'fruit'),

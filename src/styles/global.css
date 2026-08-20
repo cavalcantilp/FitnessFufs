@@ -673,22 +673,58 @@ input[type='range']::-moz-range-thumb {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  position: relative;
+}
+
+/* Pendant le glisser : au-dessus des autres repas, avec un peu de relief. */
+.meal.dragging {
+  z-index: 30;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.45);
+  touch-action: none;
 }
 
 .meal-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   padding: 14px 16px;
   border-bottom: 1px solid rgba(71, 85, 105, 0.5);
 }
 
+.meal-grip {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  color: var(--text-sub);
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .meal-head .name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.meal-rename-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
   font-weight: 700;
   font-size: 0.95rem;
 }
 
 .meal-head .kcal {
+  margin-left: auto;
+  flex: none;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--accent);
@@ -773,6 +809,16 @@ input[type='range']::-moz-range-thumb {
   padding: 14px 16px;
   font-size: 0.82rem;
   color: var(--text-sub);
+}
+
+.meal-new-row {
+  display: flex;
+  gap: 8px;
+}
+
+.meal-new-row input {
+  flex: 1;
+  min-width: 0;
 }
 
 /* ---------- Recherche d'aliments ---------- */

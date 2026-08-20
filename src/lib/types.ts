@@ -82,7 +82,23 @@ export interface PortionUnit {
   grams: number
 }
 
-export type MealId = 'breakfast' | 'lunch' | 'dinner' | 'snack'
+/**
+ * Identifiant d'un repas — 'breakfast'/'lunch'/'dinner'/'snack' pour les
+ * quatre repas par défaut, un id généré pour un repas personnalisé. Ouvert
+ * (pas une union fermée) pour ne jamais invalider une entrée de journal déjà
+ * enregistrée si l'utilisateur renomme ou réorganise ses repas ensuite.
+ */
+export type MealId = string
+
+/**
+ * Définition d'un repas tel qu'affiché dans le journal, dans l'ordre où il
+ * doit apparaître (l'ordre du tableau fait foi, pas de champ dédié).
+ */
+export interface MealDef {
+  id: MealId
+  /** Titre personnalisé. Absent pour un repas par défaut non renommé : le libellé vient alors de meal.<id>. */
+  label?: string
+}
 
 /**
  * État de préparation. Décisif sur le poids : 100 g de riz cru donnent environ

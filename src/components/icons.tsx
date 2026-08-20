@@ -199,6 +199,28 @@ export function IconComment({ size = 14 }: IconProps) {
   )
 }
 
+export function IconGrip({ size = 18 }: IconProps) {
+  return (
+    <svg {...base(size)} fill="currentColor" stroke="none" aria-hidden="true">
+      <circle cx="9" cy="6" r="1.4" />
+      <circle cx="15" cy="6" r="1.4" />
+      <circle cx="9" cy="12" r="1.4" />
+      <circle cx="15" cy="12" r="1.4" />
+      <circle cx="9" cy="18" r="1.4" />
+      <circle cx="15" cy="18" r="1.4" />
+    </svg>
+  )
+}
+
+export function IconEdit({ size = 16 }: IconProps) {
+  return (
+    <svg {...base(size)} aria-hidden="true">
+      <path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z" />
+      <path d="M13.5 7.5l3 3" />
+    </svg>
+  )
+}
+
 export function Logo({ size = 84 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 96 96" aria-hidden="true">

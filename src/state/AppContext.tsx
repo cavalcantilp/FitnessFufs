@@ -11,6 +11,7 @@ import { BUILTIN_FOODS } from '../lib/foods'
 import { computeTargets, nutrientsFor, type Targets } from '../lib/nutrition'
 import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
 import { currentMonthKey } from '../lib/usage'
+import { DEFAULT_MEALS, MAX_CUSTOM_MEALS } from '../lib/meals'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
 import type {
   ChatMessage,
@@ -21,6 +22,7 @@ import type {
   FridgeItem,
   FridgeLocation,
   Lang,
+  MealDef,
   MealId,
   MeasurementEntry,
   MeasurementKey,
@@ -53,6 +55,7 @@ export interface ExportPayload {
   notes?: Record<string, string>
   measurements?: MeasurementEntry[]
   fridge?: FridgeItem[]
+  mealDefs?: MealDef[]
 }
 
 interface AppState {
@@ -121,6 +124,12 @@ interface AppState {
   updateFridgeItem: (id: string, grams: number | undefined) => void
   removeFridgeItem: (id: string) => void
 
+  /** Repas du journal, dans l'ordre d'affichage — les quatre par défaut, plus jusqu'à 3 personnalisés. */
+  mealDefs: MealDef[]
+  addMeal: (label: string) => void
+  renameMeal: (id: string, label: string) => void
+  reorderMeals: (orderedIds: string[]) => void
+
   /**
    * Clé personnelle Anthropic, envoyée directement depuis le navigateur.
    * Volontairement absente de l'export/import : un secret ne doit pas finir
@@ -174,6 +183,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   )
   const [notes, setNotes] = useState<Record<string, string>>(() => load(STORAGE_KEYS.notes, {}))
   const [fridge, setFridge] = useState<FridgeItem[]>(() => load(STORAGE_KEYS.fridge, []))
+  const [mealDefs, setMealDefs] = useState<MealDef[]>(() => load(STORAGE_KEYS.meals, DEFAULT_MEALS))
   const [apiKey, setApiKey] = useState<string>(() => load(STORAGE_KEYS.apiKey, ''))
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => load(STORAGE_KEYS.chat, []))
   const [usage, setUsage] = useState<MonthlyUsage>(() => {
@@ -195,6 +205,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
   useEffect(() => save(STORAGE_KEYS.notes, notes), [notes])
   useEffect(() => save(STORAGE_KEYS.fridge, fridge), [fridge])
+  useEffect(() => save(STORAGE_KEYS.meals, mealDefs), [mealDefs])
   useEffect(() => save(STORAGE_KEYS.apiKey, apiKey), [apiKey])
   useEffect(() => save(STORAGE_KEYS.chat, chatMessages), [chatMessages])
   useEffect(() => save(STORAGE_KEYS.usage, usage), [usage])
@@ -386,6 +397,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFridge((current) => current.filter((item) => item.id !== id))
   }, [])
 
+  const addMeal = useCallback((label: string) => {
+    const trimmed = label.trim()
+    if (!trimmed) return
+    setMealDefs((current) => {
+      const customCount = current.filter((meal) => !DEFAULT_MEALS.some((entry) => entry.id === meal.id)).length
+      if (customCount >= MAX_CUSTOM_MEALS) return current
+      return [...current, { id: newId(), label: trimmed }]
+    })
+  }, [])
+
+  const renameMeal = useCallback((id: string, label: string) => {
+    const trimmed = label.trim()
+    if (!trimmed) return
+    setMealDefs((current) => current.map((meal) => (meal.id === id ? { ...meal, label: trimmed } : meal)))
+  }, [])
+
+  const reorderMeals = useCallback((orderedIds: string[]) => {
+    setMealDefs((current) => {
+      const byId = new Map(current.map((meal) => [meal.id, meal]))
+      const reordered = orderedIds.map((id) => byId.get(id)).filter((meal): meal is MealDef => Boolean(meal))
+      // Un id oublié dans orderedIds (jamais censé arriver) reste tout de même visible, à la fin.
+      const missing = current.filter((meal) => !orderedIds.includes(meal.id))
+      return [...reordered, ...missing]
+    })
+  }, [])
+
   const addChatMessage = useCallback((message: ChatMessage) => {
     setChatMessages((current) => [...current, message])
   }, [])
@@ -414,8 +451,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       notes,
       measurements,
       fridge,
+      mealDefs,
     }),
-    [profile, entries, weights, customFoods, favorites, dayMacros, notes, measurements, fridge],
+    [profile, entries, weights, customFoods, favorites, dayMacros, notes, measurements, fridge, mealDefs],
   )
 
   const importData = useCallback((payload: unknown) => {
@@ -433,6 +471,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setNotes(data.notes ?? {})
     setMeasurements(Array.isArray(data.measurements) ? data.measurements : [])
     setFridge(Array.isArray(data.fridge) ? data.fridge : [])
+    setMealDefs(Array.isArray(data.mealDefs) && data.mealDefs.length > 0 ? data.mealDefs : DEFAULT_MEALS)
     setOnboarded(true)
     return true
   }, [])
@@ -448,6 +487,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setDayMacros({})
     setNotes({})
     setFridge([])
+    setMealDefs(DEFAULT_MEALS)
     setApiKey('')
     setChatMessages([])
     setUsage({ month: currentMonthKey(), costUsd: 0 })
@@ -499,6 +539,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addFridgeItem,
       updateFridgeItem,
       removeFridgeItem,
+      mealDefs,
+      addMeal,
+      renameMeal,
+      reorderMeals,
       apiKey,
       setApiKey,
       chatMessages,
@@ -550,6 +594,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addFridgeItem,
       updateFridgeItem,
       removeFridgeItem,
+      mealDefs,
+      addMeal,
+      renameMeal,
+      reorderMeals,
       apiKey,
       setApiKey,
       chatMessages,

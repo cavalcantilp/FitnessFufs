@@ -6,7 +6,7 @@ import { extractMealSuggestions, mealFullyResolved } from '../lib/mealSuggestion
 import { foodName } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
 import { shiftDay, todayKey } from '../lib/date'
-import { defaultMeal } from '../lib/meals'
+import { defaultMeal, mealLabel } from '../lib/meals'
 import { IconCheck, IconChevronLeft, IconPlus, IconSend, IconTrash } from '../components/icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { CustomFoodSheet } from '../components/CustomFoodSheet'
@@ -19,6 +19,7 @@ import type {
   FoodState,
   FridgeLocation,
   Lang,
+  MealDef,
   MeasurementEntry,
   WeightEntry,
 } from '../lib/types'
@@ -154,6 +155,7 @@ function formatHistory(
     entries: DiaryEntry[]
     weights: WeightEntry[]
     measurements: MeasurementEntry[]
+    mealDefs: MealDef[]
     t: (key: TranslationKey, vars?: Record<string, string | number>) => string
     lang: Lang
   },
@@ -161,6 +163,10 @@ function formatHistory(
   const days = Math.min(30, Math.max(1, Math.round(Number(input.days) || 7)))
   const today = todayKey()
   const lines: string[] = []
+  const labelForMeal = (mealId: string) => {
+    const meal = context.mealDefs.find((entry) => entry.id === mealId)
+    return meal ? mealLabel(meal, context.t) : mealId
+  }
 
   for (let i = 1; i <= days; i++) {
     const date = shiftDay(today, -i)
@@ -172,9 +178,7 @@ function formatHistory(
     const parts = [date]
     if (dayEntries.length > 0) {
       const totals = sumNutrients(dayEntries.map((entry) => entry.nutrients))
-      const items = dayEntries
-        .map((entry) => `${entry.label} ${entry.grams} g [${context.t(`meal.${entry.meal}`)}]`)
-        .join(', ')
+      const items = dayEntries.map((entry) => `${entry.label} ${entry.grams} g [${labelForMeal(entry.meal)}]`).join(', ')
       parts.push(
         `repas: ${items} — total ${Math.round(totals.kcal)} kcal, ${Math.round(totals.protein)} g prot, ` +
           `${Math.round(totals.carbs)} g gluc, ${Math.round(totals.fat)} g lip`,
@@ -204,6 +208,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     entries,
     weights,
     measurements,
+    mealDefs,
     addEntry,
     apiKey,
     chatMessages,
@@ -278,16 +283,19 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
           }
         })
         .filter((entry): entry is StockIndexItem => entry !== null)
-      const todayLines = entriesFor(today).map(
-        (entry) => `[${t(`meal.${entry.meal}`)}] ${entry.label}${stateLabel(entry.state)} — ${entry.grams} g`,
-      )
+      const todayLines = entriesFor(today).map((entry) => {
+        const meal = mealDefs.find((defEntry) => defEntry.id === entry.meal)
+        const label = meal ? mealLabel(meal, t) : entry.meal
+        return `[${label}] ${entry.label}${stateLabel(entry.state)} — ${entry.grams} g`
+      })
       const system = buildSystemPrompt(lang, stockIndex, remaining, todayLines)
       const reply = await askAssistant(
         apiKey,
         [...chatMessages, userMessage],
         system,
         [HISTORY_TOOL],
-        (name, toolInput) => (name === 'get_history' ? formatHistory(toolInput, { entries, weights, measurements, t, lang }) : 'Outil inconnu.'),
+        (name, toolInput) =>
+          name === 'get_history' ? formatHistory(toolInput, { entries, weights, measurements, mealDefs, t, lang }) : 'Outil inconnu.',
       )
       const { text, meals } = extractMealSuggestions(reply.text, foods)
       addChatMessage({

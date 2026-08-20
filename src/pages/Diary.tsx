@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { Ring } from '../components/Ring'
 import { MacroBars } from '../components/MacroBars'
@@ -10,14 +10,16 @@ import {
   IconChevronRight,
   IconComment,
   IconCopy,
+  IconEdit,
+  IconGrip,
   IconPlus,
   IconTrash,
 } from '../components/icons'
 import { formatDay, shiftDay, todayKey } from '../lib/date'
 import { microsFor, sumMicros, sumNutrients } from '../lib/nutrition'
-import { MEALS } from '../lib/meals'
+import { DEFAULT_MEALS, MAX_CUSTOM_MEALS, mealLabel } from '../lib/meals'
 import { foodName } from '../lib/foods'
-import type { MealId } from '../lib/types'
+import type { MealDef, MealId } from '../lib/types'
 
 interface DiaryProps {
   date: string
@@ -26,8 +28,26 @@ interface DiaryProps {
   onToast: (message: string) => void
 }
 
+/** Doigt immobile assez longtemps sur la poignée pour déclencher le glisser, pas juste un tap. */
+const LONG_PRESS_MS = 350
+/** Au-delà, un doigt qui bouge avant la fin du long-press est un scroll, pas une intention de glisser. */
+const MOVE_CANCEL_PX = 10
+
 export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
-  const { t, lang, entriesFor, removeEntry, targetsFor, copyDay, foods, notes } = useApp()
+  const {
+    t,
+    lang,
+    entriesFor,
+    removeEntry,
+    targetsFor,
+    copyDay,
+    foods,
+    notes,
+    mealDefs,
+    addMeal,
+    renameMeal,
+    reorderMeals,
+  } = useApp()
   const [noteOpen, setNoteOpen] = useState(false)
 
   // Les objectifs du jour consulté, pas ceux du profil : la journée peut avoir
@@ -43,10 +63,10 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
 
   const byMeal = useMemo(() => {
     const groups = new Map<MealId, typeof dayEntries>()
-    MEALS.forEach((meal) => groups.set(meal, []))
+    mealDefs.forEach((meal) => groups.set(meal.id, []))
     dayEntries.forEach((entry) => groups.get(entry.meal)?.push(entry))
     return groups
-  }, [dayEntries])
+  }, [dayEntries, mealDefs])
 
   /** Le libellé suit la langue courante tant que l'aliment existe encore. */
   const labelOf = (foodId: string, fallback: string) => {
@@ -55,6 +75,168 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
   }
 
   const remaining = targets.kcal - eaten.kcal
+
+  // --- Réorganisation des repas par glisser-déposer (appui long sur la poignée) ---
+  const [order, setOrder] = useState<string[]>(() => mealDefs.map((meal) => meal.id))
+  const orderRef = useRef(order)
+  orderRef.current = order
+  const [draggingId, setDraggingId] = useState<string | null>(null)
+  const nodeRefs = useRef<Map<string, HTMLElement>>(new Map())
+  const dragInfo = useRef<{
+    id: string
+    pointerId: number
+    pointerStartX: number
+    pointerStartY: number
+    naturalTop: number
+    height: number
+    longPressTimer: number | null
+    active: boolean
+  } | null>(null)
+
+  useEffect(() => {
+    // Ne pas resynchroniser pendant un glisser en cours : ça couperait l'ordre en vol.
+    if (!dragInfo.current) setOrder(mealDefs.map((meal) => meal.id))
+  }, [mealDefs])
+
+  const orderedMeals = order
+    .map((id) => mealDefs.find((meal) => meal.id === id))
+    .filter((meal): meal is MealDef => Boolean(meal))
+
+  const endDrag = () => {
+    const info = dragInfo.current
+    if (info) {
+      if (info.longPressTimer) window.clearTimeout(info.longPressTimer)
+      const node = nodeRefs.current.get(info.id)
+      if (node) node.style.transform = ''
+      if (info.active) reorderMeals(orderRef.current)
+    }
+    dragInfo.current = null
+    setDraggingId(null)
+    window.removeEventListener('pointermove', onDragMove)
+    window.removeEventListener('pointerup', endDrag)
+    window.removeEventListener('pointercancel', endDrag)
+  }
+
+  const onDragMove = (event: PointerEvent) => {
+    const info = dragInfo.current
+    if (!info) return
+
+    if (!info.active) {
+      if (
+        Math.abs(event.clientX - info.pointerStartX) > MOVE_CANCEL_PX ||
+        Math.abs(event.clientY - info.pointerStartY) > MOVE_CANCEL_PX
+      ) {
+        // Le doigt a bougé avant la fin de l'appui long : c'est un scroll, pas un glisser.
+        if (info.longPressTimer) window.clearTimeout(info.longPressTimer)
+        dragInfo.current = null
+        window.removeEventListener('pointermove', onDragMove)
+        window.removeEventListener('pointerup', endDrag)
+        window.removeEventListener('pointercancel', endDrag)
+      }
+      return
+    }
+
+    const translateY = event.clientY - info.pointerStartY
+    const node = nodeRefs.current.get(info.id)
+    if (node) node.style.transform = `translateY(${translateY}px)`
+
+    const visualCenter = info.naturalTop + translateY + info.height / 2
+    const current = orderRef.current
+    const idx = current.indexOf(info.id)
+
+    if (idx < current.length - 1) {
+      const nextNode = nodeRefs.current.get(current[idx + 1])
+      if (nextNode) {
+        const nextRect = nextNode.getBoundingClientRect()
+        if (visualCenter > nextRect.top + nextRect.height / 2) {
+          info.naturalTop += nextRect.height
+          const next = [...current]
+          ;[next[idx], next[idx + 1]] = [next[idx + 1], next[idx]]
+          setOrder(next)
+          return
+        }
+      }
+    }
+    if (idx > 0) {
+      const prevNode = nodeRefs.current.get(current[idx - 1])
+      if (prevNode) {
+        const prevRect = prevNode.getBoundingClientRect()
+        if (visualCenter < prevRect.top + prevRect.height / 2) {
+          info.naturalTop -= prevRect.height
+          const next = [...current]
+          ;[next[idx], next[idx - 1]] = [next[idx - 1], next[idx]]
+          setOrder(next)
+        }
+      }
+    }
+  }
+
+  const onGripPointerDown = (id: string, event: React.PointerEvent) => {
+    event.preventDefault()
+    const pointerId = event.pointerId
+    const pointerStartX = event.clientX
+    const pointerStartY = event.clientY
+
+    const timer = window.setTimeout(() => {
+      const node = nodeRefs.current.get(id)
+      if (!node || !dragInfo.current) return
+      const rect = node.getBoundingClientRect()
+      dragInfo.current = {
+        ...dragInfo.current,
+        naturalTop: rect.top,
+        height: rect.height,
+        longPressTimer: null,
+        active: true,
+      }
+      setDraggingId(id)
+      try {
+        node.setPointerCapture(pointerId)
+      } catch {
+        // Le pointeur a pu être relâché entre-temps : rien à faire de plus.
+      }
+    }, LONG_PRESS_MS)
+
+    dragInfo.current = {
+      id,
+      pointerId,
+      pointerStartX,
+      pointerStartY,
+      naturalTop: 0,
+      height: 0,
+      longPressTimer: timer,
+      active: false,
+    }
+
+    window.addEventListener('pointermove', onDragMove)
+    window.addEventListener('pointerup', endDrag)
+    window.addEventListener('pointercancel', endDrag)
+  }
+
+  // --- Renommage d'un repas ---
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  const [renameValue, setRenameValue] = useState('')
+
+  const startRename = (meal: MealDef) => {
+    setRenamingId(meal.id)
+    setRenameValue(mealLabel(meal, t))
+  }
+
+  const commitRename = () => {
+    if (renamingId) renameMeal(renamingId, renameValue)
+    setRenamingId(null)
+  }
+
+  // --- Ajout d'un repas personnalisé (jusqu'à MAX_CUSTOM_MEALS) ---
+  const [addingMeal, setAddingMeal] = useState(false)
+  const [newMealName, setNewMealName] = useState('')
+  const customMealCount = mealDefs.filter((meal) => !DEFAULT_MEALS.some((entry) => entry.id === meal.id)).length
+  const canAddMeal = customMealCount < MAX_CUSTOM_MEALS
+
+  const commitAddMeal = () => {
+    if (newMealName.trim()) addMeal(newMealName)
+    setNewMealName('')
+    setAddingMeal(false)
+  }
 
   /**
    * Totaux de micronutriments du jour, et part des calories provenant
@@ -196,13 +378,55 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
         <MicroPanel micros={dayMicros} coverage={microCoverage} />
       </div>
 
-      {MEALS.map((meal) => {
-        const items = byMeal.get(meal) ?? []
+      {orderedMeals.map((meal) => {
+        const items = byMeal.get(meal.id) ?? []
         const total = sumNutrients(items.map((entry) => entry.nutrients))
         return (
-          <section className="meal" key={meal}>
+          <section
+            className={`meal${draggingId === meal.id ? ' dragging' : ''}`}
+            key={meal.id}
+            ref={(node) => {
+              if (node) nodeRefs.current.set(meal.id, node)
+              else nodeRefs.current.delete(meal.id)
+            }}
+          >
             <header className="meal-head">
-              <span className="name">{t(`meal.${meal}`)}</span>
+              <button
+                type="button"
+                className="meal-grip"
+                aria-label={t('diary.reorderMeal')}
+                onPointerDown={(event) => onGripPointerDown(meal.id, event)}
+              >
+                <IconGrip size={16} />
+              </button>
+
+              {renamingId === meal.id ? (
+                <input
+                  type="text"
+                  autoComplete="off"
+                  className="meal-rename-input"
+                  value={renameValue}
+                  autoFocus
+                  onChange={(event) => setRenameValue(event.target.value)}
+                  onBlur={commitRename}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') commitRename()
+                    if (event.key === 'Escape') setRenamingId(null)
+                  }}
+                />
+              ) : (
+                <span className="name">{mealLabel(meal, t)}</span>
+              )}
+
+              <button
+                type="button"
+                className="icon-btn"
+                aria-label={t('diary.renameMeal')}
+                onClick={() => startRename(meal)}
+              >
+                <IconEdit size={15} />
+              </button>
+
               <span className="kcal">{total.kcal} kcal</span>
             </header>
 
@@ -234,13 +458,43 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
               ))
             )}
 
-            <button type="button" className="meal-add" onClick={() => onAddTo(meal)}>
+            <button type="button" className="meal-add" onClick={() => onAddTo(meal.id)}>
               <IconPlus size={16} />
               {t('diary.addFood')}
             </button>
           </section>
         )
       })}
+
+      {canAddMeal ? (
+        addingMeal ? (
+          <div className="meal-new-row">
+            <input
+              type="text"
+              autoComplete="off"
+              autoFocus
+              value={newMealName}
+              placeholder={t('diary.newMealPlaceholder')}
+              onChange={(event) => setNewMealName(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') commitAddMeal()
+                if (event.key === 'Escape') {
+                  setNewMealName('')
+                  setAddingMeal(false)
+                }
+              }}
+            />
+            <button type="button" className="btn small" onClick={commitAddMeal}>
+              {t('common.save')}
+            </button>
+          </div>
+        ) : (
+          <button type="button" className="btn secondary" onClick={() => setAddingMeal(true)}>
+            <IconPlus size={16} />
+            {t('diary.addMeal')}
+          </button>
+        )
+      ) : null}
 
       <button type="button" className="btn secondary" onClick={handleCopy}>
         <IconCopy />

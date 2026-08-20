@@ -4,7 +4,7 @@ import { MicroPanel } from './MicroPanel'
 import { useApp } from '../state/AppContext'
 import { foodName, statesOf } from '../lib/foods'
 import { microsFor, nutrientsFor, portionOf } from '../lib/nutrition'
-import { MEALS } from '../lib/meals'
+import { mealLabel } from '../lib/meals'
 import type { TranslationKey } from '../i18n/translations'
 import type { Food, FoodState, MealId, PortionKey } from '../lib/types'
 
@@ -19,7 +19,7 @@ interface QuantitySheetProps {
 }
 
 export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit }: QuantitySheetProps) {
-  const { t, lang } = useApp()
+  const { t, lang, mealDefs } = useApp()
   const states = statesOf(food)
   const [state, setState] = useState<FoodState | undefined>(food.state)
   const [selectedMeal, setSelectedMeal] = useState<MealId>(meal)
@@ -131,9 +131,9 @@ export function QuantitySheet({ food, meal, onConfirm, onClose, onDelete, onEdit
           value={selectedMeal}
           onChange={(event) => setSelectedMeal(event.target.value as MealId)}
         >
-          {MEALS.map((entry) => (
-            <option key={entry} value={entry}>
-              {t(`meal.${entry}`)}
+          {mealDefs.map((entry) => (
+            <option key={entry.id} value={entry.id}>
+              {mealLabel(entry, t)}
             </option>
           ))}
         </select>

@@ -5,11 +5,12 @@ import { MONTHLY_CAP_USD } from '../lib/usage'
 import { extractMealSuggestions, mealFullyResolved } from '../lib/mealSuggestions'
 import { foodName, statesOf } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
-import { shiftDay, todayKey } from '../lib/date'
+import { formatDay, shiftDay, todayKey } from '../lib/date'
 import { defaultMeal, mealLabel } from '../lib/meals'
-import { IconCheck, IconChevronLeft, IconClose, IconPlus, IconSend, IconTrash } from '../components/icons'
+import { IconCalendar, IconCheck, IconChevronLeft, IconClose, IconPlus, IconSend, IconTrash } from '../components/icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { CustomFoodSheet } from '../components/CustomFoodSheet'
+import { SchedulePicker } from '../components/SchedulePicker'
 import type { TranslationKey } from '../i18n/translations'
 import type {
   ChatMealNewFoodItem,
@@ -248,6 +249,9 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     itemIndex: number
     item: ChatMealNewFoodItem
   } | null>(null)
+  // Choix d'une date pour planifier un repas résolu — remplace tout l'écran,
+  // comme la création d'aliment.
+  const [schedulingMeal, setSchedulingMeal] = useState<{ items: ChatMealSuggestion['items'] } | null>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
   // Estimation seulement — pas une vraie limite de facturation Anthropic —
@@ -322,8 +326,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     }
   }
 
-  const sendMealToDiary = (messageId: string, mealIndex: number, items: ChatMealSuggestion['items']) => {
-    const date = todayKey()
+  const addMealToDiary = (date: string, items: ChatMealSuggestion['items']) => {
     const meal = defaultMeal()
     for (const item of items) {
       if (item.kind !== 'food') continue
@@ -331,6 +334,10 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
       if (!food) continue
       addEntry(date, meal, food, item.grams, item.state)
     }
+  }
+
+  const sendMealToDiary = (messageId: string, mealIndex: number, items: ChatMealSuggestion['items']) => {
+    addMealToDiary(todayKey(), items)
     setSentMeals((current) => ({ ...current, [`${messageId}-${mealIndex}`]: true }))
     onToast(t('chat.mealAdded'))
   }
@@ -365,20 +372,37 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
   if (creatingFood) {
     const { item } = creatingFood
     return (
-      <CustomFoodSheet
-        initialName={item.name}
-        initialValues={{ kcal: item.kcal, protein: item.protein, carbs: item.carbs, fat: item.fat }}
-        onClose={() => setCreatingFood(null)}
-        onCreated={(food) => {
-          addEntry(todayKey(), defaultMeal(), food, item.grams)
-          setCreatedFoods((current) => ({
-            ...current,
-            [`${creatingFood.messageId}-${creatingFood.mealIndex}-${creatingFood.itemIndex}`]: true,
-          }))
-          setCreatingFood(null)
-          onToast(t('chat.foodAdded'))
-        }}
-      />
+      <div className="chat-screen">
+        <CustomFoodSheet
+          initialName={item.name}
+          initialValues={{ kcal: item.kcal, protein: item.protein, carbs: item.carbs, fat: item.fat }}
+          onClose={() => setCreatingFood(null)}
+          onCreated={(food) => {
+            addEntry(todayKey(), defaultMeal(), food, item.grams)
+            setCreatedFoods((current) => ({
+              ...current,
+              [`${creatingFood.messageId}-${creatingFood.mealIndex}-${creatingFood.itemIndex}`]: true,
+            }))
+            setCreatingFood(null)
+            onToast(t('chat.foodAdded'))
+          }}
+        />
+      </div>
+    )
+  }
+
+  if (schedulingMeal) {
+    return (
+      <div className="chat-screen">
+        <SchedulePicker
+          onClose={() => setSchedulingMeal(null)}
+          onPick={(date) => {
+            addMealToDiary(date, schedulingMeal.items)
+            setSchedulingMeal(null)
+            onToast(t('chat.mealScheduled', { date: formatDay(date, lang) }))
+          }}
+        />
+      </div>
     )
   }
 
@@ -525,15 +549,26 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
                         return null
                       })}
                       {mealFullyResolved(suggestion) ? (
-                        <button
-                          type="button"
-                          className="meal-btn"
-                          disabled={sent}
-                          onClick={() => sendMealToDiary(message.id, mealIndex, suggestion.items)}
-                        >
-                          <span>{suggestion.label}</span>
-                          {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
-                        </button>
+                        <div className="meal-btn-row">
+                          <button
+                            type="button"
+                            className="meal-btn"
+                            disabled={sent}
+                            onClick={() => sendMealToDiary(message.id, mealIndex, suggestion.items)}
+                          >
+                            <span>{suggestion.label}</span>
+                            {sent ? <IconCheck size={16} /> : <span className="meal-btn-cta">{t('chat.sendToDiary')}</span>}
+                          </button>
+                          <button
+                            type="button"
+                            className="meal-btn schedule"
+                            onClick={() => setSchedulingMeal({ items: suggestion.items })}
+                          >
+                            <span className="meal-btn-cta">
+                              <IconCalendar size={14} /> {t('chat.schedule')}
+                            </span>
+                          </button>
+                        </div>
                       ) : null}
                     </div>
                   )

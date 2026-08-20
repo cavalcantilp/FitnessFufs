@@ -2341,6 +2341,23 @@ input[type='range']::-moz-range-thumb {
   border-style: dashed;
 }
 
+.meal-btn-row {
+  display: flex;
+  gap: 6px;
+}
+
+.meal-btn-row .meal-btn {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Planifier reste toujours disponible (même repas, plusieurs jours) : un
+   contour discret plutôt que la couleur d'accent de l'envoi au journal. */
+.meal-btn.schedule {
+  border-color: var(--border);
+  color: var(--text-sub);
+}
+
 .meal-btn-cta {
   display: inline-flex;
   align-items: center;

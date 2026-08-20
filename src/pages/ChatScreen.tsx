@@ -1,15 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { AnthropicError, askAssistant } from '../lib/anthropic'
+import { AnthropicError, askAssistant, type AnthropicTool } from '../lib/anthropic'
 import { MONTHLY_CAP_USD } from '../lib/usage'
 import { extractMealSuggestions } from '../lib/mealSuggestions'
 import { foodName } from '../lib/foods'
 import { sumNutrients } from '../lib/nutrition'
-import { todayKey } from '../lib/date'
+import { shiftDay, todayKey } from '../lib/date'
 import { defaultMeal } from '../lib/meals'
 import { IconCheck, IconChevronLeft, IconSend, IconTrash } from '../components/icons'
 import { ConfirmDialog } from '../components/ConfirmDialog'
-import type { ChatMealSuggestion, ChatMessage, FoodState, FridgeLocation, Lang } from '../lib/types'
+import type { TranslationKey } from '../i18n/translations'
+import type {
+  ChatMealSuggestion,
+  ChatMessage,
+  DiaryEntry,
+  FoodState,
+  FridgeLocation,
+  Lang,
+  MeasurementEntry,
+  WeightEntry,
+} from '../lib/types'
 
 interface ChatScreenProps {
   onClose: () => void
@@ -22,6 +32,31 @@ interface StockIndexItem {
   label: string
   grams?: number
   location: FridgeLocation
+}
+
+/**
+ * Outil que le modèle peut appeler pour lire le passé (repas, poids,
+ * mensurations) sans que cet historique soit envoyé à chaque message —
+ * seul aujourd'hui l'est systématiquement, pour limiter le coût.
+ */
+const HISTORY_TOOL: AnthropicTool = {
+  name: 'get_history',
+  description:
+    "Renvoie le détail des repas loggés, le poids et les mensurations enregistrés pour les N derniers jours " +
+    "(hier inclus, en remontant). N'appelle cet outil que si la question porte sur le passé (hier, cette " +
+    "semaine, une tendance de poids...) — les données d'aujourd'hui sont déjà fournies plus haut.",
+  input_schema: {
+    type: 'object',
+    properties: {
+      days: {
+        type: 'integer',
+        minimum: 1,
+        maximum: 30,
+        description: "Nombre de jours en arrière à couvrir, en partant d'hier (1 à 30).",
+      },
+    },
+    required: ['days'],
+  },
 }
 
 function newId(): string {
@@ -42,7 +77,9 @@ function buildSystemPrompt(
   lang: Lang,
   stock: StockIndexItem[],
   remaining: { kcal: number; protein: number; carbs: number; fat: number },
+  todayLines: string[],
 ): string {
+  const todayBlock = todayLines.length > 0 ? todayLines.map((line) => `- ${line}`).join('\n') : '(rien loggé pour le moment)'
   const stockBlock = LOCATION_ORDER.map((location) => {
     const items = stock.filter((item) => item.location === location)
     const lines =
@@ -71,11 +108,18 @@ function buildSystemPrompt(
       "des produits secs ou en conserve — tiens-en compte dans ce que tu proposes :",
     stockBlock,
     '',
+    "Repas déjà loggés aujourd'hui :",
+    todayBlock,
+    '',
     "Macros restants pour aujourd'hui (objectif du jour moins ce qui a déjà été mangé) :",
     `- Calories : ${remaining.kcal} kcal`,
     `- Protéines : ${remaining.protein} g`,
     `- Glucides : ${remaining.carbs} g`,
     `- Lipides : ${remaining.fat} g`,
+    '',
+    "Pour toute question portant sur le passé (hier, cette semaine, l'évolution du poids...), utilise " +
+      "l'outil get_history plutôt que de répondre au hasard ou de dire que tu n'as pas accès à ces " +
+      'données — tu y as accès via cet outil.',
     '',
     'Propose des idées de repas réalistes avec ce qui est disponible (frigo, placard, congélateur), en ' +
       'tenant compte de ces macros restants. Indique les quantités à utiliser parmi ce qui est ' +
@@ -97,6 +141,52 @@ function buildSystemPrompt(
   ].join('\n')
 }
 
+/** Construit le texte renvoyé à l'outil get_history — bornée à 30 jours, jamais illimité. */
+function formatHistory(
+  input: Record<string, unknown>,
+  context: {
+    entries: DiaryEntry[]
+    weights: WeightEntry[]
+    measurements: MeasurementEntry[]
+    t: (key: TranslationKey, vars?: Record<string, string | number>) => string
+    lang: Lang
+  },
+): string {
+  const days = Math.min(30, Math.max(1, Math.round(Number(input.days) || 7)))
+  const today = todayKey()
+  const lines: string[] = []
+
+  for (let i = 1; i <= days; i++) {
+    const date = shiftDay(today, -i)
+    const dayEntries = context.entries.filter((entry) => entry.date === date)
+    const weight = context.weights.find((entry) => entry.date === date)
+    const measurement = context.measurements.find((entry) => entry.date === date)
+    if (dayEntries.length === 0 && !weight && !measurement) continue
+
+    const parts = [date]
+    if (dayEntries.length > 0) {
+      const totals = sumNutrients(dayEntries.map((entry) => entry.nutrients))
+      const items = dayEntries
+        .map((entry) => `${entry.label} ${entry.grams} g [${context.t(`meal.${entry.meal}`)}]`)
+        .join(', ')
+      parts.push(
+        `repas: ${items} — total ${Math.round(totals.kcal)} kcal, ${Math.round(totals.protein)} g prot, ` +
+          `${Math.round(totals.carbs)} g gluc, ${Math.round(totals.fat)} g lip`,
+      )
+    }
+    if (weight) parts.push(`poids: ${weight.weight} kg`)
+    if (measurement) {
+      const values = Object.entries(measurement.values)
+        .map(([key, value]) => `${key} ${value} cm`)
+        .join(', ')
+      if (values) parts.push(`mensurations: ${values}`)
+    }
+    lines.push(parts.join(' | '))
+  }
+
+  return lines.length > 0 ? lines.join('\n') : 'Aucune donnée sur cette période.'
+}
+
 export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps) {
   const {
     t,
@@ -105,6 +195,9 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
     fridge,
     targetsFor,
     entriesFor,
+    entries,
+    weights,
+    measurements,
     addEntry,
     apiKey,
     chatMessages,
@@ -168,8 +261,17 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
           }
         })
         .filter((entry): entry is StockIndexItem => entry !== null)
-      const system = buildSystemPrompt(lang, stockIndex, remaining)
-      const reply = await askAssistant(apiKey, [...chatMessages, userMessage], system)
+      const todayLines = entriesFor(today).map(
+        (entry) => `[${t(`meal.${entry.meal}`)}] ${entry.label}${stateLabel(entry.state)} — ${entry.grams} g`,
+      )
+      const system = buildSystemPrompt(lang, stockIndex, remaining, todayLines)
+      const reply = await askAssistant(
+        apiKey,
+        [...chatMessages, userMessage],
+        system,
+        [HISTORY_TOOL],
+        (name, toolInput) => (name === 'get_history' ? formatHistory(toolInput, { entries, weights, measurements, t, lang }) : 'Outil inconnu.'),
+      )
       const { text, meals } = extractMealSuggestions(reply.text, foods)
       addChatMessage({
         id: newId(),

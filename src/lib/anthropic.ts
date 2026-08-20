@@ -27,15 +27,32 @@ export function estimateCost(inputTokens: number, outputTokens: number): number 
  */
 const RETRY_DELAYS_MS = [1500, 3000]
 
+/** Un aller-retour d'outil coûte un appel API en plus : borné pour éviter qu'un modèle boucle. */
+const MAX_TOOL_ROUNDS = 2
+
 export class AnthropicError extends Error {}
 
 export interface AssistantReply {
   text: string
-  /** Coût estimé de cet échange, à partir des tokens facturés renvoyés par l'API. */
+  /** Coût estimé de l'échange (tous les appels d'outils inclus), à partir des tokens facturés renvoyés par l'API. */
   costUsd: number
 }
 
-async function callOnce(apiKey: string, history: ChatMessage[], system: string) {
+export interface AnthropicTool {
+  name: string
+  description: string
+  input_schema: Record<string, unknown>
+}
+
+/** Exécute un outil demandé par le modèle et renvoie le texte à lui renvoyer comme résultat. */
+export type ToolExecutor = (name: string, input: Record<string, unknown>) => string
+
+interface AnthropicMessage {
+  role: 'user' | 'assistant'
+  content: string | Record<string, unknown>[]
+}
+
+async function callOnce(apiKey: string, messages: AnthropicMessage[], system: string, tools?: AnthropicTool[]) {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -50,42 +67,24 @@ async function callOnce(apiKey: string, history: ChatMessage[], system: string) 
       model: MODEL,
       max_tokens: MAX_TOKENS,
       system,
-      messages: history.map((message) => ({ role: message.role, content: message.text })),
+      messages,
+      ...(tools && tools.length > 0 ? { tools } : {}),
     }),
   })
   const data = await response.json().catch(() => null)
   return { response, data }
 }
 
-/**
- * Appelle l'API Anthropic directement depuis le navigateur, avec la clé
- * personnelle de l'utilisateur — usage individuel, sans backend.
- */
-export async function askAssistant(
-  apiKey: string,
-  history: ChatMessage[],
-  system: string,
-): Promise<AssistantReply> {
+async function callWithRetries(apiKey: string, messages: AnthropicMessage[], system: string, tools?: AnthropicTool[]) {
   let lastError: AnthropicError = new AnthropicError('Réponse vide')
 
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    const { response, data } = await callOnce(apiKey, history, system)
+    const { response, data } = await callOnce(apiKey, messages, system, tools)
 
-    if (response.ok) {
-      const block = Array.isArray(data?.content)
-        ? data.content.find((entry: { type?: string }) => entry.type === 'text')
-        : null
-      const text = block?.text
-      if (typeof text === 'string' && text) {
-        const inputTokens = Number(data?.usage?.input_tokens) || 0
-        const outputTokens = Number(data?.usage?.output_tokens) || 0
-        return { text, costUsd: estimateCost(inputTokens, outputTokens) }
-      }
-      lastError = new AnthropicError('Réponse vide')
-    } else {
-      lastError = new AnthropicError(data?.error?.message ?? `HTTP ${response.status}`)
-      if (response.status !== 429 && response.status !== 529) throw lastError
-    }
+    if (response.ok) return data as { content?: Record<string, unknown>[]; usage?: { input_tokens?: number; output_tokens?: number } }
+
+    lastError = new AnthropicError(data?.error?.message ?? `HTTP ${response.status}`)
+    if (response.status !== 429 && response.status !== 529) throw lastError
 
     if (attempt < RETRY_DELAYS_MS.length) {
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt]))
@@ -93,4 +92,53 @@ export async function askAssistant(
   }
 
   throw lastError
+}
+
+/**
+ * Appelle l'API Anthropic directement depuis le navigateur, avec la clé
+ * personnelle de l'utilisateur — usage individuel, sans backend. Si le
+ * modèle demande un outil, l'exécute via `executeTool` et relance l'appel
+ * avec le résultat, jusqu'à MAX_TOOL_ROUNDS allers-retours.
+ */
+export async function askAssistant(
+  apiKey: string,
+  history: ChatMessage[],
+  system: string,
+  tools?: AnthropicTool[],
+  executeTool?: ToolExecutor,
+): Promise<AssistantReply> {
+  const messages: AnthropicMessage[] = history.map((message) => ({ role: message.role, content: message.text }))
+  let inputTokens = 0
+  let outputTokens = 0
+
+  for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
+    const data = await callWithRetries(apiKey, messages, system, tools)
+    inputTokens += Number(data?.usage?.input_tokens) || 0
+    outputTokens += Number(data?.usage?.output_tokens) || 0
+
+    const content = Array.isArray(data?.content) ? data.content : []
+    const toolUses = content.filter((block) => block.type === 'tool_use')
+
+    if (toolUses.length > 0 && executeTool && round < MAX_TOOL_ROUNDS) {
+      messages.push({ role: 'assistant', content })
+      messages.push({
+        role: 'user',
+        content: toolUses.map((block) => ({
+          type: 'tool_result',
+          tool_use_id: block.id,
+          content: executeTool(String(block.name), (block.input as Record<string, unknown>) ?? {}),
+        })),
+      })
+      continue
+    }
+
+    const textBlock = content.find((block) => block.type === 'text')
+    const text = textBlock?.text
+    if (typeof text === 'string' && text) {
+      return { text, costUsd: estimateCost(inputTokens, outputTokens) }
+    }
+    throw new AnthropicError('Réponse vide')
+  }
+
+  throw new AnthropicError("Trop d'appels d'outils")
 }

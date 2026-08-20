@@ -56,6 +56,10 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Réinitialisé à chaque ouverture (ChatScreen est remonté à chaque fois) :
+  // les suggestions reviennent à chaque visite, et disparaissent dès qu'on
+  // envoie un message dans cette visite, historique ou pas.
+  const [interacted, setInteracted] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -70,6 +74,7 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
     if (!trimmed || sending || !apiKey) return
     setInput('')
     setError(null)
+    setInteracted(true)
     const userMessage: ChatMessage = { id: newId(), role: 'user', text: trimmed, at: new Date().toISOString() }
     addChatMessage(userMessage)
     setSending(true)
@@ -108,7 +113,6 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
         </button>
         <div className="chat-head-title">
           <h2>{t('chat.title')}</h2>
-          {sending ? <span className="sub">{t('chat.thinking')}</span> : null}
         </div>
         {chatMessages.length > 0 ? (
           <button
@@ -125,34 +129,34 @@ export function ChatScreen({ onClose, onOpenProfile }: ChatScreenProps) {
       </div>
 
       <div className="chat-messages" ref={listRef}>
-        {chatMessages.length === 0 ? (
-          <div className="chat-empty">
-            <p className="hint">{t('chat.empty')}</p>
-            <div className="chip-list">
-              {SUGGESTIONS.map((key) => (
-                <button
-                  type="button"
-                  className="chip"
-                  key={key}
-                  onClick={() => void send(t(key))}
-                  disabled={!apiKey}
-                >
-                  {t(key)}
-                </button>
-              ))}
-            </div>
+        {chatMessages.length === 0 ? <p className="hint">{t('chat.empty')}</p> : null}
+        {chatMessages.map((message) => (
+          <div className={`chat-bubble ${message.role}`} key={message.id}>
+            {message.text}
           </div>
-        ) : (
-          chatMessages.map((message) => (
-            <div className={`chat-bubble ${message.role}`} key={message.id}>
-              {message.text}
-            </div>
-          ))
-        )}
-        {sending ? <div className="chat-bubble assistant pending">{t('chat.thinking')}</div> : null}
+        ))}
+        {sending ? (
+          <div className="chat-bubble assistant pending" role="status" aria-label={t('chat.thinking')}>
+            <span className="typing-dots">
+              <span />
+              <span />
+              <span />
+            </span>
+          </div>
+        ) : null}
       </div>
 
       {error ? <p className="notice chat-error">{error}</p> : null}
+
+      {!interacted ? (
+        <div className="chip-list">
+          {SUGGESTIONS.map((key) => (
+            <button type="button" className="chip" key={key} onClick={() => void send(t(key))} disabled={!apiKey}>
+              {t(key)}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {!apiKey ? (
         <div className="notice info chat-nokey">

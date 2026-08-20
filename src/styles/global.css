@@ -2159,17 +2159,11 @@ input[type='range']::-moz-range-thumb {
   gap: 10px;
 }
 
-.chat-empty {
-  margin: auto 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
 .chip-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 0 16px 10px;
 }
 
 .chip-list .chip {
@@ -2201,8 +2195,42 @@ input[type='range']::-moz-range-thumb {
 }
 
 .chat-bubble.pending {
-  color: var(--text-sub);
-  font-style: italic;
+  padding: 14px 16px;
+}
+
+.typing-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-sub);
+  animation: typing-bounce 1.2s ease-in-out infinite;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
 }
 
 .chat-error {

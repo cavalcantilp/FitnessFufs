@@ -190,6 +190,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => load(STORAGE_KEYS.chat, []))
   const [usage, setUsage] = useState<MonthlyUsage>(() => {
     const loaded = load<MonthlyUsage>(STORAGE_KEYS.usage, { since: todayKey(), costUsd: 0 })
+    // Anciennes sauvegardes : { month: "2026-08", costUsd } sans champ "since" — la lecture
+    // doit rester tolérante à ce format révolu, pas planter l'appli au premier chargement.
+    if (typeof loaded.since !== 'string') return { since: todayKey(), costUsd: 0 }
     // Le mois de suivi a pu s'écouler pendant que l'app était fermée.
     return usagePeriodExpired(loaded.since) ? { since: todayKey(), costUsd: 0 } : loaded
   })

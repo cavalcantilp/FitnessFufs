@@ -284,10 +284,10 @@ export interface ChatMessage {
   meals?: ChatMealSuggestion[]
 }
 
-/** Dépense estimée de l'assistant pour le mois en cours, à partir des tokens facturés par l'API. */
+/** Dépense estimée de l'assistant depuis le début de la période de suivi en cours (1 mois glissant), à partir des tokens facturés par l'API. */
 export interface MonthlyUsage {
-  /** Clé du mois (« 2026-08 ») : sert à détecter le passage à un nouveau mois. */
-  month: string
+  /** Date de début de la période (« 2026-08-21 ») : la période se termine un mois plus tard. */
+  since: string
   costUsd: number
 }
 

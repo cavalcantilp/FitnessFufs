@@ -10,7 +10,8 @@ import {
 import { BUILTIN_FOODS } from '../lib/foods'
 import { computeTargets, nutrientsFor, type Targets } from '../lib/nutrition'
 import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
-import { currentMonthKey } from '../lib/usage'
+import { usagePeriodExpired } from '../lib/usage'
+import { todayKey } from '../lib/date'
 import { DEFAULT_MEALS, MAX_CUSTOM_MEALS } from '../lib/meals'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
 import type {
@@ -188,9 +189,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [apiKey, setApiKey] = useState<string>(() => load(STORAGE_KEYS.apiKey, ''))
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => load(STORAGE_KEYS.chat, []))
   const [usage, setUsage] = useState<MonthlyUsage>(() => {
-    const loaded = load<MonthlyUsage>(STORAGE_KEYS.usage, { month: currentMonthKey(), costUsd: 0 })
-    // Un nouveau mois a pu commencer pendant que l'app était fermée.
-    return loaded.month === currentMonthKey() ? loaded : { month: currentMonthKey(), costUsd: 0 }
+    const loaded = load<MonthlyUsage>(STORAGE_KEYS.usage, { since: todayKey(), costUsd: 0 })
+    // Le mois de suivi a pu s'écouler pendant que l'app était fermée.
+    return usagePeriodExpired(loaded.since) ? { since: todayKey(), costUsd: 0 } : loaded
   })
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
@@ -446,12 +447,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const clearChat = useCallback(() => setChatMessages([]), [])
 
   const addUsageCost = useCallback((costUsd: number) => {
-    setUsage((current) => {
-      const month = currentMonthKey()
-      return month === current.month
-        ? { month, costUsd: current.costUsd + costUsd }
-        : { month, costUsd }
-    })
+    setUsage((current) =>
+      usagePeriodExpired(current.since)
+        ? { since: todayKey(), costUsd }
+        : { since: current.since, costUsd: current.costUsd + costUsd },
+    )
   }, [])
 
   const exportData = useCallback(
@@ -506,7 +506,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setMealDefs(DEFAULT_MEALS)
     setApiKey('')
     setChatMessages([])
-    setUsage({ month: currentMonthKey(), costUsd: 0 })
+    setUsage({ since: todayKey(), costUsd: 0 })
     setOnboarded(false)
     setTutorialsEnabled(true)
     setTutorialSeen({})

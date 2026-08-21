@@ -1,8 +1,12 @@
-/** Plafond mensuel de dépense estimée pour l'assistant, en dollars. */
+import { shiftMonth, todayKey } from './date'
+
+/** Plafond de dépense estimée pour l'assistant sur une période, en dollars. */
 export const MONTHLY_CAP_USD = 1
 
-/** Clé du mois courant (« 2026-08 »), pour détecter le passage à un nouveau mois. */
-export function currentMonthKey(): string {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+/**
+ * Vrai si un mois complet s'est écoulé depuis le début de la période de suivi en
+ * cours — la période démarre à la première dépense, pas au 1er du calendrier.
+ */
+export function usagePeriodExpired(since: string, today: string = todayKey()): boolean {
+  return today >= shiftMonth(since, 1)
 }

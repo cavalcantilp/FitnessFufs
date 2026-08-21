@@ -35,6 +35,12 @@ export function daysBetween(from: string, to: string): number {
   return Math.round(ms / 86_400_000)
 }
 
+export function shiftMonth(key: string, months: number): string {
+  const date = fromKey(key)
+  date.setMonth(date.getMonth() + months)
+  return toKey(date)
+}
+
 export function formatDay(key: string, lang: Lang): string {
   return fromKey(key).toLocaleDateString(LOCALES[lang], {
     weekday: 'short',
@@ -45,6 +51,10 @@ export function formatDay(key: string, lang: Lang): string {
 
 export function formatShort(key: string, lang: Lang): string {
   return fromKey(key).toLocaleDateString(LOCALES[lang], { day: '2-digit', month: '2-digit' })
+}
+
+export function formatDateNumeric(key: string, lang: Lang): string {
+  return fromKey(key).toLocaleDateString(LOCALES[lang], { day: '2-digit', month: '2-digit', year: '2-digit' })
 }
 
 export function localeOf(lang: Lang): string {

@@ -3,6 +3,7 @@ import { useApp } from '../state/AppContext'
 import { ProfileForm } from '../components/ProfileForm'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { MONTHLY_CAP_USD } from '../lib/usage'
+import { formatDateNumeric } from '../lib/date'
 
 interface ProfileScreenProps {
   onToast: (message: string) => void
@@ -11,6 +12,7 @@ interface ProfileScreenProps {
 export function ProfileScreen({ onToast }: ProfileScreenProps) {
   const {
     t,
+    lang,
     targets,
     exportData,
     importData,
@@ -93,8 +95,9 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
         <div className="card-title">{t('chat.title')}</div>
         <div className="usage-bar-wrap">
           <div className="usage-bar-label">
-            <span>{t('profile.usageLabel')}</span>
-            <span>{usagePctDisplay} %</span>
+            <span>
+              {t('profile.usagePeriod', { pct: usagePctDisplay, date: formatDateNumeric(usage.since, lang) })}
+            </span>
           </div>
           <div className="usage-bar">
             <div

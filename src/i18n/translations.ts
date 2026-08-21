@@ -124,9 +124,9 @@ const fr = {
   'profile.apiKey': 'Clé API Anthropic',
   'profile.apiKeyHint':
     "Utilisée uniquement sur cet appareil, envoyée directement à Anthropic pour l'assistant nutrition. Jamais incluse dans l'export.",
-  'profile.usageLabel': 'Dépense estimée ce mois-ci',
+  'profile.usagePeriod': '{pct} % utilisé depuis le {date}',
   'profile.usageHint':
-    "Estimation à partir des tokens facturés par l'API, à titre indicatif — ne remplace pas un vrai plafond réglé sur console.anthropic.com.",
+    "Estimation à partir des tokens facturés par l'API, à titre indicatif — ne remplace pas un vrai plafond réglé sur console.anthropic.com. Remise à zéro un mois après le début de cette période.",
   'add.deleteFood': 'Supprimer cet aliment',
   'add.editFood': 'Corriger cet aliment',
   'add.updated': 'Valeurs mises à jour',
@@ -466,9 +466,9 @@ const pt: Dict = {
   'profile.apiKey': 'Chave de API da Anthropic',
   'profile.apiKeyHint':
     'Usada apenas neste aparelho, enviada diretamente à Anthropic para o assistente de nutrição. Nunca incluída na exportação.',
-  'profile.usageLabel': 'Gasto estimado neste mês',
+  'profile.usagePeriod': '{pct} % usado desde {date}',
   'profile.usageHint':
-    'Estimativa a partir dos tokens cobrados pela API, apenas indicativa — não substitui um limite real definido em console.anthropic.com.',
+    'Estimativa a partir dos tokens cobrados pela API, apenas indicativa — não substitui um limite real definido em console.anthropic.com. Zerado um mês após o início deste período.',
   'add.deleteFood': 'Eliminar este alimento',
   'add.editFood': 'Corrigir este alimento',
   'add.updated': 'Valores atualizados',
@@ -805,9 +805,9 @@ const es: Dict = {
   'profile.apiKey': 'Clave de API de Anthropic',
   'profile.apiKeyHint':
     'Se usa solo en este dispositivo, enviada directamente a Anthropic para el asistente de nutrición. Nunca incluida en la exportación.',
-  'profile.usageLabel': 'Gasto estimado este mes',
+  'profile.usagePeriod': '{pct} % usado desde el {date}',
   'profile.usageHint':
-    'Estimación a partir de los tokens facturados por la API, solo orientativa — no sustituye a un límite real configurado en console.anthropic.com.',
+    'Estimación a partir de los tokens facturados por la API, solo orientativa — no sustituye a un límite real configurado en console.anthropic.com. Se reinicia un mes después del inicio de este período.',
   'add.deleteFood': 'Eliminar este alimento',
   'add.editFood': 'Corregir este alimento',
   'add.updated': 'Valores actualizados',
@@ -1141,9 +1141,9 @@ const en: Dict = {
   'profile.apiKey': 'Anthropic API key',
   'profile.apiKeyHint':
     'Used only on this device, sent directly to Anthropic for the nutrition assistant. Never included in the export.',
-  'profile.usageLabel': 'Estimated spend this month',
+  'profile.usagePeriod': '{pct}% used since {date}',
   'profile.usageHint':
-    'Estimated from the tokens billed by the API, for reference only — not a substitute for a real cap set at console.anthropic.com.',
+    'Estimated from the tokens billed by the API, for reference only — not a substitute for a real cap set at console.anthropic.com. Resets one month after this period started.',
   'add.deleteFood': 'Delete this food',
   'add.editFood': 'Edit this food',
   'add.updated': 'Values updated',
@@ -1476,9 +1476,9 @@ const it: Dict = {
   'profile.apiKey': 'Chiave API Anthropic',
   'profile.apiKeyHint':
     "Usata solo su questo dispositivo, inviata direttamente ad Anthropic per l'assistente nutrizionale. Mai inclusa nell'esportazione.",
-  'profile.usageLabel': 'Spesa stimata questo mese',
+  'profile.usagePeriod': '{pct}% utilizzato dal {date}',
   'profile.usageHint':
-    "Stima basata sui token fatturati dall'API, solo indicativa — non sostituisce un limite reale impostato su console.anthropic.com.",
+    "Stima basata sui token fatturati dall'API, solo indicativa — non sostituisce un limite reale impostato su console.anthropic.com. Azzerato un mese dopo l'inizio di questo periodo.",
   'add.deleteFood': 'Elimina questo alimento',
   'add.editFood': 'Correggi questo alimento',
   'add.updated': 'Valori aggiornati',

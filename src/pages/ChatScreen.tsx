@@ -134,6 +134,14 @@ function buildSystemPrompt(
       lang +
       '.)',
     '',
+    "Chaque repas proposé doit être un plat cohérent, pas une simple combinaison d'aliments du stock " +
+      "choisis uniquement pour coller aux macros restants. Avant de proposer, demande-toi si ce plat " +
+      "existe vraiment en cuisine — s'il fallait le nommer, le nom aurait-il un sens (« poulet-riz-brocolis " +
+      "sauté », « yaourt et fruits », « omelette aux légumes »...) ? Si deux aliments disponibles ne se " +
+      "marient pas naturellement (ex. un fromage frais et un légume vapeur sans lien), ne les combine pas " +
+      "dans le même repas sous prétexte qu'ils complètent les macros — propose plutôt deux repas séparés, " +
+      "ou accepte de ne pas tout utiliser.",
+    '',
     "Si ta réponse propose un ou plusieurs repas concrets, ajoute tout à la fin, sur une seule ligne, ce " +
       "bloc caché (jamais montré tel quel, jamais mentionné dans ta réponse) : " +
       '<meals>[{"label":"court résumé du repas","items":[...]}]</meals>. Chaque item est soit ' +

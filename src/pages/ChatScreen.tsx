@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useApp } from '../state/AppContext'
 import { AnthropicError, askAssistant, type AnthropicTool } from '../lib/anthropic'
 import { MONTHLY_CAP_USD } from '../lib/usage'
@@ -66,6 +66,30 @@ const HISTORY_TOOL: AnthropicTool = {
 
 function newId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+/**
+ * Le modèle écrit parfois en markdown (**gras**) — jamais montré tel quel avec ses astérisques,
+ * ni transformé en gras : mis en évidence par la couleur, seule façon de faire ressortir une
+ * donnée dans une bulle de conversation.
+ */
+function renderHighlighted(text: string): ReactNode[] {
+  const parts: ReactNode[] = []
+  const regex = /\*\*(.+?)\*\*/g
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+  let key = 0
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index))
+    parts.push(
+      <span className="chat-highlight" key={key++}>
+        {match[1]}
+      </span>,
+    )
+    lastIndex = regex.lastIndex
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex))
+  return parts
 }
 
 const SUGGESTIONS = ['chat.suggest.plan', 'chat.suggest.remaining', 'chat.suggest.quick'] as const
@@ -413,7 +437,7 @@ export function ChatScreen({ onClose, onOpenProfile, onToast }: ChatScreenProps)
         {chatMessages.length === 0 ? <p className="hint">{t('chat.empty')}</p> : null}
         {chatMessages.map((message) => (
           <div key={message.id} className="chat-message-group">
-            <div className={`chat-bubble ${message.role}`}>{message.text}</div>
+            <div className={`chat-bubble ${message.role}`}>{renderHighlighted(message.text)}</div>
             {message.meals && message.meals.length > 0 ? (
               <div className="meal-actions">
                 {message.meals.map((suggestion, mealIndex) => {

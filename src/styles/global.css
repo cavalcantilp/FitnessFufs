@@ -12,6 +12,7 @@
   --warning: #f59e0b;
   --positive: #34d399;
   --negative: #f87171;
+  --highlight: #facc15;
 
   /* Mêmes couleurs de macros que le calculateur dédié : bleu, ambre, vert. */
   --protein: #38bdf8;
@@ -2472,6 +2473,12 @@ input[type='range']::-moz-range-thumb {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-bottom-left-radius: 4px;
+}
+
+/* Le modèle marque parfois une donnée en **gras** : jamais montré avec ses astérisques,
+   la couleur seule la fait ressortir dans la bulle. */
+.chat-highlight {
+  color: var(--highlight);
 }
 
 .chat-bubble.pending {

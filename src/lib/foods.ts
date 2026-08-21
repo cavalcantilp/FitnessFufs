@@ -149,7 +149,7 @@ export const BUILTIN_FOODS: Food[] = [
   food('feijao_carioca', ['Feijão carioca cuit', 'Feijão carioca cozido', 'Frijol carioca cocido', 'Cooked carioca beans', 'Fagioli carioca cotti'], 76, 4.8, 13.6, 0.5, 5.5, 150, 'protein', [2, 250, 27, 1.3, 40, 0.7, 0, 0, 0]),
 
   // ---------- Produits laitiers ----------
-  food('milk_semi', ['Lait demi-écrémé', 'Leite meio-gordo', 'Leche semidesnatada', 'Semi-skimmed milk', 'Latte parzialmente scremato'], 46, 3.4, 4.8, 1.6, 0, 200, 'dairy', [44, 150, 120, 0.05, 11, 0.4, 1, 0.05, 0.4]),
+  food('milk_semi', ['Lait demi-écrémé', 'Leite semi-desnatado', 'Leche semidesnatada', 'Semi-skimmed milk', 'Latte parzialmente scremato'], 46, 3.4, 4.8, 1.6, 0, 200, 'dairy', [44, 150, 120, 0.05, 11, 0.4, 1, 0.05, 0.4]),
   food('yogurt_plain', ['Yaourt nature', 'Iogurte natural', 'Yogur natural', 'Plain yogurt', 'Yogurt bianco'], 61, 3.5, 4.7, 3.3, 0, 125, 'dairy', [46, 155, 120, 0.05, 12, 0.6, 0.5, 0.05, 0.4]),
   food('skyr', ['Skyr / fromage blanc 0 %', 'Skyr / queijo quark 0 %', 'Skyr / queso batido 0 %', 'Skyr / fat-free quark', 'Skyr / fiocchi magri'], 63, 11, 4, 0.2, 0, 150, 'dairy', [45, 150, 110, 0.1, 11, 0.5, 0, 0, 0.5]),
   food('greek_yogurt', ['Yaourt grec', 'Iogurte grego', 'Yogur griego', 'Greek yogurt', 'Yogurt greco'], 97, 9, 3.6, 5, 0, 150, 'dairy', [35, 140, 100, 0.05, 11, 0.5, 0, 0, 0.5]),

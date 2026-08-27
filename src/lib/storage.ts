@@ -59,4 +59,5 @@ export const STORAGE_KEYS = {
   chat: 'chat',
   usage: 'usage',
   meals: 'meals',
+  mealChecks: 'mealChecks',
 } as const

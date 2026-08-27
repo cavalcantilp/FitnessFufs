@@ -9,6 +9,7 @@ import { QuantitySheet } from '../components/QuantitySheet'
 import {
   IconArrowDown,
   IconArrowUp,
+  IconCheck,
   IconChevronLeft,
   IconChevronRight,
   IconComment,
@@ -45,6 +46,8 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
     addMeal,
     renameMeal,
     reorderMeals,
+    mealChecks,
+    toggleMealCheck,
   } = useApp()
   const [noteOpen, setNoteOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<DiaryEntry | null>(null)
@@ -325,6 +328,16 @@ export function Diary({ date, onDateChange, onAddTo, onToast }: DiaryProps) {
               </button>
 
               <span className="kcal">{total.kcal} kcal</span>
+
+              <button
+                type="button"
+                className={`meal-check${mealChecks[`${date}-${meal.id}`] ? ' checked' : ''}`}
+                aria-label={t('diary.markMealDone')}
+                aria-pressed={Boolean(mealChecks[`${date}-${meal.id}`])}
+                onClick={() => toggleMealCheck(date, meal.id)}
+              >
+                <IconCheck size={13} />
+              </button>
             </header>
 
             {items.length === 0 ? (

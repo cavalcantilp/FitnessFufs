@@ -749,6 +749,24 @@ input[type='range']::-moz-range-thumb {
   font-variant-numeric: tabular-nums;
 }
 
+/* Coche purement indicative — marquer un repas comme terminé n'a aucun autre effet. */
+.meal-check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  color: transparent;
+}
+
+.meal-check.checked {
+  border-color: var(--positive);
+  background: var(--positive);
+  color: #04202f;
+}
+
 .entry {
   display: flex;
   align-items: center;

@@ -97,6 +97,10 @@ interface AppState {
   removeEntry: (id: string) => void
   copyDay: (from: string, to: string) => number
 
+  /** Repas d'un jour cochés comme terminés, indexés par « date-idRepas » — purement indicatif. */
+  mealChecks: Record<string, boolean>
+  toggleMealCheck: (date: string, meal: MealId) => void
+
   weights: WeightEntry[]
   logWeight: (date: string, weight: number) => void
   removeWeight: (date: string) => void
@@ -184,6 +188,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     load(STORAGE_KEYS.dayMacros, {}),
   )
   const [notes, setNotes] = useState<Record<string, string>>(() => load(STORAGE_KEYS.notes, {}))
+  const [mealChecks, setMealChecks] = useState<Record<string, boolean>>(() => load(STORAGE_KEYS.mealChecks, {}))
   const [fridge, setFridge] = useState<FridgeItem[]>(() => load(STORAGE_KEYS.fridge, []))
   const [mealDefs, setMealDefs] = useState<MealDef[]>(() => load(STORAGE_KEYS.meals, DEFAULT_MEALS))
   const [apiKey, setApiKey] = useState<string>(() => load(STORAGE_KEYS.apiKey, ''))
@@ -209,6 +214,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => save(STORAGE_KEYS.favorites, favorites), [favorites])
   useEffect(() => save(STORAGE_KEYS.dayMacros, dayMacros), [dayMacros])
   useEffect(() => save(STORAGE_KEYS.notes, notes), [notes])
+  useEffect(() => save(STORAGE_KEYS.mealChecks, mealChecks), [mealChecks])
   useEffect(() => save(STORAGE_KEYS.fridge, fridge), [fridge])
   useEffect(() => save(STORAGE_KEYS.meals, mealDefs), [mealDefs])
   useEffect(() => save(STORAGE_KEYS.apiKey, apiKey), [apiKey])
@@ -267,6 +273,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return next
       }
       return { ...current, [date]: trimmed }
+    })
+  }, [])
+
+  const toggleMealCheck = useCallback((date: string, meal: MealId) => {
+    const key = `${date}-${meal}`
+    setMealChecks((current) => {
+      const next = { ...current }
+      if (next[key]) delete next[key]
+      else next[key] = true
+      return next
     })
   }, [])
 
@@ -541,6 +557,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateEntry,
       removeEntry,
       copyDay,
+      mealChecks,
+      toggleMealCheck,
       weights,
       logWeight,
       removeWeight,
@@ -597,6 +615,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       updateEntry,
       removeEntry,
       copyDay,
+      mealChecks,
+      toggleMealCheck,
       weights,
       logWeight,
       removeWeight,

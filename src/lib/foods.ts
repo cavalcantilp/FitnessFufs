@@ -204,6 +204,7 @@ export const BUILTIN_FOODS: Food[] = [
   food2('potato', ['Pomme de terre', 'Batata', 'Patata', 'Potato', 'Patata'], 'carbs', 'cooked', [77, 2, 17, 0.1, 2.2, 220], [87, 2, 20, 0.1, 1.8, 200], [5, 379, 8, 0.3, 20, 0.3, 13, 0, 0]),
   food2('sweet_potato', ['Patate douce', 'Batata-doce', 'Boniato', 'Sweet potato', 'Patata dolce'], 'carbs', 'cooked', [86, 1.6, 20, 0.1, 3, 220], [90, 2, 21, 0.1, 3.3, 200], [27, 475, 27, 0.7, 18, 0.3, 13, 0, 0]),
   food2('cassava', ['Manioc', 'Mandioca', 'Yuca', 'Cassava', 'Manioca'], 'carbs', 'cooked', [160, 1.4, 38, 0.3, 1.8, 170], [125, 0.6, 30, 0.3, 1.8, 150], [14, 271, 16, 0.3, 21, 0.3, 20, 0, 0]),
+  food2('yam', ['Igname', 'Inhame', 'Ñame', 'Yam', 'Igname'], 'carbs', 'cooked', [118, 1.5, 28, 0.2, 4.1, 220], [116, 1.3, 27, 0.1, 3.9, 200], [9, 816, 17, 0.5, 21, 0.2, 11, 0, 0]),
   food('bread_whole', ['Pain complet', 'Pão integral', 'Pan integral', 'Wholemeal bread', 'Pane integrale'], 247, 13, 41, 3.4, 7, 50, 'carbs', [450, 250, 60, 2.5, 80, 1.8, 0, 0, 0]),
   food('baguette', ['Baguette / pain blanc', 'Pão branco', 'Pan blanco', 'White bread', 'Pane bianco'], 274, 9, 55, 1.5, 2.7, 50, 'carbs', [500, 120, 30, 1.2, 25, 0.7, 0, 0, 0]),
   food('pao_frances', ['Pain français (pãozinho)', 'Pão francês', 'Pan francés', 'Brazilian bread roll', 'Panino brasiliano'], 300, 8, 58, 3, 2.3, 50, 'carbs', [550, 120, 35, 1.5, 25, 0.7, 0, 0, 0]),

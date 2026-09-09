@@ -3,6 +3,7 @@ import { useApp } from '../state/AppContext'
 import { LineChart, RANGE_LABEL, RANGE_ORDER, type RangeKey } from '../components/LineChart'
 import { BmiGauge } from '../components/BmiGauge'
 import { AddWeightSheet } from '../components/AddWeightSheet'
+import { ProgressPhotoGallery } from '../components/ProgressPhotoGallery'
 import { HistoryScreen } from './HistoryScreen'
 import { IconChevronDown, IconPlus } from '../components/icons'
 import { bmi, round1 } from '../lib/nutrition'
@@ -136,6 +137,8 @@ export function WeightScreen({ onToast }: WeightScreenProps) {
           }}
         />
       ) : null}
+
+      <ProgressPhotoGallery onToast={onToast} />
 
       <div className="disclosure">
         <button

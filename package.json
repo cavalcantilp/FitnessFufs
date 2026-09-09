@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "barcode-detector": "^3.2.1",
+    "idb-keyval": "^6.3.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

@@ -1613,6 +1613,37 @@ input[type='range']::-moz-range-thumb {
   margin-top: 2px;
 }
 
+/* Simple case + texte, sans le cadre de .check-row (pensé pour un titre + indice
+   sur deux lignes, pas pour une seule ligne centrée avec sa case). */
+.auth-remember {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-remember input[type='checkbox'] {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.auth-remember input[type='checkbox']:checked {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f172a' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  background-size: 15px 15px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 /* ---------- Panneau dépliable ---------- */
 
 .disclosure {

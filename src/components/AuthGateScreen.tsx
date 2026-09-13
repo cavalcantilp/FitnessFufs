@@ -128,7 +128,7 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
           />
         </div>
 
-        <label className="check-row">
+        <label className="auth-remember">
           <input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />
           {t('account.rememberMe')}
         </label>

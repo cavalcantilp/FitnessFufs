@@ -25,8 +25,18 @@ function displayName(email: string | null): string {
  * continuer hors connexion.
  */
 export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
-  const { t, user, authLoading, authError, rememberMe, setRememberMe, signInWithPassword, signUpWithPassword, signInWithGoogle } =
-    useApp()
+  const {
+    t,
+    user,
+    profile,
+    authLoading,
+    authError,
+    rememberMe,
+    setRememberMe,
+    signInWithPassword,
+    signUpWithPassword,
+    signInWithGoogle,
+  } = useApp()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -53,7 +63,11 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
       <div className="onboarding auth-splash">
         <div className="brand">
           <Logo />
-          {user ? <p className="auth-greeting">{t('account.greeting', { name: displayName(user.email) })}</p> : null}
+          {user ? (
+            <p className="auth-greeting">
+              {t('account.greeting', { name: profile.displayName?.trim() || displayName(user.email) })}
+            </p>
+          ) : null}
         </div>
       </div>
     )

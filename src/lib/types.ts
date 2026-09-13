@@ -7,6 +7,8 @@ export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'ath
 export type GoalRate = 1.5 | 1 | 0.75 | 0.5 | 0.25 | 0 | -0.25 | -0.5
 
 export interface Profile {
+  /** Comment l'app s'adresse à la personne (accueil de connexion) — absent, l'e-mail sert de repli. */
+  displayName?: string
   height: number
   weight: number
   age: number

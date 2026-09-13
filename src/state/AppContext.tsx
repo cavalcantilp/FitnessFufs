@@ -625,7 +625,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const signUpWithPassword = useCallback(async (email: string, password: string): Promise<AuthResult> => {
     setAuthError(null)
-    const { error } = await getSupabase().auth.signUp({ email, password })
+    const { error } = await getSupabase().auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: window.location.origin },
+    })
     if (error) {
       setAuthError(error.message)
       return { ok: false, message: error.message }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
-import { Logo } from './icons'
+import { IconGoogle, Logo } from './icons'
 
 interface AuthGateScreenProps {
   /** Appelé une fois la porte franchie — connexion restaurée (après l'accueil), ou passée sciemment. */
@@ -25,20 +25,9 @@ function displayName(email: string | null): string {
  * continuer hors connexion.
  */
 export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
-  const {
-    t,
-    user,
-    authLoading,
-    authError,
-    clearAuthError,
-    rememberMe,
-    setRememberMe,
-    signInWithPassword,
-    signUpWithPassword,
-    signInWithGoogle,
-  } = useApp()
+  const { t, user, authLoading, authError, rememberMe, setRememberMe, signInWithPassword, signUpWithPassword, signInWithGoogle } =
+    useApp()
 
-  const [mode, setMode] = useState<'signIn' | 'signUp'>('signIn')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -70,22 +59,16 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
     )
   }
 
-  const toggleMode = () => {
-    setMode((current) => (current === 'signIn' ? 'signUp' : 'signIn'))
-    clearAuthError()
-    setInfo(null)
-    setLocalError(null)
-  }
-
-  const submit = async () => {
+  /** "Se connecter" (bouton) et "Créer un compte" (texte) sont deux actions fixes,
+   * jamais un même bouton dont le libellé bascule — chacune part des mêmes champs. */
+  const runAuth = async (kind: 'signIn' | 'signUp') => {
     if (!email.trim() || !password || submitting) return
     setSubmitting(true)
     setInfo(null)
     setLocalError(null)
     try {
-      const result =
-        mode === 'signIn' ? await signInWithPassword(email.trim(), password) : await signUpWithPassword(email.trim(), password)
-      if (result.ok && mode === 'signUp') setInfo(t('account.confirmEmail'))
+      const result = kind === 'signIn' ? await signInWithPassword(email.trim(), password) : await signUpWithPassword(email.trim(), password)
+      if (result.ok && kind === 'signUp') setInfo(t('account.confirmEmail'))
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -118,7 +101,7 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
         className="stack"
         onSubmit={(event) => {
           event.preventDefault()
-          void submit()
+          void runAuth('signIn')
         }}
       >
         <div className="field">
@@ -139,7 +122,7 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
             id="gate-password"
             name="gate-password"
             type="password"
-            autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'}
+            autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
@@ -154,19 +137,27 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
         {info ? <p className="notice info">{info}</p> : null}
 
         <button type="submit" className="btn" disabled={submitting || !email.trim() || !password}>
-          {submitting ? t('account.loading') : mode === 'signIn' ? t('account.signIn') : t('account.signUp')}
+          {submitting ? t('account.loading') : t('account.signIn')}
         </button>
 
-        <button type="button" className="btn secondary" onClick={() => void withGoogle()} disabled={submitting}>
-          {t('account.continueWithGoogle')}
-        </button>
-
-        <button type="button" className="auth-skip" onClick={toggleMode}>
-          {mode === 'signIn' ? t('account.signUp') : t('account.signIn')}
+        <button
+          type="button"
+          className="auth-skip"
+          disabled={submitting || !email.trim() || !password}
+          onClick={() => void runAuth('signUp')}
+        >
+          {t('account.signUp')}
         </button>
 
         <button type="button" className="auth-skip" onClick={onProceed}>
           {t('account.skip')}
+        </button>
+
+        <hr className="auth-divider" />
+
+        <button type="button" className="btn secondary auth-google" onClick={() => void withGoogle()} disabled={submitting}>
+          <IconGoogle size={18} />
+          {t('account.continueWithGoogle')}
         </button>
       </form>
     </div>

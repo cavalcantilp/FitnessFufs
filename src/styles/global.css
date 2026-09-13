@@ -1603,6 +1603,16 @@ input[type='range']::-moz-range-thumb {
   padding: 10px;
 }
 
+.auth-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+}
+
+.auth-google {
+  margin-top: 2px;
+}
+
 /* ---------- Panneau dépliable ---------- */
 
 .disclosure {

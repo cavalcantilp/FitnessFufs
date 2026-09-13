@@ -28,6 +28,11 @@ export function App() {
   // ou porte volontairement passée) — jamais persistée : la porte redemande sa
   // preuve à chaque lancement, sauf session « dont on se souvient ».
   const [gatePassed, setGatePassed] = useState(false)
+  // Identité stable exigée : un rendu de App pendant l'accueil recréerait sinon une
+  // nouvelle fonction à chaque fois, annulant le minuteur de AuthGateScreen sans
+  // jamais le relancer (son effet le voit comme une dépendance changée) — la porte
+  // restait alors bloquée sur l'accueil indéfiniment.
+  const handleGatePassed = useCallback(() => setGatePassed(true), [])
   /**
    * L'onglet et le jour consultés survivent au rechargement : un simple
    * « tirer pour rafraîchir » renvoyait sinon systématiquement au journal
@@ -100,7 +105,7 @@ export function App() {
     document.title = `${t('app.name')} — ${t('app.tagline')}`
   }, [t])
 
-  if (accountAvailable && !gatePassed) return <AuthGateScreen onProceed={() => setGatePassed(true)} />
+  if (accountAvailable && !gatePassed) return <AuthGateScreen onProceed={handleGatePassed} />
 
   if (!onboarded) return <Onboarding />
 

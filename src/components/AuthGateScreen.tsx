@@ -45,14 +45,19 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
   const [info, setInfo] = useState<string | null>(null)
   const [localError, setLocalError] = useState<string | null>(null)
   const greetingStarted = useRef(false)
+  // Toujours la dernière fonction reçue, sans jamais être une dépendance d'effet :
+  // un onProceed recréé à chaque rendu du parent ne doit plus jamais pouvoir
+  // annuler ce minuteur en cours de route (déjà arrivé une fois — voir App.tsx).
+  const onProceedRef = useRef(onProceed)
+  onProceedRef.current = onProceed
 
   useEffect(() => {
     if (!authLoading && user && !greetingStarted.current) {
       greetingStarted.current = true
-      const timer = window.setTimeout(onProceed, GREETING_DELAY_MS)
+      const timer = window.setTimeout(() => onProceedRef.current(), GREETING_DELAY_MS)
       return () => window.clearTimeout(timer)
     }
-  }, [authLoading, user, onProceed])
+  }, [authLoading, user])
 
   if (authLoading || user) {
     return (
@@ -63,6 +68,13 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
         </div>
       </div>
     )
+  }
+
+  const toggleMode = () => {
+    setMode((current) => (current === 'signIn' ? 'signUp' : 'signIn'))
+    clearAuthError()
+    setInfo(null)
+    setLocalError(null)
   }
 
   const submit = async () => {
@@ -109,33 +121,6 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
           void submit()
         }}
       >
-        <div className="chip-list">
-          <button
-            type="button"
-            className={`chip${mode === 'signIn' ? ' active' : ''}`}
-            onClick={() => {
-              setMode('signIn')
-              clearAuthError()
-              setInfo(null)
-              setLocalError(null)
-            }}
-          >
-            {t('account.signIn')}
-          </button>
-          <button
-            type="button"
-            className={`chip${mode === 'signUp' ? ' active' : ''}`}
-            onClick={() => {
-              setMode('signUp')
-              clearAuthError()
-              setInfo(null)
-              setLocalError(null)
-            }}
-          >
-            {t('account.signUp')}
-          </button>
-        </div>
-
         <div className="field">
           <label htmlFor="gate-email">{t('account.email')}</label>
           <input
@@ -174,6 +159,10 @@ export function AuthGateScreen({ onProceed }: AuthGateScreenProps) {
 
         <button type="button" className="btn secondary" onClick={() => void withGoogle()} disabled={submitting}>
           {t('account.continueWithGoogle')}
+        </button>
+
+        <button type="button" className="auth-skip" onClick={toggleMode}>
+          {mode === 'signIn' ? t('account.signUp') : t('account.signIn')}
         </button>
 
         <button type="button" className="auth-skip" onClick={onProceed}>

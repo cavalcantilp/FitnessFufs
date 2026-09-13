@@ -56,18 +56,20 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
     <div className="screen">
       <div className="card">
         <div className="card-title">{t('profile.title')}</div>
-        <div className="field">
-          <label htmlFor="display-name">{t('profile.displayName')}</label>
-          <input
-            id="display-name"
-            name="display-name"
-            type="text"
-            autoComplete="nickname"
-            value={profile.displayName ?? ''}
-            onChange={(event) => updateProfile({ displayName: event.target.value })}
-          />
+        <div className="stack">
+          <div className="field">
+            <label htmlFor="display-name">{t('profile.displayName')}</label>
+            <input
+              id="display-name"
+              name="display-name"
+              type="text"
+              autoComplete="nickname"
+              value={profile.displayName ?? ''}
+              onChange={(event) => updateProfile({ displayName: event.target.value })}
+            />
+          </div>
+          <ProfileForm />
         </div>
-        <ProfileForm />
       </div>
 
       <div className="card">

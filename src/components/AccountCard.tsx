@@ -27,25 +27,42 @@ export function AccountCard() {
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [info, setInfo] = useState<string | null>(null)
+  // Distinct de authError (échecs Supabase propres) : couvre une exception imprévue
+  // pendant l'appel, pour ne jamais laisser le formulaire sans aucun retour visible.
+  const [localError, setLocalError] = useState<string | null>(null)
 
   if (!accountAvailable) return null
 
   const submit = async () => {
-    if (!email.trim() || !password) return
+    if (!email.trim() || !password || submitting) return
     setSubmitting(true)
     setInfo(null)
-    const result =
-      mode === 'signIn' ? await signInWithPassword(email.trim(), password) : await signUpWithPassword(email.trim(), password)
-    setSubmitting(false)
-    if (result.ok && mode === 'signUp') {
-      setInfo(t('account.confirmEmail'))
+    setLocalError(null)
+    try {
+      const result =
+        mode === 'signIn' ? await signInWithPassword(email.trim(), password) : await signUpWithPassword(email.trim(), password)
+      if (result.ok && mode === 'signUp') setInfo(t('account.confirmEmail'))
+    } catch (err) {
+      // Un échec Supabase normal repasse par authError (message clair) ; ceci ne
+      // couvre qu'un imprévu (réseau coupé en plein appel, bug...), pour ne
+      // jamais laisser le formulaire silencieux sans le moindre retour.
+      setLocalError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const withGoogle = async () => {
+    if (submitting) return
     setSubmitting(true)
-    await signInWithGoogle()
-    setSubmitting(false)
+    setLocalError(null)
+    try {
+      await signInWithGoogle()
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -82,6 +99,7 @@ export function AccountCard() {
                 setMode('signIn')
                 clearAuthError()
                 setInfo(null)
+                setLocalError(null)
               }}
             >
               {t('account.signIn')}
@@ -93,6 +111,7 @@ export function AccountCard() {
                 setMode('signUp')
                 clearAuthError()
                 setInfo(null)
+                setLocalError(null)
               }}
             >
               {t('account.signUp')}
@@ -132,11 +151,11 @@ export function AccountCard() {
             {t('account.rememberMe')}
           </label>
 
-          {authError ? <p className="notice chat-error">{authError}</p> : null}
+          {authError || localError ? <p className="notice chat-error">{authError ?? localError}</p> : null}
           {info ? <p className="notice info">{info}</p> : null}
 
           <button type="submit" className="btn" disabled={submitting || !email.trim() || !password}>
-            {mode === 'signIn' ? t('account.signIn') : t('account.signUp')}
+            {submitting ? t('account.loading') : mode === 'signIn' ? t('account.signIn') : t('account.signUp')}
           </button>
 
           <button type="button" className="btn secondary" onClick={() => void withGoogle()} disabled={submitting}>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 import { useApp } from './state/AppContext'
 import { Onboarding } from './pages/Onboarding'
+import { AuthGateScreen } from './components/AuthGateScreen'
 import { CalendarScreen } from './pages/CalendarScreen'
 import { Diary } from './pages/Diary'
 import { AddScreen, type AddView } from './pages/AddScreen'
@@ -22,7 +23,11 @@ import type { Lang, MealId } from './lib/types'
 type Tab = 'calendar' | 'diary' | 'add' | 'weight' | 'fridge'
 
 export function App() {
-  const { t, lang, setLang, onboarded, tutorialsEnabled, tutorialSeen, markTutorialSeen, apiKey } = useApp()
+  const { t, lang, setLang, onboarded, tutorialsEnabled, tutorialSeen, markTutorialSeen, apiKey, accountAvailable } = useApp()
+  // Franchie une fois par ouverture d'app (session restaurée après l'accueil bref,
+  // ou porte volontairement passée) — jamais persistée : la porte redemande sa
+  // preuve à chaque lancement, sauf session « dont on se souvient ».
+  const [gatePassed, setGatePassed] = useState(false)
   /**
    * L'onglet et le jour consultés survivent au rechargement : un simple
    * « tirer pour rafraîchir » renvoyait sinon systématiquement au journal
@@ -94,6 +99,8 @@ export function App() {
   useEffect(() => {
     document.title = `${t('app.name')} — ${t('app.tagline')}`
   }, [t])
+
+  if (accountAvailable && !gatePassed) return <AuthGateScreen onProceed={() => setGatePassed(true)} />
 
   if (!onboarded) return <Onboarding />
 

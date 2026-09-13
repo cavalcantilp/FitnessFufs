@@ -57,8 +57,6 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
         <ProfileForm />
       </div>
 
-      <AccountCard />
-
       <div className="card">
         <div className="card-title">{t('profile.targets')}</div>
         {/* Les macros sont détaillées au-dessus, sous les curseurs : ici, l'énergétique. */}
@@ -160,6 +158,8 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
           {t('profile.reset')}
         </button>
       </div>
+
+      <AccountCard />
 
       {confirmingReset ? (
         <ConfirmDialog

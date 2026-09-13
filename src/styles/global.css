@@ -1566,6 +1566,43 @@ input[type='range']::-moz-range-thumb {
   display: block;
 }
 
+/* Accueil bref pendant la restauration d'une session mémorisée — le même
+   gabarit que l'onboarding, réduit à la marque et à une salutation. */
+.auth-splash {
+  justify-content: center;
+  align-items: center;
+}
+
+/* Plus spécifique que ".onboarding .brand p" (taille/couleur par défaut du sous-titre),
+   sans quoi cette règle générique l'emporterait malgré son ordre plus tardif. */
+.onboarding .brand .auth-greeting {
+  margin-top: 20px;
+  padding: 0 24px;
+  font-size: 1.7rem;
+  line-height: 1.25;
+  font-weight: 800;
+  color: var(--accent);
+  animation: auth-greeting-pop 0.4s ease-out;
+}
+
+@keyframes auth-greeting-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.auth-skip {
+  text-align: center;
+  color: var(--text-sub);
+  font-size: 0.82rem;
+  padding: 10px;
+}
+
 /* ---------- Panneau dépliable ---------- */
 
 .disclosure {

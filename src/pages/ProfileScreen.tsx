@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { ProfileForm } from '../components/ProfileForm'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { AccountCard } from '../components/AccountCard'
 import { MONTHLY_CAP_USD } from '../lib/usage'
 import { formatDateNumeric } from '../lib/date'
 
@@ -55,6 +56,8 @@ export function ProfileScreen({ onToast }: ProfileScreenProps) {
         <div className="card-title">{t('profile.title')}</div>
         <ProfileForm />
       </div>
+
+      <AccountCard />
 
       <div className="card">
         <div className="card-title">{t('profile.targets')}</div>

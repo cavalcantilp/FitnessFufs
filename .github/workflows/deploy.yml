@@ -29,7 +29,13 @@ jobs:
       - run: npm ci
 
       # base = / : le site est servi à la racine du domaine de public/CNAME.
+      # Clé "anon" Supabase, publique par nature (protégée par les policies RLS
+      # côté serveur, pas par sa confidentialité) — absente tant que les secrets
+      # du dépôt ne sont pas renseignés, l'app reste alors utilisable en local.
       - run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       # enablement active Pages sur le dépôt au premier run, sans passage
       # manuel par Settings → Pages.

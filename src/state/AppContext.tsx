@@ -13,6 +13,8 @@ import { load, save, clearAll, STORAGE_KEYS } from '../lib/storage'
 import { usagePeriodExpired } from '../lib/usage'
 import { todayKey } from '../lib/date'
 import { DEFAULT_MEALS, MAX_CUSTOM_MEALS } from '../lib/meals'
+import { getRememberMe, getSupabase, isSupabaseConfigured, setRememberMe as persistRememberMe } from '../lib/supabase'
+import { pullSyncedState, pushSyncedState } from '../lib/sync'
 import { detectLang, TRANSLATIONS, type TranslationKey } from '../i18n/translations'
 import type {
   ChatMessage,
@@ -58,6 +60,13 @@ export interface ExportPayload {
   fridge?: FridgeItem[]
   mealDefs?: MealDef[]
 }
+
+export interface AccountUser {
+  id: string
+  email: string | null
+}
+
+export type AuthResult = { ok: true } | { ok: false; message: string }
 
 interface AppState {
   lang: Lang
@@ -156,6 +165,19 @@ interface AppState {
   exportData: () => ExportPayload
   importData: (payload: unknown) => boolean
   resetAll: () => void
+
+  /** Absent tant que le projet Supabase n'est pas configuré : la fonctionnalité reste invisible plutôt que cassée. */
+  accountAvailable: boolean
+  user: AccountUser | null
+  authLoading: boolean
+  authError: string | null
+  clearAuthError: () => void
+  rememberMe: boolean
+  setRememberMe: (remember: boolean) => void
+  signInWithPassword: (email: string, password: string) => Promise<AuthResult>
+  signUpWithPassword: (email: string, password: string) => Promise<AuthResult>
+  signInWithGoogle: () => Promise<AuthResult>
+  signOut: () => Promise<void>
 }
 
 const AppContext = createContext<AppState | null>(null)
@@ -201,6 +223,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     // Le mois de suivi a pu s'écouler pendant que l'app était fermée.
     return usagePeriodExpired(loaded.since) ? { since: todayKey(), costUsd: 0 } : loaded
   })
+
+  const [user, setUser] = useState<AccountUser | null>(null)
+  const [authLoading, setAuthLoading] = useState<boolean>(isSupabaseConfigured)
+  const [authError, setAuthError] = useState<string | null>(null)
+  // Une fois vrai, la réconciliation initiale (tirée ou semée) après connexion est
+  // faite — sans cette garde, chaque modification locale pousserait un état pas
+  // encore fusionné avec le cloud, écrasant potentiellement les autres appareils.
+  const [syncReady, setSyncReady] = useState(false)
+  const [rememberMe, setRememberMeState] = useState<boolean>(() => getRememberMe())
 
   useEffect(() => save(STORAGE_KEYS.lang, lang), [lang])
   useEffect(() => save(STORAGE_KEYS.profile, profile), [profile])
@@ -511,7 +542,121 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return true
   }, [])
 
+  const clearAuthError = useCallback(() => setAuthError(null), [])
+
+  const setRememberMe = useCallback((remember: boolean) => {
+    persistRememberMe(remember)
+    setRememberMeState(remember)
+  }, [])
+
+  // Restaure une session existante au démarrage et écoute les connexions/déconnexions —
+  // invisible tant que le projet Supabase n'est pas configuré (clés absentes du build).
+  useEffect(() => {
+    if (!isSupabaseConfigured) return
+    const supabase = getSupabase()
+    let cancelled = false
+
+    void supabase.auth.getSession().then(({ data }) => {
+      if (cancelled) return
+      const session = data.session
+      setUser(session ? { id: session.user.id, email: session.user.email ?? null } : null)
+      setAuthLoading(false)
+    })
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        setUser(null)
+        setSyncReady(false)
+        return
+      }
+      if (session) setUser({ id: session.user.id, email: session.user.email ?? null })
+    })
+
+    return () => {
+      cancelled = true
+      listener.subscription.unsubscribe()
+    }
+  }, [])
+
+  // Réconciliation initiale après connexion, une seule fois par session : le cloud
+  // prime s'il a déjà des données (autre appareil), sinon le local d'aujourd'hui y
+  // est semé — jamais les deux dans le même sens, pour ne rien écraser à l'aveugle.
+  useEffect(() => {
+    if (!user) return
+    let cancelled = false
+    setSyncReady(false)
+    void (async () => {
+      try {
+        const remote = await pullSyncedState(user.id)
+        if (cancelled) return
+        if (remote) importData(remote)
+        else await pushSyncedState(user.id, exportData())
+      } catch {
+        if (!cancelled) setAuthError(t('account.syncError'))
+      } finally {
+        if (!cancelled) setSyncReady(true)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id])
+
+  // Pousse le local vers le cloud après chaque changement pertinent, une fois la
+  // réconciliation initiale terminée — jamais avant (voir l'effet précédent).
+  useEffect(() => {
+    if (!user || !syncReady) return
+    const timer = window.setTimeout(() => {
+      void pushSyncedState(user.id, exportData()).catch(() => setAuthError(t('account.syncError')))
+    }, 1500)
+    return () => window.clearTimeout(timer)
+  }, [user, syncReady, exportData])
+
+  const signInWithPassword = useCallback(async (email: string, password: string): Promise<AuthResult> => {
+    setAuthError(null)
+    const { error } = await getSupabase().auth.signInWithPassword({ email, password })
+    if (error) {
+      setAuthError(error.message)
+      return { ok: false, message: error.message }
+    }
+    return { ok: true }
+  }, [])
+
+  const signUpWithPassword = useCallback(async (email: string, password: string): Promise<AuthResult> => {
+    setAuthError(null)
+    const { error } = await getSupabase().auth.signUp({ email, password })
+    if (error) {
+      setAuthError(error.message)
+      return { ok: false, message: error.message }
+    }
+    return { ok: true }
+  }, [])
+
+  const signInWithGoogle = useCallback(async (): Promise<AuthResult> => {
+    setAuthError(null)
+    const { error } = await getSupabase().auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    })
+    if (error) {
+      setAuthError(error.message)
+      return { ok: false, message: error.message }
+    }
+    return { ok: true }
+  }, [])
+
+  const signOut = useCallback(async () => {
+    if (!isSupabaseConfigured) return
+    await getSupabase().auth.signOut()
+    setUser(null)
+    setSyncReady(false)
+  }, [])
+
   const resetAll = useCallback(() => {
+    // Se déconnecter d'abord : sans ça, la remise à zéro locale se pousserait vers
+    // le cloud à la prochaine synchronisation et effacerait aussi les autres appareils.
+    if (isSupabaseConfigured) void signOut()
     clearAll()
     setProfile(DEFAULT_PROFILE)
     setEntries([])
@@ -529,7 +674,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setOnboarded(false)
     setTutorialsEnabled(true)
     setTutorialSeen({})
-  }, [])
+  }, [signOut])
 
   const value = useMemo<AppState>(
     () => ({
@@ -591,6 +736,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       exportData,
       importData,
       resetAll,
+      accountAvailable: isSupabaseConfigured,
+      user,
+      authLoading,
+      authError,
+      clearAuthError,
+      rememberMe,
+      setRememberMe,
+      signInWithPassword,
+      signUpWithPassword,
+      signInWithGoogle,
+      signOut,
     }),
     [
       lang,
@@ -649,6 +805,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       exportData,
       importData,
       resetAll,
+      user,
+      authLoading,
+      authError,
+      clearAuthError,
+      rememberMe,
+      setRememberMe,
+      signInWithPassword,
+      signUpWithPassword,
+      signInWithGoogle,
+      signOut,
     ],
   )
 

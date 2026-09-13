@@ -13,6 +13,7 @@
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
     "barcode-detector": "^3.2.1",
     "idb-keyval": "^6.3.0",
     "react": "^19.1.1",

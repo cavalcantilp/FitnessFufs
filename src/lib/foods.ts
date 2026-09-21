@@ -323,6 +323,7 @@ export const BUILTIN_FOODS: Food[] = [
   food('caesar_salad', ['Salade César', 'Salada César', 'Ensalada César', 'Caesar salad', 'Insalata Caesar'], 190, 10, 6, 14, 1.2, 250, 'dish'),
   food('arroz_feijao', ['Riz-haricots (arroz e feijão)', 'Arroz e feijão', 'Arroz con frijoles', 'Rice and beans', 'Riso e fagioli'], 110, 4, 20, 1.5, 3, 300, 'dish'),
   food('feijoada', ['Feijoada', 'Feijoada', 'Feijoada', 'Feijoada', 'Feijoada'], 180, 12, 12, 9, 4, 300, 'dish'),
+  food('chili_con_carne', ['Chili con carne', 'Chili con carne', 'Chile con carne', 'Chili con carne', 'Chili con carne'], 150, 10, 11, 7, 3.5, 300, 'dish'),
   food('moqueca', ['Moqueca de poisson', 'Moqueca de peixe', 'Moqueca de pescado', 'Fish moqueca', 'Moqueca di pesce'], 120, 11, 4, 7, 1, 300, 'dish'),
   food('coxinha', ['Coxinha', 'Coxinha', 'Coxinha', 'Coxinha', 'Coxinha'], 280, 9, 30, 13, 1.5, 80, 'dish'),
   food('pastel', ['Pastel frit', 'Pastel', 'Pastel frito', 'Fried pastel', 'Pastel fritto'], 340, 8, 33, 19, 1.5, 80, 'dish'),
@@ -713,6 +714,7 @@ const ALIASES: Record<string, string[]> = {
   mayonnaise: ['maionese'],
   grapes: ['uva'],
   barilla_protein_fusilli: ['pates proteinees', 'pasta proteica', 'protein plus', 'protein pasta', 'high protein pasta'],
+  chili_con_carne: ['chile con carne', 'chili', 'chilli con carne'],
 }
 
 // Les mesures et synonymes sont rattachés après coup : la table reste lisible.

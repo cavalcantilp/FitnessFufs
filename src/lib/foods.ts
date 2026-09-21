@@ -198,6 +198,12 @@ export const BUILTIN_FOODS: Food[] = [
   food2('rice_black', ['Riz noir', 'Arroz negro', 'Arroz negro', 'Black rice', 'Riso nero'], 'carbs', 'cooked', [356, 8.5, 76, 3.2, 4.9, 60], [160, 3.8, 34, 1.4, 2.2, 150], [5, 95, 12, 0.5, 48, 0.7, 0, 0, 0]),
   food2('rice_sushi', ['Riz à sushi', 'Arroz para sushi', 'Arroz para sushi', 'Sushi rice', 'Riso per sushi'], 'carbs', 'cooked', [358, 6.1, 79, 0.5, 0.5, 60], [130, 2.4, 29, 0.2, 0.2, 150], [1, 32, 9, 0.2, 10, 0.5, 0, 0, 0]),
   food2('pasta', ['Pâtes', 'Massa', 'Pasta', 'Pasta', 'Pasta'], 'carbs', 'cooked', [371, 13, 75, 1.5, 3.2, 80], [158, 5.8, 31, 0.9, 1.8, 180], [5, 44, 7, 0.5, 18, 0.5, 0, 0, 0]),
+  // Valeurs de l'emballage (Fusilli Protein+, trafilata al bronzo) — pas de détail micronutriments sur l'étiquette.
+  {
+    ...food2('barilla_protein_fusilli', ['Fusilli Protein+ Barilla', 'Fusilli Protein+ Barilla', 'Fusilli Protein+ Barilla', 'Barilla Protein+ Fusilli', 'Fusilli Protein+ Barilla'], 'carbs', 'cooked', [354, 20, 63, 1.7, 3.1, 80], [154, 8.7, 27, 0.7, 1.3, 180]),
+    brand: 'Barilla',
+    barcode: '8076809585866',
+  },
   food2('quinoa', ['Quinoa', 'Quinoa', 'Quinoa', 'Quinoa', 'Quinoa'], 'carbs', 'cooked', [368, 14, 64, 6, 7, 60], [120, 4.4, 21, 1.9, 2.8, 150], [7, 172, 17, 1.5, 64, 1.1, 0, 0, 0]),
   food2('couscous', ['Semoule / couscous', 'Cuscuz', 'Cuscús', 'Couscous', 'Cuscus'], 'carbs', 'cooked', [376, 13, 77, 0.6, 5, 60], [112, 3.8, 23, 0.2, 1.4, 180], [5, 58, 8, 0.4, 8, 0.3, 0, 0, 0]),
   food2('oats', ["Flocons d'avoine", 'Flocos de aveia', 'Copos de avena', 'Rolled oats', "Fiocchi d'avena"], 'carbs', 'raw', [379, 13, 68, 6.5, 10.6, 50], [71, 2.4, 12, 1.4, 1.7, 250], [2, 429, 54, 4.7, 177, 4, 0, 0, 0]),
@@ -706,6 +712,7 @@ const ALIASES: Record<string, string[]> = {
   olives: ['azeitona'],
   mayonnaise: ['maionese'],
   grapes: ['uva'],
+  barilla_protein_fusilli: ['pates proteinees', 'pasta proteica', 'protein plus', 'protein pasta', 'high protein pasta'],
 }
 
 // Les mesures et synonymes sont rattachés après coup : la table reste lisible.

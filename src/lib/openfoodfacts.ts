@@ -1,4 +1,5 @@
 import type { Food, FoodCategory, Lang, Micros } from './types'
+import { normalize } from './foods'
 
 /**
  * Client Open Food Facts — base ouverte (licence ODbL), sans clé d'API,
@@ -149,6 +150,20 @@ async function getJson(url: string, signal?: AbortSignal): Promise<unknown> {
   }
 }
 
+/**
+ * `search_terms` n'est pas un filtre reconnu par toutes les routes tentées —
+ * notamment l'API v2, prévue pour des requêtes structurées (tags, code-barres),
+ * qui répond alors avec une page de produits quelconques plutôt qu'une erreur.
+ * Sans ce filtre, une recherche sans vrai résultat renvoyait le premier produit
+ * de cette page (« fromage blanc » pour « clear whey optimum nutrition »)
+ * au lieu d'essayer le service de recherche suivant.
+ */
+function isRelevant(food: Food, queryTokens: string[]): boolean {
+  if (queryTokens.length === 0) return true
+  const haystack = normalize(`${food.name} ${food.brand ?? ''}`)
+  return queryTokens.some((token) => haystack.includes(token))
+}
+
 /** Les deux services de recherche ne nomment pas leur tableau de la même façon. */
 function productsOf(payload: unknown): OffProduct[] {
   if (typeof payload !== 'object' || payload === null) return []
@@ -192,6 +207,9 @@ export async function searchOpenFoodFacts(
 ): Promise<Food[]> {
   const term = query.trim()
   if (term.length < 3) return []
+  const queryTokens = normalize(term)
+    .split(/\s+/)
+    .filter((token) => token.length >= 2)
 
   let reached = false
   const failures: string[] = []
@@ -202,6 +220,7 @@ export async function searchOpenFoodFacts(
       const foods = products
         .map((product) => toFood(product, lang))
         .filter((food): food is Food => food !== null)
+        .filter((food) => isRelevant(food, queryTokens))
       if (foods.length > 0) return foods
     } catch (error) {
       // Service indisponible ou format inattendu : on tente le suivant.

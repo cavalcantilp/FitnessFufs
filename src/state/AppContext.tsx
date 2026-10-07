@@ -556,12 +556,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const supabase = getSupabase()
     let cancelled = false
 
-    void supabase.auth.getSession().then(({ data }) => {
-      if (cancelled) return
-      const session = data.session
-      setUser(session ? { id: session.user.id, email: session.user.email ?? null } : null)
-      setAuthLoading(false)
-    })
+    // Projet Supabase injoignable (en pause après une période d'inactivité, hors
+    // ligne…) : la bibliothèque retente alors le rafraîchissement du jeton en
+    // interne, encore et encore, sans jamais résoudre getSession() — authLoading
+    // restait bloqué à true pour toujours, la porte de connexion ne quittant
+    // jamais son écran de chargement (ni formulaire, ni "Continuer sans compte").
+    // Un filet de secours local force la sortie après quelques secondes, quoi
+    // que fasse la tentative en arrière-plan.
+    const TIMEOUT = Symbol('timeout')
+    const timeout = new Promise<typeof TIMEOUT>((resolve) => window.setTimeout(() => resolve(TIMEOUT), 6000))
+
+    void Promise.race([supabase.auth.getSession(), timeout])
+      .then((result) => {
+        if (cancelled) return
+        if (result === TIMEOUT) {
+          setUser(null)
+          setAuthLoading(false)
+          setAuthError(t('account.connectionError'))
+          return
+        }
+        const session = result.data.session
+        setUser(session ? { id: session.user.id, email: session.user.email ?? null } : null)
+        setAuthLoading(false)
+      })
+      .catch(() => {
+        if (cancelled) return
+        setUser(null)
+        setAuthLoading(false)
+        setAuthError(t('account.connectionError'))
+      })
 
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
